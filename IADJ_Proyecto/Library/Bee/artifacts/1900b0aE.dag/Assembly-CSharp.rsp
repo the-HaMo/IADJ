@@ -386,6 +386,10 @@
 -analyzer:"C:/Program Files/Unity/Hub/Editor/2023.2.20f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.UIToolkit.SourceGenerator.dll"
 "Assets/scripts/mov/MovimientoTeclado.cs"
 "Assets/scripts/movAI/Conociendo_las_Rotaciones/Rotacion.cs"
+"Assets/scripts/movAI/Formaciones/ArrowFormation.cs"
+"Assets/scripts/movAI/Formaciones/FormationController.cs"
+"Assets/scripts/movAI/Formaciones/FormationManager.cs"
+"Assets/scripts/movAI/Formaciones/FormationPattern.cs"
 "Assets/scripts/movAI/NPC/Agent.cs"
 "Assets/scripts/movAI/NPC/AgentNPC.cs"
 "Assets/scripts/movAI/NPC/AgentPlayer.cs"
@@ -401,8 +405,10 @@
 "Assets/scripts/movAI/Steering/Delegate/Face/Face.cs"
 "Assets/scripts/movAI/Steering/Delegate/WallAvoidance/WallAvoidance.cs"
 "Assets/scripts/movAI/Steering/Delegate/Wander/Wander.cs"
+"Assets/scripts/movAI/Steering/FormationFollowBehavior.cs"
 "Assets/scripts/movAI/Steering/Generic/Steering.cs"
 "Assets/scripts/movAI/Steering/Generic/SteeringBehaviour.cs"
+"Assets/scripts/movAI/Steering/LeaderFollowingBehavior.cs"
 "Assets/Store_Unity/Characters/Mini Simple Characters Skeleton Demo/Readme/Scripts/Readme.cs"
 -langversion:9.0
 
