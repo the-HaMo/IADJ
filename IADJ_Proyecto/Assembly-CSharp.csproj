@@ -66,26 +66,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\scripts\movAI\Formaciones\FormationPattern.cs" />
-    <Compile Include="Assets\scripts\movAI\Steering\FormationFollowBehavior.cs" />
     <Compile Include="Assets\scripts\movAI\Formaciones\FormationController.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\AntiAlign.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\VelocityMatching.cs" />
     <Compile Include="Assets\scripts\movAI\NPC\Agent.cs" />
     <Compile Include="Assets\scripts\movAI\NPC\Bodi.cs" />
     <Compile Include="Assets\scripts\movAI\NPC\AgentPlayer.cs" />
-    <Compile Include="Assets\scripts\movAI\Formaciones\ArrowFormation.cs" />
+    <Compile Include="Assets\scripts\movAI\Formaciones\DefensivePattern.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Generic\SteeringBehaviour.cs" />
     <Compile Include="Assets\Store_Unity\Characters\Mini Simple Characters Skeleton Demo\Readme\Scripts\Readme.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\Flee.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\Arrive.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Delegate\Wander\Wander.cs" />
     <Compile Include="Assets\scripts\movAI\NPC\AgentPlayerWithAnimation.cs" />
+    <Compile Include="Assets\scripts\movAI\Formaciones\AttackPattern.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Delegate\Face\Face.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\Seek.cs" />
+    <Compile Include="Assets\scripts\movAI\Formaciones\SeleccionarObjetivos.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\Seek_IanMillington.cs" />
+    <Compile Include="Assets\scripts\movAI\Formaciones\GridFormation.cs" />
     <Compile Include="Assets\scripts\movAI\Conociendo_las_Rotaciones\Rotacion.cs" />
-    <Compile Include="Assets\scripts\movAI\Steering\LeaderFollowingBehavior.cs" />
-    <Compile Include="Assets\scripts\movAI\Formaciones\FormationManager.cs" />
     <Compile Include="Assets\scripts\mov\MovimientoTeclado.cs" />
     <Compile Include="Assets\scripts\movAI\NPC\AgentNPC.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\Align.cs" />

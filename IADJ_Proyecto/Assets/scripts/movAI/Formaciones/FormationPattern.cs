@@ -1,50 +1,48 @@
-using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
-/// <summary>
-/// Estructura que representa la asignación de un personaje a una ranura en la formación
-/// </summary>
-public struct SlotAssignment
+public abstract class FormationPattern
 {
-    public AgentNPC character; // El personaje 
-    public int slotNumber;     // El número de ranura asignado 
-}
+    // Número de agentes que acepta la formación
+    protected int numAgents;
+    
+    // Celdas que usa la formación (coordenadas en el grid)
+    protected (int, int)[] validSlots;
+    
+    // Celda del líder
+    protected (int, int) leaderSlot;
+    
+    // Orientaciones que tienen que tener los NPCs de cada celda
+    protected float[] relativeAngles;
 
-public abstract class FormationPattern : MonoBehaviour
-{
-    // Define cuántas ranuras puede manejar este patrón
-    protected int numberOfSlots;
-
-    /// Retorna la posición y orientación relativa de una ranura específica.
-    /// Este método debe ser implementado por cada patrón (V, Círculo, etc).
-    public abstract Pose GetSlotLocation(int slotNumber);
-
-    /// Verifica si el patrón soporta añadir un personaje más.
-    public abstract bool SupportsSlots(int slotCount);
-
-    /// Calcula el centro de masa de las ranuras ocupadas.
-    public virtual Pose GetDriftOffset(List<SlotAssignment> slotAssignments)
+    public (int, int) GetLeaderSlot()
     {
-        int count = slotAssignments.Count;
+        return leaderSlot;
+    }
 
-        // Si no hay nadie, no hay desviación
-        if (count == 0) return new Pose(Vector3.zero, Quaternion.identity);
+    public (int, int) GetSlot(int numSlot)
+    {
+        return validSlots[numSlot - 1];
+    }
 
-        Vector3 centerPos = Vector3.zero;
-        float centerOrientation = 0f;
+    public (int, int)[] GetValidSlots()
+    {
+        return validSlots;
+    }
 
-        // Sumamos las posiciones de los slots que sí tienen un personaje asignado
-        foreach (var assignment in slotAssignments)
-        {
-            Pose location = GetSlotLocation(assignment.slotNumber);
-            centerPos += location.position;
-            centerOrientation += location.rotation.eulerAngles.y;
-        }
+    public bool SupportAgent(int slotCount)
+    {
+        return slotCount < numAgents;
+    }
 
-        // Calculamos el promedio (Centro de masas)
-        Vector3 averagePos = centerPos / count;
-        Quaternion averageRot = Quaternion.Euler(0, centerOrientation / count, 0);
+    public float GetAngle(int numSlot)
+    {
+        return relativeAngles[numSlot];
+    }
 
-        return new Pose(averagePos, averageRot);
+    public int GetNumAgents()
+    {
+        return numAgents;
     }
 }

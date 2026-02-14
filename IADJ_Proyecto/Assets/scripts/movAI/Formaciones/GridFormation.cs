@@ -1,0 +1,385 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System;
+
+/// <summary>
+/// Estructura que representa un slot (ranura) en la formación
+/// </summary>
+public struct Slot
+{
+    // NPC asociado a la celda
+    public AgentNPC npc;
+
+    // Posición con respecto al líder
+    public Vector3 relativePosition;
+
+    // Orientación con respecto al líder
+    public float relativeOrientation;
+
+    // Indica si esta celda es la del líder
+    public bool leaderCell;
+
+    // Agente virtual que usarán los NPCs para posicionarse como deben en la celda
+    public Agent virtualAgent;
+}
+
+/// <summary>
+/// Grid de formación que administra los slots y posiciones de los agentes.
+/// Implementa el sistema de Leader Following del apartado h).
+/// </summary>
+public class GridFormation : MonoBehaviour
+{
+    // Columnas del grid
+    public int numColumns;
+    
+    // Filas del grid
+    public int numRows;
+    
+    // Tamaño de celda
+    public float cellSize;
+    
+    // Agente líder (una vez asignado SIEMPRE será el mismo)
+    public AgentNPC leader;
+
+    // Orientación real del líder (su orientación relativa será 0)
+    public float leaderAngle;
+
+    // Celdas del grid
+    public Slot[,] slots; // Matriz de ranuras
+
+    // Posición real del grid (posición de la celda del líder)
+    public Vector3 gridPosition;
+
+    // Manejador del grid
+    public FormationController formationController;
+
+    // Usado para llevar el grid a la posición del líder al hacer F
+    public bool activated = false;
+
+    /// <summary>
+    /// "Constructor" del grid. Como GridFormation hereda de MonoBehaviour no permite constructores.
+    /// Se usa justo después del AddComponent para preparar el grid.
+    /// </summary>
+    public void CreateGridManager(float cellSize, AgentNPC leader, int leaderI, int leaderJ, float angle, int numColumns, int numRows)
+    {
+        this.activated = true;
+        this.numColumns = numColumns;
+        this.numRows = numRows;
+        this.slots = new Slot[numColumns, numRows];
+        this.cellSize = cellSize;
+        this.leader = leader;
+        this.leaderAngle = angle;
+        this.gridPosition = leader.Position;
+        this.formationController = FindFirstObjectByType<FormationController>();
+
+        // Para cada celda del grid
+        for (int i = 0; i < numColumns; i++)
+        {
+            for (int j = 0; j < numRows; j++)
+            {
+                this.slots[i, j] = new Slot();
+                
+                // Calculamos la posición relativa desde la celda del líder hasta esta celda
+                this.slots[i, j].relativePosition = new Vector3(
+                    i * cellSize - leaderI * cellSize, 
+                    0f, 
+                    j * cellSize - leaderJ * cellSize
+                );
+
+                // Creamos un virtualAgent en la posición real del mundo donde se encuentra la celda
+                this.slots[i, j].virtualAgent = Agent.CreateStaticVirtual(
+                    GridToPlane(i, j), 
+                    intRadius: 0.5f, 
+                    arrRadius: 2f,
+                    ori: angle, 
+                    paint: false
+                );
+
+                // Las orientaciones se especificarán más adelante
+                this.slots[i, j].relativeOrientation = 0f;
+
+                // Si esta celda es la celda del líder
+                if (leaderI == i && leaderJ == j)
+                {
+                    this.slots[i, j].npc = this.leader;
+                    this.slots[i, j].leaderCell = true;
+                }
+                else
+                {
+                    this.slots[i, j].npc = null;
+                    this.slots[i, j].leaderCell = false;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Conecta un agente a su celda
+    /// </summary>S
+    public void LinkToSlot(int i, int j, float angle, AgentNPC npc)
+    {
+        this.slots[i, j].npc = npc;
+        
+        // La orientación relativa es la orientación respecto al líder
+        this.slots[i, j].relativeOrientation = Bodi.MapToRange(angle - leaderAngle, Range.Degrees);
+        
+        Agent v = this.slots[i, j].virtualAgent;
+        
+        // Actualizar el agente virtual con la orientación necesaria
+        v.UpdateVirtual(v.Position, ori: angle);
+    }
+
+    /// <summary>
+    /// Dada una posición relativa, devuelve la posición de la ranura en el mundo real
+    /// </summary>
+    public Vector3 GridToPlane(int i, int j)
+    {
+        // Convertir el ángulo del líder a radianes
+        float cosAngle = Mathf.Cos(leaderAngle * Mathf.Deg2Rad);
+        float sinAngle = Mathf.Sin(leaderAngle * Mathf.Deg2Rad);
+
+        // Aplica matriz de rotación 2D manual (plano XZ)
+        Vector3 relativeLoc = slots[i, j].relativePosition;
+        float rotatedX = relativeLoc.x * cosAngle - relativeLoc.z * sinAngle;
+        float rotatedZ = relativeLoc.x * sinAngle + relativeLoc.z * cosAngle;
+
+        // Transforma la posición relativa a coordenadas globales
+        return gridPosition + new Vector3(rotatedX, 0, rotatedZ);
+    }
+
+    /// <summary>
+    /// Mueve el grid a una nueva posición
+    /// </summary>
+    public void MoveGrid(Vector3 newPosition)
+    {
+        this.gridPosition = newPosition;
+        
+        // Actualizar la posición de todos los agentes virtuales
+        for (int i = 0; i < numColumns; i++)
+        {
+            for (int j = 0; j < numRows; j++)
+            {
+                // La posición del virtual agent asociado cambiará
+                this.slots[i, j].virtualAgent.Position = GridToPlane(i, j);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Devuelve la celda del líder
+    /// </summary>
+    public Slot GetLeaderSlot()
+    {
+        for (int i = 0; i < numColumns; i++)
+        {
+            for (int j = 0; j < numRows; j++)
+            {
+                if (slots[i, j].leaderCell) 
+                    return slots[i, j];
+            }
+        }
+        return slots[0, 0];
+    }
+
+    /// <summary>
+    /// Implementación del Leader Following.
+    /// Cuando se mueve el grid, el líder va al destino y los demás lo siguen.
+    /// </summary>
+    public void LeaderFollowing()
+    {
+        for (int i = 0; i < numColumns; i++)
+        {
+            for (int j = 0; j < numRows; j++)
+            {
+                if (slots[i, j].npc != null)
+                {
+                    Agent leaderVirtual = GetLeaderSlot().virtualAgent;
+                    AgentNPC currentNPC = slots[i, j].npc;
+
+                    // Obtener componentes de steering
+                    Arrive arrive = currentNPC.GetComponent<Arrive>();
+                    Face face = currentNPC.GetComponent<Face>();
+
+                    if (arrive == null || face == null)
+                    {
+                        Debug.LogWarning($"NPC {currentNPC.name} no tiene Arrive o Face");
+                        continue;
+                    }
+
+                    // Si es el líder, va hacia donde está el nuevo grid
+                    if (slots[i, j].npc == leader)
+                    {
+                        arrive.enabled = true;
+                        face.enabled = true;
+                        arrive.NewTarget(leaderVirtual);
+                        face.NewTarget(leaderVirtual);
+                    }
+                    // Si es otro NPC, persigue al líder
+                    else
+                    {
+                        arrive.enabled = true;
+                        face.enabled = true;
+                        arrive.NewTarget(leader);
+                        face.NewTarget(leader);
+                    }
+                }
+            }
+        }
+
+        if (formationController != null)
+            formationController.StartTimer();
+    }
+
+    /// <summary>
+    /// Cuando el líder ha llegado a la nueva posición del grid.
+    /// Esta función hace que cada NPC vaya a su celda correspondiente y se orienten.
+    /// </summary>
+    public void AgentsToCell()
+    {
+        for (int i = 0; i < numColumns; i++)
+        {
+            for (int j = 0; j < numRows; j++)
+            {
+                if (slots[i, j].npc != null)
+                {
+                    AgentNPC currentNPC = slots[i, j].npc;
+                    
+                    // Obtener componentes
+                    Arrive arrive = currentNPC.GetComponent<Arrive>();
+                    Align align = currentNPC.GetComponent<Align>();
+
+                    if (arrive != null && align != null)
+                    {
+                        arrive.enabled = true;
+                        align.enabled = true;
+                        arrive.NewTarget(slots[i, j].virtualAgent);
+                        align.NewTarget(slots[i, j].virtualAgent);
+                    }
+                }
+            }
+        }
+
+        if (formationController != null)
+            formationController.StartTimer();
+    }
+
+    /// <summary>
+    /// Libera todos los agentes de la formación (excepto el líder)
+    /// </summary>
+    public void LiberarAgents()
+    {
+        this.activated = false;
+        
+        for (int i = 0; i < numColumns; i++)
+        {
+            for (int j = 0; j < numRows; j++)
+            {
+                if (slots[i, j].npc != null && !slots[i, j].leaderCell)
+                {
+                    // Desactivar steering de formación
+                    Arrive arrive = slots[i, j].npc.GetComponent<Arrive>();
+                    Align align = slots[i, j].npc.GetComponent<Align>();
+                    
+                    if (arrive != null) arrive.enabled = false;
+                    if (align != null) align.enabled = false;
+                    
+                    slots[i, j].npc = null;
+                }
+                
+                // Si es el líder, solo desactivar steering
+                if (slots[i, j].npc == leader)
+                {
+                    Arrive arrive = leader.GetComponent<Arrive>();
+                    Align align = leader.GetComponent<Align>();
+                    
+                    if (arrive != null) arrive.enabled = false;
+                    if (align != null) align.enabled = false;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Cuando la formación está parada, el líder entra en Wander y los demás lo siguen
+    /// </summary>
+    public void LeaderWander()
+    {
+        for (int i = 0; i < numColumns; i++)
+        {
+            for (int j = 0; j < numRows; j++)
+            {
+                if (slots[i, j].npc != null)
+                {
+                    if (slots[i, j].npc == leader)
+                    {
+                        // El líder activa Wander
+                        Wander wander = leader.GetComponent<Wander>();
+                        if (wander != null)
+                        {
+                            wander.enabled = true;
+                        }
+                    }
+                    else
+                    {
+                        // Los demás siguen al líder
+                        Arrive arrive = slots[i, j].npc.GetComponent<Arrive>();
+                        Face face = slots[i, j].npc.GetComponent<Face>();
+                        
+                        if (arrive != null && face != null)
+                        {
+                            arrive.enabled = true;
+                            face.enabled = true;
+                            arrive.NewTarget(leader);
+                            face.NewTarget(leader);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (formationController != null)
+            formationController.StartTimer();
+    }
+
+    /// <summary>
+    /// Dibuja el grid en la escena para debug
+    /// </summary>
+    public void OnDrawGizmos()
+    {
+        if (slots == null || !activated) return;
+
+        Gizmos.color = Color.red;
+        
+        // Dibujar líneas verticales
+        for (int i = 1; i < numColumns; i++)
+        {
+            Vector3 start = GridToPlane(i, 0) - new Vector3(cellSize / 2, 0, cellSize / 2);
+            Vector3 end = GridToPlane(i, numRows - 1) + new Vector3(-cellSize / 2, 0, cellSize / 2);
+            Gizmos.DrawLine(start, end);
+        }
+
+        // Dibujar líneas horizontales
+        for (int j = 1; j < numRows; j++)
+        {
+            Vector3 start = GridToPlane(0, j) - new Vector3(cellSize / 2, 0, cellSize / 2);
+            Vector3 end = GridToPlane(numColumns - 1, j) + new Vector3(cellSize / 2, 0, -cellSize / 2);
+            Gizmos.DrawLine(start, end);
+        }
+
+        // Dibujar posiciones de slots
+        bool first = true;
+        Gizmos.color = Color.green;
+        
+        foreach (var slot in slots)
+        {
+            Gizmos.DrawSphere(slot.relativePosition + gridPosition, 0.3f);
+            
+            if (first)
+            {
+                first = false;
+                Gizmos.color = Color.blue; // El líder en azul
+            }
+        }
+    }
+}

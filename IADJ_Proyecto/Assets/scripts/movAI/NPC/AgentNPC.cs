@@ -3,6 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+
+public enum StateNPC
+{
+    Normal,
+    Formation,
+    LeaderFollowing,
+}
+
 public class AgentNPC : Agent
 { 
     // Este será el steering final que se aplique al personaje.
