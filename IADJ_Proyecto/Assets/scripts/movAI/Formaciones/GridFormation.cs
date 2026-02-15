@@ -200,6 +200,8 @@ public class GridFormation : MonoBehaviour
                     // Obtener componentes de steering
                     Arrive arrive = currentNPC.GetComponent<Arrive>();
                     Face face = currentNPC.GetComponent<Face>();
+                    Align align = currentNPC.GetComponent<Align>();
+                    Wander wander = currentNPC.GetComponent<Wander>();
 
                     if (arrive == null || face == null)
                     {
@@ -210,6 +212,8 @@ public class GridFormation : MonoBehaviour
                     // Si es el líder, va hacia donde está el nuevo grid
                     if (slots[i, j].npc == leader)
                     {
+                        if (wander != null) wander.enabled = false;
+                        if (align != null) align.enabled = false;
                         arrive.enabled = true;
                         face.enabled = true;
                         arrive.NewTarget(leaderVirtual);
@@ -218,6 +222,7 @@ public class GridFormation : MonoBehaviour
                     // Si es otro NPC, persigue al líder
                     else
                     {
+                        if (align != null) align.enabled = false;
                         arrive.enabled = true;
                         face.enabled = true;
                         arrive.NewTarget(leader);
@@ -226,9 +231,6 @@ public class GridFormation : MonoBehaviour
                 }
             }
         }
-
-        if (formationController != null)
-            formationController.StartTimer();
     }
 
     /// <summary>
@@ -248,9 +250,13 @@ public class GridFormation : MonoBehaviour
                     // Obtener componentes
                     Arrive arrive = currentNPC.GetComponent<Arrive>();
                     Align align = currentNPC.GetComponent<Align>();
+                    Face face = currentNPC.GetComponent<Face>();
+                    Wander wander = currentNPC.GetComponent<Wander>();
 
                     if (arrive != null && align != null)
                     {
+                        if (wander != null) wander.enabled = false;
+                        if (face != null) face.enabled = false;
                         arrive.enabled = true;
                         align.enabled = true;
                         arrive.NewTarget(slots[i, j].virtualAgent);
@@ -280,9 +286,13 @@ public class GridFormation : MonoBehaviour
                     // Desactivar steering de formación
                     Arrive arrive = slots[i, j].npc.GetComponent<Arrive>();
                     Align align = slots[i, j].npc.GetComponent<Align>();
+                    Face face = slots[i, j].npc.GetComponent<Face>();
+                    Wander wander = slots[i, j].npc.GetComponent<Wander>();
                     
                     if (arrive != null) arrive.enabled = false;
                     if (align != null) align.enabled = false;
+                    if (face != null) face.enabled = false;
+                    if (wander != null) wander.enabled = false;
                     
                     slots[i, j].npc = null;
                 }
@@ -292,9 +302,13 @@ public class GridFormation : MonoBehaviour
                 {
                     Arrive arrive = leader.GetComponent<Arrive>();
                     Align align = leader.GetComponent<Align>();
+                    Face face = leader.GetComponent<Face>();
+                    Wander wander = leader.GetComponent<Wander>();
                     
                     if (arrive != null) arrive.enabled = false;
                     if (align != null) align.enabled = false;
+                    if (face != null) face.enabled = false;
+                    if (wander != null) wander.enabled = false;
                 }
             }
         }
@@ -315,6 +329,12 @@ public class GridFormation : MonoBehaviour
                     {
                         // El líder activa Wander
                         Wander wander = leader.GetComponent<Wander>();
+                        Arrive arrive = leader.GetComponent<Arrive>();
+                        Align align = leader.GetComponent<Align>();
+                        Face face = leader.GetComponent<Face>();
+                        if (arrive != null) arrive.enabled = false;
+                        if (align != null) align.enabled = false;
+                        if (face != null) face.enabled = false;
                         if (wander != null)
                         {
                             wander.enabled = true;
@@ -325,9 +345,11 @@ public class GridFormation : MonoBehaviour
                         // Los demás siguen al líder
                         Arrive arrive = slots[i, j].npc.GetComponent<Arrive>();
                         Face face = slots[i, j].npc.GetComponent<Face>();
+                        Align align = slots[i, j].npc.GetComponent<Align>();
                         
                         if (arrive != null && face != null)
                         {
+                            if (align != null) align.enabled = false;
                             arrive.enabled = true;
                             face.enabled = true;
                             arrive.NewTarget(leader);

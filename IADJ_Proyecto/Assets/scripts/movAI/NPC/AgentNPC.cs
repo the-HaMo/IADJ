@@ -76,10 +76,11 @@ public class AgentNPC : Agent
         // Recorremos cada steering
         foreach (SteeringBehaviour behavior in listSteerings)
         {
-            if (behavior != null) {
-            Steering kinematic = behavior.GetSteering(this);
-            kinematicFinal.linear += kinematic.linear * behavior.weight;
-            kinematicFinal.angular += kinematic.angular * behavior.weight;
+            if (behavior != null && behavior.isActiveAndEnabled)
+            {
+                Steering kinematic = behavior.GetSteering(this);
+                kinematicFinal.linear += kinematic.linear * behavior.weight;
+                kinematicFinal.angular += kinematic.angular * behavior.weight;
             }
         //// La cinemática de este SteeringBehaviour se tiene que combinar
         //// con las cinemáticas de los demás SteeringBehaviour.

@@ -23,6 +23,11 @@ public class Arrive : SteeringBehaviour
 
     public override Steering GetSteering(AgentNPC agent)
     {
+        if (target == null)
+        {
+            return new Steering();
+        }
+
         if (isArriving)
         {
             Steering steer = new Steering();

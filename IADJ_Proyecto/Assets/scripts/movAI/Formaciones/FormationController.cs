@@ -32,6 +32,7 @@ public class FormationController : MonoBehaviour
     private int inicio;
     private bool waiting = false;
     private bool doingWander = false;
+    private bool waitingLeaderArrival = false;
 
     void Start()
     {
@@ -63,19 +64,26 @@ public class FormationController : MonoBehaviour
             MoverAPunto();
         }
 
+        CheckLeaderArrival();
         FinishTimer();
     }
 
     public void Formar()
     {
-        if (selectorObjetivos == null) return;
+        if (selectorObjetivos == null)
+        {
+            Debug.LogError("SeleccionarObjetivos no está asignado!");
+            return;
+        }
 
         // Obtener todos los agentes seleccionados
         AgentNPC[] allAgents = ObtenerAgentesSeleccionados();
 
+        Debug.Log($"Intentando formar con {allAgents.Length} agentes seleccionados");
+
         if (allAgents.Length == 0)
         {
-            Debug.LogWarning("No hay agentes seleccionados. Selecciona NPCs primero (clic izquierdo).");
+            Debug.LogWarning("No hay agentes seleccionados. Selecciona NPCs primero (clic izquierdo o Shift+clic).");
             return;
         }
 
@@ -117,12 +125,18 @@ public class FormationController : MonoBehaviour
                 
                 // Conectar el NPC a la celda correspondiente
                 grid.LinkToSlot(cell.Item1, cell.Item2, angle, agent);
+                Debug.Log($"Agente {agent.name} vinculado a celda ({cell.Item1}, {cell.Item2})");
                 i++;
             }
         }
 
+        // Verificar componentes necesarios
+        VerificarComponentesNPCs(allAgents);
+
         // Posicionar a todos los agentes usando Leader Following
         grid.LeaderFollowing();
+        waitingLeaderArrival = true;
+        CheckLeaderArrival();
         
         Debug.Log($"Formación activada con {i} agentes.");
     }
@@ -140,6 +154,8 @@ public class FormationController : MonoBehaviour
         if (grid != null)
         {
             NoWait();
+            waitingLeaderArrival = false;
+            doingWander = false;
             grid.LiberarAgents();
             Debug.Log("Formación disuelta.");
         }
@@ -165,16 +181,78 @@ public class FormationController : MonoBehaviour
             if (grid != null && grid.activated)
             {
                 // Mover la formación
+                NoWait();
                 grid.MoveGrid(point);
                 grid.LeaderFollowing();
+                waitingLeaderArrival = true;
                 Debug.Log($"Formación moviéndose a: {point}");
+            }
+        }
+    }
+
+    private void CheckLeaderArrival()
+    {
+        if (!waitingLeaderArrival || grid == null || !grid.activated || leader == null)
+        {
+            return;
+        }
+
+        Agent leaderVirtual = grid.GetLeaderSlot().virtualAgent;
+        if (leaderVirtual == null)
+        {
+            return;
+        }
+
+        float distance = Vector3.Distance(leader.Position, leaderVirtual.Position);
+        if (distance <= leaderVirtual.ArrivalRadius)
+        {
+            waitingLeaderArrival = false;
+            NotifyLeaderArrival();
+        }
+    }
+
+    private void VerificarComponentesNPCs(AgentNPC[] agentes)
+    {
+        Debug.Log("=== Verificando componentes de NPCs ===");
+        foreach (AgentNPC agent in agentes)
+        {
+            Arrive arrive = agent.GetComponent<Arrive>();
+            Face face = agent.GetComponent<Face>();
+            Align align = agent.GetComponent<Align>();
+
+            string status = $"NPC: {agent.name} - ";
+            if (arrive == null) status += "❌ Falta Arrive. ";
+            else status += "✓ Arrive. ";
+            
+            if (face == null) status += "❌ Falta Face. ";
+            else status += "✓ Face. ";
+            
+            if (align == null) status += "❌ Falta Align. ";
+            else status += "✓ Align. ";
+
+            if (arrive == null || face == null || align == null)
+            {
+                Debug.LogWarning(status);
+                Debug.LogWarning($"El NPC {agent.name} necesita los componentes Arrive, Face y Align para formar!");
+            }
+            else
+            {
+                Debug.Log(status);
             }
         }
     }
 
     private AgentNPC[] ObtenerAgentesSeleccionados()
     {
+        if (selectorObjetivos == null)
+        {
+            Debug.LogError("selectorObjetivos es null!");
+            return new AgentNPC[0];
+        }
+
         List<GameObject> npcsSeleccionados = selectorObjetivos.getListNPCs();
+        Debug.Log($"NPCs en lista de selección: {npcsSeleccionados.Count}");
+        
         List<AgentNPC> agentes = new List<AgentNPC>();
 
         foreach (GameObject obj in npcsSeleccionados)
@@ -183,9 +261,15 @@ public class FormationController : MonoBehaviour
             if (agent != null)
             {
                 agentes.Add(agent);
+                Debug.Log($"Agente válido encontrado: {obj.name}");
+            }
+            else
+            {
+                Debug.LogWarning($"GameObject {obj.name} no tiene componente AgentNPC!");
             }
         }
 
+        Debug.Log($"Total de agentes válidos: {agentes.Count}");
         return agentes.ToArray();
     }
 
@@ -215,7 +299,7 @@ public class FormationController : MonoBehaviour
                 {
                     if (grid != null)
                     {
-                        grid.LeaderFollowing();
+                        grid.AgentsToCell();
                         doingWander = false;
                     }
                 }

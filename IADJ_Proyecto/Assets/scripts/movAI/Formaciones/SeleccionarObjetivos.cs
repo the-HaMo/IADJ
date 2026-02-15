@@ -20,16 +20,15 @@ public class SeleccionarObjetivos : MonoBehaviour
 
     void Update()
     {
-        // Seleccionar NPC con clic izquierdo
-        if (Input.GetMouseButtonDown(0))
-        {
-            SeleccionarNPC(false); // false = no añadir, reemplazar selección
-        }
-
-        // Añadir NPC a selección con Shift + Clic
+        // Añadir NPC a selección con Shift + Clic (verificar primero)
         if (Input.GetKey(KeyCode.LeftShift) && Input.GetMouseButtonDown(0))
         {
             SeleccionarNPC(true); // true = añadir a selección existente
+        }
+        // Seleccionar NPC con clic izquierdo (reemplazar selección)
+        else if (Input.GetMouseButtonDown(0))
+        {
+            SeleccionarNPC(false); // false = no añadir, reemplazar selección
         }
 
         // Deseleccionar todos con ESC

@@ -19,6 +19,11 @@ public class Face : SteeringBehaviour
 
     public override Steering GetSteering(AgentNPC agent)
     {
+        if (target == null)
+        {
+            return new Steering();
+        }
+
         float targetRotation = 0f;
         Steering steer = new Steering();
         
