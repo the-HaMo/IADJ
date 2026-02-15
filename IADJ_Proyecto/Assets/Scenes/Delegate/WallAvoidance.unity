@@ -827,8 +827,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weight: 100
-  lookahead: 5
-  avoidDistance: 2
+  lookahead: 3.5
+  avoidDistance: 3
   numWhiskers: 1
   whiskerAngle: 30
 --- !u!114 &868305190
@@ -1113,8 +1113,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weight: 100
-  lookahead: 5
-  avoidDistance: 2
+  lookahead: 3.5
+  avoidDistance: 3
   numWhiskers: 3
   whiskerAngle: 30
 --- !u!114 &933891430
@@ -1231,8 +1231,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weight: 100
-  lookahead: 5
-  avoidDistance: 2
+  lookahead: 3.5
+  avoidDistance: 3
   numWhiskers: 2
   whiskerAngle: 30
 --- !u!114 &1084542702

@@ -382,11 +382,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mass: 1
-  _maxSpeed: 1
-  _maxRotation: 1
-  _maxAcceleration: 1
-  _maxAngularAcc: 1
-  _maxForce: 1
+  _maxSpeed: 5
+  _maxRotation: 5
+  _maxAcceleration: 5
+  _maxAngularAcc: 5
+  _maxForce: 5
   lookahead: 5
   avoidDistance: 3.5
   _interiorRadius: 1
@@ -654,11 +654,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mass: 1
-  _maxSpeed: 1
-  _maxRotation: 1
-  _maxAcceleration: 1
-  _maxAngularAcc: 1
-  _maxForce: 1
+  _maxSpeed: 5
+  _maxRotation: 5
+  _maxAcceleration: 5
+  _maxAngularAcc: 5
+  _maxForce: 5
   lookahead: 5
   avoidDistance: 3.5
   _interiorRadius: 1
@@ -827,11 +827,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mass: 1
-  _maxSpeed: 1
-  _maxRotation: 1
-  _maxAcceleration: 1
-  _maxAngularAcc: 1
-  _maxForce: 1
+  _maxSpeed: 5
+  _maxRotation: 5
+  _maxAcceleration: 5
+  _maxAngularAcc: 5
+  _maxForce: 5
   lookahead: 5
   avoidDistance: 3.5
   _interiorRadius: 1
@@ -1560,11 +1560,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mass: 1
-  _maxSpeed: 1
-  _maxRotation: 1
-  _maxAcceleration: 1
-  _maxAngularAcc: 1
-  _maxForce: 1
+  _maxSpeed: 5
+  _maxRotation: 5
+  _maxAcceleration: 5
+  _maxAngularAcc: 5
+  _maxForce: 5
   lookahead: 5
   avoidDistance: 3.5
   _interiorRadius: 1
@@ -1733,11 +1733,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mass: 1
-  _maxSpeed: 1
-  _maxRotation: 1
-  _maxAcceleration: 1
-  _maxAngularAcc: 1
-  _maxForce: 1
+  _maxSpeed: 5
+  _maxRotation: 5
+  _maxAcceleration: 5
+  _maxAngularAcc: 5
+  _maxForce: 5
   lookahead: 5
   avoidDistance: 3.5
   _interiorRadius: 1
@@ -1937,11 +1937,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mass: 1
-  _maxSpeed: 1
-  _maxRotation: 1
-  _maxAcceleration: 1
-  _maxAngularAcc: 1
-  _maxForce: 1
+  _maxSpeed: 5
+  _maxRotation: 5
+  _maxAcceleration: 5
+  _maxAngularAcc: 5
+  _maxForce: 5
   lookahead: 5
   avoidDistance: 3.5
   _interiorRadius: 1
@@ -2308,11 +2308,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mass: 1
-  _maxSpeed: 1
-  _maxRotation: 1
-  _maxAcceleration: 1
-  _maxAngularAcc: 1
-  _maxForce: 1
+  _maxSpeed: 5
+  _maxRotation: 5
+  _maxAcceleration: 5
+  _maxAngularAcc: 5
+  _maxForce: 5
   lookahead: 5
   avoidDistance: 3.5
   _interiorRadius: 1
@@ -2890,11 +2890,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mass: 1
-  _maxSpeed: 1
-  _maxRotation: 1
-  _maxAcceleration: 1
-  _maxAngularAcc: 1
-  _maxForce: 1
+  _maxSpeed: 5
+  _maxRotation: 5
+  _maxAcceleration: 5
+  _maxAngularAcc: 5
+  _maxForce: 5
   lookahead: 5
   avoidDistance: 3.5
   _interiorRadius: 1
@@ -3291,11 +3291,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mass: 1
-  _maxSpeed: 1
-  _maxRotation: 1
-  _maxAcceleration: 1
-  _maxAngularAcc: 1
-  _maxForce: 1
+  _maxSpeed: 5
+  _maxRotation: 5
+  _maxAcceleration: 5
+  _maxAngularAcc: 5
+  _maxForce: 5
   lookahead: 5
   avoidDistance: 3.5
   _interiorRadius: 1

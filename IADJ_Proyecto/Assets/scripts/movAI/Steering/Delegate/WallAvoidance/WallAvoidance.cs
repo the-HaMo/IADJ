@@ -49,10 +49,13 @@ public class WallAvoidance : SteeringBehaviour
             Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.up);
             Vector3 whiskerDir = rotation * rayVector;
 
-            // Encontrar la colisión (equivalente a collisionDetector.getCollision)
-            // Se detecta todo sin máscara de capas
-            if (Physics.Raycast(agent.Position, whiskerDir.normalized, out RaycastHit hit, rayVector.magnitude))
+            // Encontrar la colisión
+            if (Physics.Raycast(agent.Position + Vector3.up * 0.5f, whiskerDir.normalized, out RaycastHit hit, rayVector.magnitude))
             {
+                // Si la distancia es casi 0, es el propio personaje o el suelo, lo ignoramos
+                if (hit.collider.gameObject == agent.gameObject || hit.distance < 0.2f)
+                    continue;
+
                 if (hit.distance < minDistance)
                 {
                     minDistance = hit.distance;
@@ -65,15 +68,10 @@ public class WallAvoidance : SteeringBehaviour
         // if not collision: return steer (como en el pseudocódigo)
         if (!foundCollision) return steer;
 
-        // target = collision.position + collision.normal * avoidDistance
-        Vector3 targetPosition = closestHit.point + closestHit.normal * avoidDistance;
-
-        // 2. Delegar a seek (calculamos aceleración lineal máxima hacia el target)
-        Vector3 directionToTarget = targetPosition - agent.Position;
-        
-        // Al combinar con Wander, necesitamos que la aceleración sea máxima para "vencer"
-        // el movimiento aleatorio del Wander mientras estemos en peligro de choque.
-        steer.linear = directionToTarget.normalized * agent.MaxAcceleration;
+        // CORREGIDO: Aplicar fuerza en dirección de la normal para alejarse de la pared.
+        // Usar un "Seek" a un punto calculado puede hacer que el personaje acelere hacia la pared.
+        // Aplicando la normal directamente, el personaje siempre intentará separarse de la pared.
+        steer.linear = closestHit.normal * agent.MaxAcceleration;
         steer.angular = 0f;
 
         return steer;
