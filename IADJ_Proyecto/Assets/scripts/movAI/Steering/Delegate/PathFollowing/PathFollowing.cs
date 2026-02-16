@@ -8,15 +8,9 @@ public class PathFollowing : SteeringBehaviour
     [Tooltip("Lista de waypoints a seguir")]
     public List<Transform> waypoints = new List<Transform>();
     
-    [Tooltip("Radio para considerar que hemos llegado a un waypoint")]
+    [HideInInspector]
     public float arrivalRadius = 1f;
     
-    [Tooltip("Usar Arrive en el último waypoint")]
-    public bool useArriveAtEnd = true;
-
-    [Header("Comportamiento al final del camino")]
-    public PathEndBehavior endBehavior = PathEndBehavior.Stop;
-
     [Header("Debug")]
     public bool showDebugGizmos = true;
 
@@ -30,20 +24,13 @@ public class PathFollowing : SteeringBehaviour
     private Seek seekBehavior;
     private Arrive arriveBehavior;
 
-    public enum PathEndBehavior
-    {
-        Stop,      // Se detiene en el último waypoint
-        Loop,      // Vuelve al inicio
-        PingPong   // Invierte dirección (patrulla)
-    }
-
     void Awake()
     {
         this.nameSteering = "PathFollowing";
         
         // Crear agentes virtuales para los targets
-        virtualTargetSeek = Agent.CreateStaticVirtual(Vector3.zero, 0.5f, 1f, 0f, false);
-        virtualTargetArrive = Agent.CreateStaticVirtual(Vector3.zero, 0.5f, 1f, 0f, false);
+        virtualTargetSeek = Agent.CreateStaticVirtual(Vector3.zero, 1f, 1f, 0f, false);
+        virtualTargetArrive = Agent.CreateStaticVirtual(Vector3.zero, 1f, 1f, 0f, false);
         
         // Crear instancias de los behaviors delegados
         seekBehavior = gameObject.AddComponent<Seek>();
@@ -114,44 +101,9 @@ public class PathFollowing : SteeringBehaviour
             // Manejar el final del camino
             if (currentWaypointIndex >= waypoints.Count)
             {
-                switch (endBehavior)
-                {
-                    case PathEndBehavior.Stop:
-                        // Quedarse en el último waypoint
-                        currentWaypointIndex = waypoints.Count - 1;
-                        currentWaypoint = waypoints[currentWaypointIndex];
-                        
-                        if (currentWaypoint == null)
-                        {
-                            Debug.LogError($"{nameSteering}: Waypoint final es nulo");
-                            return steer;
-                        }
-                        
-                        if (useArriveAtEnd)
-                        {
-                            // Actualizar posición del agente virtual
-                            virtualTargetArrive.Position = currentWaypoint.position;
-                            return arriveBehavior.GetSteering(agent);
-                        }
-                        
-                        return steer;
-
-                    case PathEndBehavior.Loop:
-                        currentWaypointIndex = 0;
-                        currentWaypoint = waypoints[currentWaypointIndex];
-                        break;
-
-                    case PathEndBehavior.PingPong:
-                        waypoints.Reverse();
-                        currentWaypointIndex = 1;
-                        
-                        if (currentWaypointIndex >= waypoints.Count)
-                        {
-                            currentWaypointIndex = 0;
-                        }
-                        currentWaypoint = waypoints[currentWaypointIndex];
-                        break;
-                }
+                // Comportamiento Loop fijo
+                currentWaypointIndex = 0;
+                currentWaypoint = waypoints[currentWaypointIndex];
             }
             else
             {
@@ -165,23 +117,7 @@ public class PathFollowing : SteeringBehaviour
             }
         }
 
-        // Si estamos en el último waypoint y el comportamiento es Stop
-        if (endBehavior == PathEndBehavior.Stop && 
-            currentWaypointIndex == waypoints.Count - 1 && 
-            useArriveAtEnd)
-        {
-            if (currentWaypoint != null)
-            {
-                // Actualizar posición del agente virtual
-                virtualTargetArrive.Position = currentWaypoint.position;
-                return arriveBehavior.GetSteering(agent);
-            }
-            else
-            {
-                Debug.LogError($"{nameSteering}: No se puede usar Arrive, waypoint es nulo");
-                return steer;
-            }
-        }
+
 
         // Caso normal: Seek al waypoint actual
         if (currentWaypoint != null)
@@ -265,8 +201,8 @@ public class PathFollowing : SteeringBehaviour
             DrawArrow(validWaypoints[i].position, validWaypoints[i + 1].position);
         }
 
-        // Si es Loop, conectar el último con el primero
-        if (endBehavior == PathEndBehavior.Loop && validWaypoints.Count > 1)
+        // Conectar el último con el primero (Loop fijo)
+        if (validWaypoints.Count > 1)
         {
             Gizmos.DrawLine(validWaypoints[validWaypoints.Count - 1].position, validWaypoints[0].position);
             DrawArrow(validWaypoints[validWaypoints.Count - 1].position, validWaypoints[0].position);

@@ -830,7 +830,7 @@ MonoBehaviour:
   lookahead: 3
   avoidDistance: 2.5
   numWhiskers: 1
-  whiskerAngle: 30
+  whiskerAngle: 0
 --- !u!114 &868305190
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -849,6 +849,7 @@ MonoBehaviour:
   _maxAcceleration: 5
   _maxAngularAcc: 200
   _maxForce: 50
+  allowVerticalMovement: 0
   lookahead: 3
   avoidDistance: 2.5
   _interiorRadius: 1
@@ -859,6 +860,9 @@ MonoBehaviour:
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
+  useGravity: 1
+  customGravity: 0
+  groundLevel: 0
 --- !u!1001 &882621379
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1116,7 +1120,7 @@ MonoBehaviour:
   lookahead: 3
   avoidDistance: 2.5
   numWhiskers: 3
-  whiskerAngle: 30
+  whiskerAngle: 40
 --- !u!114 &933891430
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1135,6 +1139,7 @@ MonoBehaviour:
   _maxAcceleration: 3
   _maxAngularAcc: 200
   _maxForce: 50
+  allowVerticalMovement: 0
   lookahead: 3
   avoidDistance: 2.5
   _interiorRadius: 1
@@ -1145,6 +1150,9 @@ MonoBehaviour:
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
+  useGravity: 1
+  customGravity: 0
+  groundLevel: 0
 --- !u!1 &1007944332 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1000011894741232, guid: a0304cd1c89ed5f47b1c609d88092942, type: 3}
@@ -1234,7 +1242,7 @@ MonoBehaviour:
   lookahead: 3
   avoidDistance: 2.5
   numWhiskers: 2
-  whiskerAngle: 30
+  whiskerAngle: 45
 --- !u!114 &1084542702
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1253,6 +1261,7 @@ MonoBehaviour:
   _maxAcceleration: 5
   _maxAngularAcc: 200
   _maxForce: 50
+  allowVerticalMovement: 0
   lookahead: 3
   avoidDistance: 2.5
   _interiorRadius: 1
@@ -1263,6 +1272,9 @@ MonoBehaviour:
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
+  useGravity: 1
+  customGravity: 0
+  groundLevel: 0
 --- !u!1001 &1279034321
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1647,6 +1659,7 @@ MonoBehaviour:
   _maxAcceleration: 3
   _maxAngularAcc: 1
   _maxForce: 1
+  allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 3.5
   _interiorRadius: 1

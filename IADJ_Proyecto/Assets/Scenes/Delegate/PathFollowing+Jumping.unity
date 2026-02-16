@@ -873,8 +873,6 @@ MonoBehaviour:
   - {fileID: 2004309829}
   - {fileID: 1514986586}
   arrivalRadius: 1
-  useArriveAtEnd: 0
-  endBehavior: 1
   showDebugGizmos: 1
 --- !u!114 &1320906585
 MonoBehaviour:
@@ -935,9 +933,8 @@ MonoBehaviour:
   maxYVelocity: 10
   maxSpeed: 5
   customGravity: 0
-  jumpMode: 0
   landingTolerance: 1
-  airborneHeight: 0.5
+  airborneHeight: 1
   autoResetOnComplete: 1
   showDebugGizmos: 1
   showDebugLogs: 0
