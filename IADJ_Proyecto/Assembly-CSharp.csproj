@@ -59,7 +59,7 @@
     <UnityVersion>2023.2.20f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Analyzer Include="C:\Users\Usuario\.vscode\extensions\visualstudiotoolsforunity.vstuc-1.2.1\Analyzers\Microsoft.Unity.Analyzers.dll" />
+    <Analyzer Include="C:\Users\sergi\.vscode\extensions\visualstudiotoolsforunity.vstuc-1.2.1\Analyzers\Microsoft.Unity.Analyzers.dll" />
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2023.2.20f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.SourceGenerators.dll" />
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2023.2.20f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2023.2.20f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
@@ -78,6 +78,7 @@
     <Compile Include="Assets\scripts\movAI\Steering\Basic\Flee.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\Arrive.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Delegate\Wander\Wander.cs" />
+    <Compile Include="Assets\scripts\movAI\Steering\Delegate\Jumper\Jumper.cs" />
     <Compile Include="Assets\scripts\movAI\NPC\AgentPlayerWithAnimation.cs" />
     <Compile Include="Assets\scripts\movAI\Formaciones\AttackPattern.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Delegate\Face\Face.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="Assets\scripts\movAI\Formaciones\GridFormation.cs" />
     <Compile Include="Assets\scripts\movAI\Conociendo_las_Rotaciones\Rotacion.cs" />
     <Compile Include="Assets\scripts\mov\MovimientoTeclado.cs" />
+    <Compile Include="Assets\scripts\movAI\Steering\Delegate\PathFollowing\PathFollowing.cs" />
     <Compile Include="Assets\scripts\movAI\NPC\AgentNPC.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\Align.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Generic\Steering.cs" />

@@ -405,6 +405,8 @@
 "Assets/scripts/movAI/Steering/Basic/Seek_IanMillington.cs"
 "Assets/scripts/movAI/Steering/Basic/VelocityMatching.cs"
 "Assets/scripts/movAI/Steering/Delegate/Face/Face.cs"
+"Assets/scripts/movAI/Steering/Delegate/Jumper/Jumper.cs"
+"Assets/scripts/movAI/Steering/Delegate/PathFollowing/PathFollowing.cs"
 "Assets/scripts/movAI/Steering/Delegate/WallAvoidance/WallAvoidance.cs"
 "Assets/scripts/movAI/Steering/Delegate/Wander/Wander.cs"
 "Assets/scripts/movAI/Steering/Generic/Steering.cs"

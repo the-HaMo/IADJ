@@ -827,8 +827,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weight: 100
-  lookahead: 3.5
-  avoidDistance: 3
+  lookahead: 3
+  avoidDistance: 2.5
   numWhiskers: 1
   whiskerAngle: 30
 --- !u!114 &868305190
@@ -848,9 +848,9 @@ MonoBehaviour:
   _maxRotation: 120
   _maxAcceleration: 5
   _maxAngularAcc: 200
-  _maxForce: 30
-  lookahead: 5
-  avoidDistance: 2
+  _maxForce: 50
+  lookahead: 3
+  avoidDistance: 2.5
   _interiorRadius: 1
   _arrivalRadius: 3
   _interiorAngle: 4
@@ -1113,8 +1113,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weight: 100
-  lookahead: 3.5
-  avoidDistance: 3
+  lookahead: 3
+  avoidDistance: 2.5
   numWhiskers: 3
   whiskerAngle: 30
 --- !u!114 &933891430
@@ -1130,13 +1130,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mass: 1
-  _maxSpeed: 5
+  _maxSpeed: 3
   _maxRotation: 120
-  _maxAcceleration: 5
+  _maxAcceleration: 3
   _maxAngularAcc: 200
-  _maxForce: 30
-  lookahead: 5
-  avoidDistance: 2
+  _maxForce: 50
+  lookahead: 3
+  avoidDistance: 2.5
   _interiorRadius: 1
   _arrivalRadius: 3
   _interiorAngle: 4
@@ -1231,8 +1231,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weight: 100
-  lookahead: 3.5
-  avoidDistance: 3
+  lookahead: 3
+  avoidDistance: 2.5
   numWhiskers: 2
   whiskerAngle: 30
 --- !u!114 &1084542702
@@ -1252,9 +1252,9 @@ MonoBehaviour:
   _maxRotation: 120
   _maxAcceleration: 5
   _maxAngularAcc: 200
-  _maxForce: 30
-  lookahead: 5
-  avoidDistance: 2
+  _maxForce: 50
+  lookahead: 3
+  avoidDistance: 2.5
   _interiorRadius: 1
   _arrivalRadius: 3
   _interiorAngle: 4
@@ -1642,9 +1642,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mass: 1
-  _maxSpeed: 1
+  _maxSpeed: 5
   _maxRotation: 1
-  _maxAcceleration: 1
+  _maxAcceleration: 3
   _maxAngularAcc: 1
   _maxForce: 1
   lookahead: 5
