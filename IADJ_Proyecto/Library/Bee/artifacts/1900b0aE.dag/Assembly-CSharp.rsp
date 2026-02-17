@@ -392,6 +392,7 @@
 "Assets/scripts/movAI/Formaciones/FormationPattern.cs"
 "Assets/scripts/movAI/Formaciones/GridFormation.cs"
 "Assets/scripts/movAI/Formaciones/SeleccionarObjetivos.cs"
+"Assets/scripts/movAI/Grafo/Graph.cs"
 "Assets/scripts/movAI/NPC/Agent.cs"
 "Assets/scripts/movAI/NPC/AgentNPC.cs"
 "Assets/scripts/movAI/NPC/AgentPlayer.cs"
