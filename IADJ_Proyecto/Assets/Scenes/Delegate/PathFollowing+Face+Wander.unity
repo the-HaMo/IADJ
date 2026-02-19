@@ -1374,11 +1374,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mass: 1
-  _maxSpeed: 3
-  _maxRotation: 120
+  _maxSpeed: 2.5
+  _maxRotation: 200
   _maxAcceleration: 5
-  _maxAngularAcc: 200
-  _maxForce: 30
+  _maxAngularAcc: 500
+  _maxForce: 50
+  allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 2
   _interiorRadius: 1
@@ -1389,6 +1390,9 @@ MonoBehaviour:
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
+  useGravity: 1
+  customGravity: 0
+  groundLevel: 0
 --- !u!114 &1431405711
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1416,8 +1420,6 @@ MonoBehaviour:
   - {fileID: 366400693}
   - {fileID: 683379920}
   arrivalRadius: 1
-  useArriveAtEnd: 1
-  endBehavior: 1
   showDebugGizmos: 1
 --- !u!1 &1453645670 stripped
 GameObject:
@@ -1442,6 +1444,7 @@ MonoBehaviour:
   _maxAcceleration: 20
   _maxAngularAcc: 200
   _maxForce: 30
+  allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 2
   _interiorRadius: 1
@@ -1452,6 +1455,9 @@ MonoBehaviour:
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
+  useGravity: 1
+  customGravity: 0
+  groundLevel: 0
 --- !u!114 &1453645675
 MonoBehaviour:
   m_ObjectHideFlags: 0

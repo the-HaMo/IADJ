@@ -58,7 +58,6 @@ public class Jumper : SteeringBehaviour
     private JumpTrigger activeJump = null;
     private Vector3 calculatedVelocity;
     private Vector3 currentVelocity;
-    private bool isCalculated = false;
     private bool isExecutingJump = false;
     private bool impulseApplied = false;
     private bool hasLanded = false;
@@ -98,7 +97,6 @@ public class Jumper : SteeringBehaviour
                     jumpVel
                 );
                 
-                isCalculated = true;
                 isExecutingJump = true;
                 impulseApplied = false;
                 hasLanded = false;
@@ -127,7 +125,6 @@ public class Jumper : SteeringBehaviour
             {
                 hasLanded = true;
                 isExecutingJump = false;
-                isCalculated = false;
                 impulseApplied = false;
                 
                 if (showDebugLogs)
@@ -304,7 +301,6 @@ public class Jumper : SteeringBehaviour
         }
         activeJump = null;
         isExecutingJump = false;
-        isCalculated = false;
         impulseApplied = false;
         hasLanded = false;
     }

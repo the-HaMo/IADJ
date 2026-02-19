@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\scripts\movAI\Formaciones\FormationPattern.cs" />
+    <Compile Include="Assets\scripts\movAI\Grafo\Graph.cs" />
     <Compile Include="Assets\scripts\movAI\Formaciones\FormationController.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\AntiAlign.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\VelocityMatching.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="Assets\scripts\movAI\Formaciones\GridFormation.cs" />
     <Compile Include="Assets\scripts\movAI\Conociendo_las_Rotaciones\Rotacion.cs" />
     <Compile Include="Assets\scripts\mov\MovimientoTeclado.cs" />
+    <Compile Include="Assets\scripts\movAI\Grafo\LRTA.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Delegate\PathFollowing\PathFollowing.cs" />
     <Compile Include="Assets\scripts\movAI\NPC\AgentNPC.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\Align.cs" />
