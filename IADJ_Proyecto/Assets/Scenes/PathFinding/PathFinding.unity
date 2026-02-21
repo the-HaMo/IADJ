@@ -1816,8 +1816,8 @@ MonoBehaviour:
   allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 3.5
-  _interiorRadius: 1
-  _arrivalRadius: 3
+  _interiorRadius: 0.3
+  _arrivalRadius: 0.5
   _interiorAngle: 3
   _exteriorAngle: 8
   gizmos: 1
@@ -1844,13 +1844,17 @@ MonoBehaviour:
   allowDiagonals: 0
   drawPath: 1
   pathColor: {r: 0, g: 1, b: 1, a: 1}
+  drawLearnedCosts: 1
+  learnedCostColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   guideSteerings: 1
   goal: {fileID: 354082757}
   steeringTargets:
   - {fileID: 1431405712}
-  repathInterval: 0.25
-  pointArrivalRadius: 0.35
   stopAtGoal: 1
+  initializeCostsOnPathRequest: 1
+  recalculateEachCell: 1
+  useStepCountCosts: 1
+  showIntegerCosts: 1
 --- !u!114 &1431405712
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1863,7 +1867,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c7dfc68f41c5494483c84f2ba2fdac2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weight: 1
+  weight: 5
   target: {fileID: 0}
 --- !u!1 &1546862027 stripped
 GameObject:
