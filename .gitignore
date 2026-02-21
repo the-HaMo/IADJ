@@ -1,11 +1,38 @@
-# This .gitignore file should be placed at the root of your Unity project directory
-#
-# Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
-#[Ll]ibrary/
+# Unity generated files (IMPORTANT)
+
+[Ll]ibrary/
 [Tt]emp/
-[Oo]bj/
 [Bb]uild/
 [Bb]uilds/
 [Ll]ogs/
 UserSettings/
+# Visual Studio / Rider
+.vs/
+.vscode/
+.idea/
 
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Build results
+*.apk
+*.unitypackage
+
+# MonoDevelop / Visual Studio Code
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+
+# Crash reports
+*.stackdump
+
+# Cache and shader artifacts
+ShaderCache/
+BurstCache/
+
+# Packed files
+*.unity3d
