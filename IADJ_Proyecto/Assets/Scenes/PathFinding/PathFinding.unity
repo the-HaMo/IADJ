@@ -1841,7 +1841,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   graph: {fileID: 2109764837}
   heuristic: 0
-  allowDiagonals: 0
   drawPath: 1
   pathColor: {r: 0, g: 1, b: 1, a: 1}
   drawLearnedCosts: 1
@@ -1854,7 +1853,6 @@ MonoBehaviour:
   initializeCostsOnPathRequest: 1
   recalculateEachCell: 1
   useStepCountCosts: 1
-  showIntegerCosts: 1
 --- !u!114 &1431405712
 MonoBehaviour:
   m_ObjectHideFlags: 0
