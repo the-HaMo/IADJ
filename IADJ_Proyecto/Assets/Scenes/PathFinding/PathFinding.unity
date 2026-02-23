@@ -1840,7 +1840,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   graph: {fileID: 2109764837}
-  heuristic: 0
+  heuristic: 1
   drawPath: 1
   pathColor: {r: 0, g: 1, b: 1, a: 1}
   drawLearnedCosts: 1
@@ -1852,7 +1852,7 @@ MonoBehaviour:
   stopAtGoal: 1
   initializeCostsOnPathRequest: 1
   recalculateEachCell: 1
-  useStepCountCosts: 1
+  maxLSSNodes: 50
 --- !u!114 &1431405712
 MonoBehaviour:
   m_ObjectHideFlags: 0

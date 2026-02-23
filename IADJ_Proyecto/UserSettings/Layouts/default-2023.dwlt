@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 1536
     height: 772.8
   m_ShowMode: 4
-  m_Title: Hierarchy
+  m_Title: Inspector
   m_RootView: {fileID: 2}
   m_MinSize: {x: 875, y: 492}
   m_MaxSize: {x: 10000, y: 10000}
@@ -146,7 +146,7 @@ MonoBehaviour:
   m_MinSize: {x: 100, y: 100}
   m_MaxSize: {x: 8096, y: 16192}
   vertical: 1
-  controlID: 16
+  controlID: 24
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -316,8 +316,8 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 
-      m_LastClickedID: 0
+      m_SelectedIDs: 687a0000
+      m_LastClickedID: 31336
       m_ExpandedIDs: eefaffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
@@ -386,7 +386,7 @@ MonoBehaviour:
     m_ControlHash: -371814159
     m_PrefName: Preview_InspectorPreview
   m_LastInspectedObjectInstanceID: -1
-  m_LastVerticalScrollValue: 378
+  m_LastVerticalScrollValue: 461.6001
   m_GlobalObjectId: 
   m_InspectorMode: 0
   m_LockTracker:
@@ -438,7 +438,8 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SkipHidden: 0
     m_SearchArea: 1
-    m_Folders: []
+    m_Folders:
+    - Assets/scripts/movAI/Grafo
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -482,24 +483,24 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_AssetTreeState:
-    scrollPos: {x: 0, y: 480.2}
+    scrollPos: {x: 0, y: 240.20001}
     m_SelectedIDs: 
     m_LastClickedID: 0
     m_ExpandedIDs: ffffffff000000005a7c00005c7c00005e7c0000607c0000627c0000647c0000667c0000687c00006a7c00006c7c00006e7c0000707c0000727c0000747c0000767c0000787c00007a7c00007c7c00007e7c0000807c0000827c0000847c0000867c0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: 
-      m_OriginalName: 
+      m_Name: Graph
+      m_OriginalName: Graph
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 0
+      m_UserData: 28466
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
-      m_OriginalEventType: 11
+      m_OriginalEventType: 0
       m_IsRenamingFilename: 1
       m_TrimLeadingAndTrailingWhitespace: 0
       m_ClientGUIView: {fileID: 8}
@@ -1138,9 +1139,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: 21.954727, y: 0.7553187, z: 24.818983}
+    m_Target: {x: 13.63049, y: 1.0088407, z: 26.126354}
     speed: 2
-    m_Value: {x: 21.954727, y: 0.7553187, z: 24.818983}
+    m_Value: {x: 13.63049, y: 1.0088407, z: 26.126354}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1190,9 +1191,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0.47694457, y: -0.5229278, z: 0.507079, w: 0.49187517}
   m_Size:
-    m_Target: 2.4557087
+    m_Target: 6.4423814
     speed: 2
-    m_Value: 2.4557087
+    m_Value: 6.1649585
   m_Ortho:
     m_Target: 1
     speed: 2
