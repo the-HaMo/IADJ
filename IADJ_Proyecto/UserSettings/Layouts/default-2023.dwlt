@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 1536
     height: 772.8
   m_ShowMode: 4
-  m_Title: Inspector
+  m_Title: Hierarchy
   m_RootView: {fileID: 2}
   m_MinSize: {x: 875, y: 492}
   m_MaxSize: {x: 10000, y: 10000}
@@ -100,7 +100,7 @@ MonoBehaviour:
   m_MinSize: {x: 400, y: 100}
   m_MaxSize: {x: 32384, y: 16192}
   vertical: 0
-  controlID: 118
+  controlID: 109
 --- !u!114 &5
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -316,9 +316,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 687a0000
-      m_LastClickedID: 31336
-      m_ExpandedIDs: eefaffff
+      m_SelectedIDs: 
+      m_LastClickedID: 0
+      m_ExpandedIDs: 54eeffffbcf2ffffeefaffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -386,7 +386,7 @@ MonoBehaviour:
     m_ControlHash: -371814159
     m_PrefName: Preview_InspectorPreview
   m_LastInspectedObjectInstanceID: -1
-  m_LastVerticalScrollValue: 461.6001
+  m_LastVerticalScrollValue: 0
   m_GlobalObjectId: 
   m_InspectorMode: 0
   m_LockTracker:
@@ -439,7 +439,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/scripts/movAI/Grafo
+    - Assets/Scenes/PathFinding
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -483,21 +483,21 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_AssetTreeState:
-    scrollPos: {x: 0, y: 240.20001}
+    scrollPos: {x: 0, y: 60}
     m_SelectedIDs: 
     m_LastClickedID: 0
     m_ExpandedIDs: ffffffff000000005a7c00005c7c00005e7c0000607c0000627c0000647c0000667c0000687c00006a7c00006c7c00006e7c0000707c0000727c0000747c0000767c0000787c00007a7c00007c7c00007e7c0000807c0000827c0000847c0000867c0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: Graph
-      m_OriginalName: Graph
+      m_Name: PathFinding
+      m_OriginalName: PathFinding
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 28466
+      m_UserData: 32010
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
       m_OriginalEventType: 0
@@ -1139,9 +1139,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: 13.63049, y: 1.0088407, z: 26.126354}
+    m_Target: {x: 14.524023, y: 0.49370915, z: 24.07719}
     speed: 2
-    m_Value: {x: 13.63049, y: 1.0088407, z: 26.126354}
+    m_Value: {x: 14.524023, y: 0.49370915, z: 24.07719}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1187,13 +1187,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: 0.4769609, y: -0.5229457, z: 0.50709635, w: 0.491892}
+    m_Target: {x: 0.48541167, y: -0.51460904, z: 0.49901262, w: 0.5006071}
     speed: 2
-    m_Value: {x: 0.47694457, y: -0.5229278, z: 0.507079, w: 0.49187517}
+    m_Value: {x: 0.4853952, y: -0.5145916, z: 0.49899566, w: 0.5005901}
   m_Size:
-    m_Target: 6.4423814
+    m_Target: 3.0064998
     speed: 2
-    m_Value: 6.1649585
+    m_Value: 3.0064998
   m_Ortho:
     m_Target: 1
     speed: 2

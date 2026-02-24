@@ -1852,7 +1852,7 @@ MonoBehaviour:
   stopAtGoal: 1
   initializeCostsOnPathRequest: 1
   recalculateEachCell: 1
-  maxLSSNodes: 50
+  maxLSSNodes: 100
 --- !u!114 &1431405712
 MonoBehaviour:
   m_ObjectHideFlags: 0
