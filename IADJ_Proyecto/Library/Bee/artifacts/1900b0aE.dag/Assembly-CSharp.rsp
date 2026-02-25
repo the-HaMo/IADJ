@@ -403,6 +403,7 @@
 "Assets/scripts/movAI/Steering/Basic/AntiAlign.cs"
 "Assets/scripts/movAI/Steering/Basic/Arrive.cs"
 "Assets/scripts/movAI/Steering/Basic/Flee.cs"
+"Assets/scripts/movAI/Steering/Basic/Leave.cs"
 "Assets/scripts/movAI/Steering/Basic/Seek.cs"
 "Assets/scripts/movAI/Steering/Basic/Seek_IanMillington.cs"
 "Assets/scripts/movAI/Steering/Basic/VelocityMatching.cs"

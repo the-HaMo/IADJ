@@ -598,7 +598,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 858642560}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f5e4b30a2142c114a9a8b11b531f3a59, type: 3}
   m_Name: 
@@ -623,6 +623,7 @@ MonoBehaviour:
   _maxAcceleration: 5
   _maxAngularAcc: 5
   _maxForce: 5
+  allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 3.5
   _interiorRadius: 1
@@ -633,6 +634,24 @@ MonoBehaviour:
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
+  useGravity: 1
+  customGravity: 0
+  groundLevel: 0
+--- !u!114 &858642563
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 858642560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24d6053ee97bb3f469dd9268934070a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 1
+  target: {fileID: 1431405707}
+  escapeRadius: 10
 --- !u!1 &932836604 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1000011035781986, guid: 3d609541b623cc24a85fcc89ee9fa9e6, type: 3}
@@ -702,6 +721,7 @@ MonoBehaviour:
   _maxAcceleration: 5
   _maxAngularAcc: 5
   _maxForce: 5
+  allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 3.5
   _interiorRadius: 1
@@ -712,6 +732,9 @@ MonoBehaviour:
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
+  useGravity: 1
+  customGravity: 0
+  groundLevel: 0
 --- !u!1 &1083800454 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3136820629370392942, guid: 62dcba975a0bdfe47bef48ea43049412, type: 3}
@@ -749,6 +772,7 @@ MonoBehaviour:
   _maxAcceleration: 5
   _maxAngularAcc: 5
   _maxForce: 5
+  allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 3.5
   _interiorRadius: 1
@@ -759,6 +783,9 @@ MonoBehaviour:
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
+  useGravity: 1
+  customGravity: 0
+  groundLevel: 0
 --- !u!1 &1369350852
 GameObject:
   m_ObjectHideFlags: 0
@@ -971,6 +998,7 @@ MonoBehaviour:
   _maxAcceleration: 5
   _maxAngularAcc: 5
   _maxForce: 5
+  allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 3.5
   _interiorRadius: 1
@@ -1272,6 +1300,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1845742921716089003, guid: 20818fda9cf85f94ca4d9803d50fb8d8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 858642561}
+    - targetCorrespondingSourceObject: {fileID: 1845742921716089003, guid: 20818fda9cf85f94ca4d9803d50fb8d8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 858642563}
   m_SourcePrefab: {fileID: 100100000, guid: 20818fda9cf85f94ca4d9803d50fb8d8, type: 3}
 --- !u!1 &1855120838
 GameObject:
