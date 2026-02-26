@@ -1,0 +1,180 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=black, urlcolor=black, citecolor=black}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tocloft}
+\usepackage{ragged2e}
+\usepackage{placeins}  % Para FloatBarrier
+\usepackage{float}     % Para usar [H] en figuras
+
+% Configuración de márgenes
+\geometry{margin=2.5cm, headheight=15pt}
+
+% Configuración de colores para código
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+% Estilo para código
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=4,
+    language=C
+}
+\lstset{style=mystyle}
+
+% Configuración de encabezados y pies de página
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Bloque 1. Movimiento}
+\lhead{IADJ}
+\rfoot{Página \thepage}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    
+    \vspace*{0.5cm}
+    
+    % Título arriba
+    {\Huge\bfseries IA PARA EL  DESARROLLO DE JUEGOS\\[0.15cm] BLOQUE 1. MOVIMIENTO\par}
+    
+    \vspace{1.0cm}
+    
+    % Logo centrado en medio
+    \includegraphics[width=0.65\textwidth]{img/umu.png}
+    
+    \vspace{1.0cm}
+    
+    % Autores
+    {\large\bfseries Autores:\par}
+    \vspace{0.3cm}
+    {\normalsize Mohammed Amrou Labied Nasser, 49857930W\par}
+    \vspace{0.15cm}
+    {\normalsize Sergio García García, \par}
+    \vspace{0.15cm}
+    {\normalsize Diego Sergio Ballesta Gonzaléz de la Higuera, - \par}
+    
+    \vspace{0.4cm}
+    
+    {\large\bfseries Tutor:\par}
+    \vspace{0.15cm}
+     {\normalsize Luis Daniel Hernandéz Molinero- \par}
+    \vspace{0.15cm}
+    
+    \vspace{0.4cm}
+    
+    {\large\bfseries Grupo y subgrupo: 1.1\par}
+    \vspace{0.15cm}
+    {\large\bfseries Fecha de entrega:\par}
+    \vspace{0.15cm}
+    {\normalsize 21-03-2026 \par}
+    
+\end{titlepage}
+
+% ==================== ÍNDICE ====================
+\newpage
+\tableofcontents
+\newpage
+
+% ==================== INTRODUCCIÓN ====================
+\section{Introducción}
+
+\begin{justify}
+ En esta memoria se documenta el diseño y la implementación del \textbf{Bloque 1: Movimiento} de la asignatura Inteligencia Artificial para Videojuegos. El propósito principal de este bloque es el desarrollo de un sistema de navegación reactivo y autónomo  (steering behaviors) para diferentes tipos de agentes dentro del motor de desarrollo \textbf{Unity}.
+\newline
+A lo largo de este documento, se detallarán los métodos y soluciones aplicados para resolver los desafíos de movilidad planteados en el enunciado. Se explicará cómo se han estructurado los elementos pedidos en el enunciado, algunos elementos fundamentales son los siguientes;
+
+\begin{itemize}
+\item \textbf{Motor de físicas: }Como diseñamos distintos aspectos de nuestro motor; como el movimiento angular, la aceleración, el movimiento rectilíneo, etc. Mediante las ecuaciones de Newton-Euler, operaciones de vectores, transformadas, etc. Con el objetivo de trabajar sobre una dimensión 2.5D.   
+\item \textbf{Sistemas de Steering :} Desarrollo de algoritmos para el control de la aceleración y dirección de los agentes, incluyendo comportamientos básicos como Seek y Arrive, y delegados como Wander.
+\item \textbf{Detección y Evitación de Obstáculos:} Implementación de sistemas de colisión basados en rayos (\textit{raycasts}) o "bigotes" para garantizar una navegación fluida en entornos complejos.
+\item \textbf{Gestión de Grupos y Formaciones:} Organización de múltiples unidades bajo estructuras de movimiento coordinado y seguimiento de líderes.
+\item\textbf{Búsqueda de Caminos (Pathfinding):} Aplicación del algoritmo \textbf{LRTA}* sobre una representación del escenario basada en rejillas (\textit{grids}) para alcanzar el objetivo.
+\end{itemize}
+\end{justify}
+\newpage
+\FloatBarrier
+
+% ==================== DESARRROLLO ====================
+\section{Arquitectura del proyecto}
+\begin{justify}
+    \subsection{Esquema de escenas del proyecto}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.95\textwidth}
+\begin{verbatim}
+Scenes/
+|____Arbitros.unity
+|____PathFinding
+|    |____PathFinding.unity
+|____Basic
+|    |____Seek_Flee_Arrive.unity
+|    |____Align-AntiAlign.unity
+|____Delegate
+|    |____PathFollowing+Face+Wander.unity
+|    |____PathFollowing+Jumping.unity
+|    |____WallAvoidance.unity
+|____Formaciones
+     |____LeaderFollowing.unity
+\end{verbatim}
+\caption{Estructura de escenas del proyecto en Unity}
+\label{fig:estructura-escenas}
+\end{minipage}
+\end{figure}
+\end{justify}
+\section{Roles de los NPCs}
+\begin{justify}
+    Deben existir 3 NPCs con distintos parametros del body
+\end{justify}
+\section{Seleccion y control de personajes}
+\section{Steering básicos acelerados}
+\subsection{Seek}
+\subsection{Flee}
+\subsection{Arrive}
+\subsection{Leave}
+\subsection{Align}
+\subsection{anti-Align}
+\section{Steering Delegado}
+\subsection{Face}
+\subsection{Wander}
+\subsection{Path Following sin PathOffset}
+\section{Detección de colisiones (WallAvoidance)}
+\section{Steering combinado (Árbitros)}
+\section{Formaciones}
+\subsection{Estructuras Fijas}
+\subsection{Criterio Leader Following}
+\section{LRTA*}
+\subsection{Generación y validación del grafo de búsqueda}
+\subsection{Heurísticas}
+\subsubsection{Manhattan}
+\subsubsection{Chebychev}
+\subsubsection{Euclídea}
+\section{Mecanismo de depuración}
+\section{Conclusión}
+
+\end{document}

@@ -1,5 +1,5 @@
 sceneSetups:
-- path: Assets/Scenes/Basic/Seek_Flee_Arrive.unity
+- path: Assets/Scenes/Delegate/PathFollowing+Face+Wander.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0

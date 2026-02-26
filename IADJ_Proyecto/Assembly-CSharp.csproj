@@ -88,6 +88,7 @@
     <Compile Include="Assets\scripts\movAI\Steering\Basic\Seek_IanMillington.cs" />
     <Compile Include="Assets\scripts\movAI\Formaciones\GridFormation.cs" />
     <Compile Include="Assets\scripts\movAI\Conociendo_las_Rotaciones\Rotacion.cs" />
+    <Compile Include="Assets\scripts\movAI\Steering\Basic\Leave.cs" />
     <Compile Include="Assets\scripts\mov\MovimientoTeclado.cs" />
     <Compile Include="Assets\scripts\movAI\Grafo\LRTA.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Delegate\PathFollowing\PathFollowing.cs" />
