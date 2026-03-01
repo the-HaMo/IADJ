@@ -147,6 +147,20 @@ Scenes/
 \end{minipage}
 \end{figure}
 \end{justify}
+\begin{justify}
+    \textbf{Descripción de las escenas del proyecto:}\\
+    El proyecto está dividido en varias escenas, cada una diseñada para mostrar y probar diferentes comportamientos de los agentes y técnicas de inteligencia artificial en Unity. A continuación se explica brevemente el propósito de cada una:
+    \begin{itemize}
+        \item \textbf{Arbitros.unity}: Escena dedicada a los agentes árbitros, que combinan varios comportamientos de steering para gestionar situaciones complejas y tomar decisiones en tiempo real.
+        \item \textbf{PathFinding/PathFinding.unity}: Aquí se implementa y prueba el algoritmo de búsqueda de caminos (LRTA*) sobre una rejilla, permitiendo a los agentes navegar el escenario y encontrar rutas óptimas evitando obstáculos.
+        \item \textbf{Basic/Seek\_Flee\_Arrive.unity}: Escena para los comportamientos básicos de steering: Seek (perseguir), Flee (huir) y Arrive (llegada suave al destino), mostrando la lógica fundamental de movimiento.
+        \item \textbf{Basic/Align-AntiAlign.unity}: Centrada en los comportamientos de alineación, donde los agentes ajustan su orientación para coincidir o contrarrestar la de un objetivo.
+        \item \textbf{Delegate/PathFollowing+Face+Wander.unity}: Combina Path Following (seguir un camino), Face (orientarse hacia un objetivo) y Wander (deambular de forma autónoma), mostrando la alternancia entre estos comportamientos.
+        \item \textbf{Delegate/PathFollowing+Jumping.unity}: Prueba el seguimiento de caminos junto con la capacidad de los agentes para saltar obstáculos, mostrando una navegación avanzada.
+        \item \textbf{Delegate/WallAvoidance.unity}: Dedicada a la detección y evasión de paredes u obstáculos mediante raycasts o bigotes, asegurando movimientos sin colisiones.
+        \item \textbf{Formaciones/LeaderFollowing.unity}: Implementa la lógica de formaciones, donde varios agentes siguen a un líder, manteniendo posiciones relativas y desplazándose como un grupo coordinado.
+    \end{itemize}
+\end{justify}
 \section{Roles de los NPCs}
 \begin{justify}
     Deben existir 3 NPCs con distintos parametros del body
@@ -169,11 +183,130 @@ Scenes/
 \subsection{Estructuras Fijas}
 \subsection{Criterio Leader Following}
 \section{LRTA*}
+\begin{justify}
+LRTA* (\textit{Learning Real-Time A*}) es un algoritmo de búsqueda en tiempo real que no necesita calcular la ruta completa antes de moverse. En cada decisión, el agente observa un entorno local, aprende (actualiza su estimación de coste) y ejecuta solo el siguiente movimiento. Este enfoque es especialmente útil en videojuegos porque permite reaccionar de forma continua, con coste computacional acotado por frame.
+
+Formalmente, LRTA* mantiene una función de coste aprendido $h(s)$ para cada celda $s$. En cada iteración se aplica una actualización local tipo Bellman:
+\[
+h(u) \leftarrow \max\left(h(u),\; \min_{v \in N(u)}\left(c(u,v) + h(v)\right)\right)
+\]
+donde $N(u)$ son los vecinos transitables y $c(u,v)$ es el coste de transición.
+\end{justify}
+
+\subsection{Diseño e implementación aplicada en nuestro proyecto}
+\begin{justify}
+La implementación se ha organizado por módulos para separar claramente representación del mapa, heurística, construcción del espacio local y control del agente:
+\begin{itemize}
+    \item \textbf{Representación del entorno (\texttt{Graph.cs})}: define la rejilla ($nFilas$, $nColumnas$, $tamCelda$), convierte coordenadas mundo-grid y detecta celdas bloqueadas mediante \texttt{Physics.OverlapBox} y etiqueta \texttt{OCUPADO}.
+    \item \textbf{Heurísticas (\texttt{HeuristicaType} + implementaciones)}: estrategia intercambiable (Manhattan, Chebyshev y Euclídea). Además de estimar distancia, cada heurística define si permite diagonales.
+    \item \textbf{Espacio local (\texttt{LssBuilder.cs})}: construye el \textit{Local Search Space} (LSS) con un BFS acotado por \texttt{maxLSSNodes}.
+    \item \textbf{Núcleo LRTA* (\texttt{LRTA.cs})}: integra inicialización de costes, actualización de valores, selección de acción y conexión con el steering \texttt{Seek} mediante un objetivo virtual.
+\end{itemize}
+
+La estructura interna del flujo en \texttt{LRTAStar(start, goal)} sigue tres fases por ciclo:
+\begin{enumerate}
+    \item Construcción del LSS local alrededor del estado actual.
+    \item Aprendizaje de costes en ese LSS (\texttt{ValueUpdateStep}).
+    \item Elección de la mejor acción inmediata (\texttt{GetBestNeighbor}).
+\end{enumerate}
+
+Con este diseño, el sistema está desacoplado: se pueden cambiar heurísticas, tamaño del LSS o política de recálculo sin rehacer el resto del algoritmo.
+\end{justify}
+
 \subsection{Generación y validación del grafo de búsqueda}
+\begin{justify}
+Antes de planificar, se validan inicio y objetivo: deben estar dentro de la rejilla y no ser celdas ocupadas. El coste aprendido se almacena en \texttt{cellCosts[row,col]}:
+\begin{itemize}
+    \item Celdas bloqueadas $\rightarrow +\infty$.
+    \item Celdas transitables $\rightarrow h$ inicial según heurística elegida.
+\end{itemize}
+
+El vecindario se construye con \texttt{GetTraversableNeighbours}. Si la heurística no permite diagonal (caso Manhattan), solo se usan movimientos ortogonales. Si hay diagonal (Chebyshev/Euclídea), se evita \textit{corner cutting}, es decir, atravesar una esquina entre dos bloqueos.
+
+El coste de movimiento usado es:
+\[
+c(u,v)=
+\begin{cases}
+1 & \text{si el movimiento es ortogonal}\\
+2 & \text{si el movimiento es diagonal}
+\end{cases}
+\]
+\end{justify}
+
+\subsection{LRTA* un paso (fase de preparación)}
+\begin{justify}
+Para verificar que el aprendizaje era correcto, primero trabajamos con una versión de comportamiento equivalente a \textbf{1 paso de decisión por iteración}: el agente calcula, aprende y avanza solo al mejor vecino. En esta fase observamos el patrón típico de LRTA*: en zonas ambiguas, el NPC puede avanzar y retroceder temporalmente hasta que los costes aprendidos penalizan la ruta mala.
+
+Ese comportamiento de ``ida y vuelta'' fue clave para validar que el aprendizaje estaba activo: cuando una zona intermedia del mapa acumula coste alto por repetición (máximo local de coste aprendido), el agente deja de insistir en ese corredor y estabiliza el avance por la alternativa correcta.
+
+En nuestra implementación, esta dinámica se ve reforzada porque se puede recalcular en cada celda (\texttt{recalculateEachCell}), y porque la acción final siempre se toma tras actualizar valores con \texttt{ValueUpdateStep}.
+\end{justify}
+
+\subsection{LRTA* con n-pasos y espacio local (LSS)}
+\begin{justify}
+Una vez validado el caso base, ampliamos a LRTA* con \textbf{n-pasos de exploración local} mediante LSS. El parámetro \texttt{maxLSSNodes} controla cuántos nodos del entorno se consideran antes de actuar:
+\begin{itemize}
+    \item Si \texttt{maxLSSNodes} es pequeño, el comportamiento se aproxima al LRTA* más reactivo (muy local).
+    \item Si \texttt{maxLSSNodes} aumenta, el aprendizaje por iteración es más informativo y reduce oscilaciones.
+\end{itemize}
+
+En términos prácticos, este espacio local mejora la eficiencia global porque evita ``reaprender'' lo mismo en cada celda con información mínima. En cada ciclo se actualiza un bloque de estados vecinos (no solo el estado actual), de forma que la política mejora más rápido con menos pasos físicos del NPC.
+\end{justify}
+
+\subsection{Ejemplo ficticio del cálculo de n-pasos}
+\begin{justify}
+Supongamos un mapa de $7\times7$, inicio en $(1,1)$, meta en $(5,5)$ y un obstáculo central que obliga a rodear. Si fijamos \texttt{maxLSSNodes = 6}:
+\begin{enumerate}
+    \item El BFS del LSS toma 6 celdas alcanzables desde $(1,1)$.
+    \item En esas 6 celdas, se aplica la actualización:
+    $h(u)=\min_{v\in N(u)}(c(u,v)+h(v))$ (sin disminuir por debajo del valor ya aprendido).
+    \item Después se selecciona la mejor acción desde el estado actual:
+    \[a^*=\arg\min_{v\in N(s)}\left(c(s,v)+h(v)\right)\]
+    \item El agente avanza solo a ese vecino y repite el proceso en la siguiente iteración.
+\end{enumerate}
+
+Si en una iteración el frente local detecta que seguir ``hacia el obstáculo'' implica valores crecientes, el coste aprendido de esa zona sube y en las siguientes decisiones el algoritmo prefiere bordear el bloqueo. Esa es la razón de que, con n-pasos, el comportamiento sea más estable y converja antes que en el caso puramente de 1 paso.
+\end{justify}
+
 \subsection{Heurísticas}
+\begin{justify}
+La selección de heurística se realiza mediante \texttt{enum} y un \texttt{switch} en tiempo de inicialización:
+\end{justify}
 \subsubsection{Manhattan}
+\begin{justify}
+\[
+h(n)=|x_n-x_g| + |y_n-y_g|
+\]
+No permite diagonales y es coherente con movimientos ortogonales en rejilla.
+\end{justify}
 \subsubsection{Chebychev}
+\begin{justify}
+\[
+h(n)=\max\left(|x_n-x_g|,|y_n-y_g|\right)
+\]
+Permite diagonales y modela bien desplazamientos en 8 direcciones con coste uniforme aproximado.
+\end{justify}
 \subsubsection{Euclídea}
+\begin{justify}
+\[
+h(n)=\sqrt{(x_n-x_g)^2 + (y_n-y_g)^2}
+\]
+Permite diagonales y aporta una estimación geométrica directa de la distancia al objetivo.
+\end{justify}
+
+\subsection{Integración con steering y depuración}
+\begin{justify}
+La salida de LRTA* se integra con el movimiento del NPC mediante un objetivo virtual, que alimenta el comportamiento \texttt{Seek}. Así se desacopla el razonamiento discreto (grid) del movimiento continuo del agente en mundo 3D.
+
+Además, se implementaron mecanismos de depuración visual muy útiles durante el desarrollo:
+\begin{itemize}
+    \item Dibujo del último LSS en verde semitransparente.
+    \item Dibujo del último tramo de camino calculado.
+    \item Visualización de costes aprendidos por celda (\textit{wire cubes} + etiqueta numérica).
+\end{itemize}
+
+Esta instrumentación permitió comprobar en tiempo real cómo evolucionaban los valores aprendidos y por qué el agente cambiaba de decisión en cada iteración.
+\end{justify}
 \section{Mecanismo de depuración}
 \section{Conclusión}
 
