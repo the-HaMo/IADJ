@@ -216,7 +216,7 @@ Scenes/
 \section{Detección de colisiones (WallAvoidance)}
 \subsection{Introducción}
 
-La evitación de paredes (\textbf{Wall Avoidance}) actúa como una capa de seguridad para garantizar que los agentes no atraviesen la geometría estática del nivel. Esto se logra lanzando rayos o detectores (\textit{Whiskers} o "bigotes") en la dirección de movimiento para intuir las colisiones antes de que ocurran y reaccionar anticipadamente con fuerzas de repulsión.
+Todo NPC debe ser capaz de detectar un obstáculo, ya sean paredes o decoración de una escena, para luego ser capaz de rodearlo y evitarlo. Sin esta implementación, el personaje simplemente atravesaría el escenario y no se vería realista. Para ello se usan "bigotes" como detectores para medir la distancia a la que está el obstáculo, aplicar las fuerzas necesarias y ser capaz de evitarlo a tiempo.
 
 
 \subsection{Implementación (Parametrización)}
@@ -228,7 +228,9 @@ La evitación de paredes (\textbf{Wall Avoidance}) actúa como una capa de segur
     \item \texttt{whiskerAngle}: Diferencia angular entre cada uno de los bigotes si \texttt{numWhiskers > 1}.
 \end{itemize}
 
-Durante cada paso del algoritmo se comprueba mediante \texttt{Physics.Raycast} si algún bigote ha intersectado con un objeto. Si se detecta un choque inminente con un obstáculo, en lugar de solicitar un de punto nuevo usando un \textit{Seek} (que generaba aceleración extra hacia las paredes en nuestras primeras implementaciones), se recupera la normal de la superficie de impacto (\texttt{hit.normal}) y se le aplica la máxima aceleración lineal provocando que el agente se empuje en base a esa repulsión directa garantizando que el agente siempre se aleje de la pared a tiempo.
+Durante la ejecución, el algoritmo calcula hacia dónde miran los bigotes en función de la velocidad y orientación actual del agente. Luego se utiliza la función \texttt{Physics.Raycast} de Unity, la cual lanza una línea invisible y devuelve información sobre qué es lo que ha tocado (esto último se conoce en programación como un \textit{Hit}).
+
+Cuando el algoritmo detecta un \textit{Hit} (es decir, el bigote ha tocado algo), verifica cuál es la colisión más cercana e inminente de entre todos los bigotes. En el diseño teórico de este comportamiento se sugería calcular un punto alejado de la pared e ir a él mediante el comportamiento básico \textit{Seek}. Sin embargo, al implementarlo en código notamos que solicitar un punto nuevo generaba ciertas aceleraciones cruzadas o empujones imprecisos que incluso empujaban al agente contra la pared. Para solucionar eso sin depender del \textit{Seek}, programamos directamente que al confirmar un choque, el agente recupere qué geometría plana tiene la pared en el punto donde chocó el rayo (eso es la \texttt{hit.normal}) y simplemente le aplicamos el máximo de aceleración lineal del agente en esa dirección perpendicular para que este rebote hacia afuera y evite la pared de forma inmediata y realista.
 
 \textbf{Dificultades y Ajustes Experimentados:}
 A lo largo de su integración nos enfrentamos a desafíos técnicos dignos de mención:
