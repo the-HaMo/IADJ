@@ -103,7 +103,7 @@
 % ==================== INTRODUCCIÓN ====================
 \section{Introducción}
 
-\begin{justify}
+
  En esta memoria se documenta el diseño y la implementación del \textbf{Bloque 1: Movimiento} de la asignatura Inteligencia Artificial para Videojuegos. El propósito principal de este bloque es el desarrollo de un sistema de navegación reactivo y autónomo  (steering behaviors) para diferentes tipos de agentes dentro del motor de desarrollo \textbf{Unity}.
 \newline
 A lo largo de este documento, se detallarán los métodos y soluciones aplicados para resolver los desafíos de movilidad planteados en el enunciado. Se explicará cómo se han estructurado los elementos pedidos en el enunciado, algunos elementos fundamentales son los siguientes;
@@ -115,13 +115,13 @@ A lo largo de este documento, se detallarán los métodos y soluciones aplicados
 \item \textbf{Gestión de Grupos y Formaciones:} Organización de múltiples unidades bajo estructuras de movimiento coordinado y seguimiento de líderes.
 \item\textbf{Búsqueda de Caminos (Pathfinding):} Aplicación del algoritmo \textbf{LRTA}* sobre una representación del escenario basada en rejillas (\textit{grids}) para alcanzar el objetivo.
 \end{itemize}
-\end{justify}
+
 \newpage
 \FloatBarrier
 
 % ==================== DESARRROLLO ====================
 \section{Arquitectura del proyecto}
-\begin{justify}
+
     \subsection{Esquema de escenas del proyecto}
 
 \begin{figure}[H]
@@ -146,8 +146,8 @@ Scenes/
 \label{fig:estructura-escenas}
 \end{minipage}
 \end{figure}
-\end{justify}
-\begin{justify}
+
+
     \textbf{Descripción de las escenas del proyecto:}\\
     El proyecto está dividido en varias escenas, cada una diseñada para mostrar y probar diferentes comportamientos de los agentes y técnicas de inteligencia artificial en Unity. A continuación se explica brevemente el propósito de cada una:
     \begin{itemize}
@@ -160,11 +160,11 @@ Scenes/
         \item \textbf{Delegate/WallAvoidance.unity}: Dedicada a la detección y evasión de paredes u obstáculos mediante raycasts o bigotes, asegurando movimientos sin colisiones.
         \item \textbf{Formaciones/LeaderFollowing.unity}: Implementa la lógica de formaciones, donde varios agentes siguen a un líder, manteniendo posiciones relativas y desplazándose como un grupo coordinado.
     \end{itemize}
-\end{justify}
+
 \section{Roles de los NPCs}
-\begin{justify}
+
     Deben existir 3 NPCs con distintos parametros del body
-\end{justify}
+
 \section{Seleccion y control de personajes}
 \section{Steering básicos acelerados}
 \subsection{Seek}
@@ -212,13 +212,43 @@ Scenes/
 \subsubsection{Introducción}
 \subsubsection{Implementación (Parametrización)}
 \subsubsection{Ejemplo de Uso}
+
 \section{Detección de colisiones (WallAvoidance)}
+\subsection{Introducción}
+
+La evitación de paredes (\textbf{Wall Avoidance}) actúa como una capa de seguridad para garantizar que los agentes no atraviesen la geometría estática del nivel. Esto se logra lanzando rayos o detectores (\textit{Whiskers} o "bigotes") en la dirección de movimiento para intuir las colisiones antes de que ocurran y reaccionar anticipadamente con fuerzas de repulsión.
+
+
+\subsection{Implementación (Parametrización)}
+
+\texttt{WallAvoidance} consta de la proyección de uno o más rayos desde la perspectiva del agente usando los siguientes parámetros:
+\begin{itemize}
+    \item \texttt{lookahead}: Distancia máxima que los detectores pueden "ver" hacia adelante.
+    \item \texttt{numWhiskers}: Cantidad de "bigotes" extendidos radialmente para escanear el entorno.
+    \item \texttt{whiskerAngle}: Diferencia angular entre cada uno de los bigotes si \texttt{numWhiskers > 1}.
+\end{itemize}
+
+Durante cada paso del algoritmo se comprueba mediante \texttt{Physics.Raycast} si algún bigote ha intersectado con un objeto. Si se detecta un choque inminente con un obstáculo, en lugar de solicitar un de punto nuevo usando un \textit{Seek} (que generaba aceleración extra hacia las paredes en nuestras primeras implementaciones), se recupera la normal de la superficie de impacto (\texttt{hit.normal}) y se le aplica la máxima aceleración lineal provocando que el agente se empuje en base a esa repulsión directa garantizando que el agente siempre se aleje de la pared a tiempo.
+
+\textbf{Dificultades y Ajustes Experimentados:}
+A lo largo de su integración nos enfrentamos a desafíos técnicos dignos de mención:
+\begin{itemize}
+    \item \textbf{Falsos Positivos con el suelo:} Usando los mensajes de debug de los rayos nos dimos cuenta de que los bigotes detectaban de forma constante e inadvertida superficies del suelo (\textit{floor}), esto se omitió ajustando la lectura u omitiendo ese layer en particular para permitir que funcionase apropiadamente de frente, pero en consecuencia esto derivó en que puntualmente un agente de "1 bigote", o los bigotes laterales de "3 bigotes" atravesasen secciones errantes al depender tanto en el \textit{Seek}. 
+    \item \textbf{Interferencia de grupo (Agentes Bloqueándose entre sí):} En los testeos por separado de WallAvoidance en escenarios vacíos, este se desenvolvía correctamente. Pero en el contexto real de la escena, apareció un problema cuando colocamos al NPC de "1 bigote" justo detrás de un agente tipo "3 bigotes": Los rayos de WallAvoidance detectaron por error a un aliado como muro, obligando al agente perseguidor a esquivarlo tomando una dirección totalmente opuesta a la esperada, terminando con éste arrinconándose inevitablemente en una esquina del mapa.
+    \item \textbf{Rebote de Normales en Entornos Estrechos:} Otro factor interesante lo observamos al inicio de la escena en zonas constreñidas con el agente de "3 bigotes". Al arrancar rodeado de obstáculos cercanos a la vez, recibía lecturas cruzadas desde paredes en la izquierda y en la derecha. Las repulsiones procedentes de la sumatoria de estas normales ralentizaban mucho el despegue inicial por la latencia en las resoluciones opuestas. 
+\end{itemize}
+
+
+\subsection{Ejemplo de Uso}
+
+WallAvoidance se implementa universalmente como un comportamiento prioritario subordinado o mezclado. Actúa en segundo plano mientras el agente ejecuta otros Steerings (como Seek o Wander). Solo se activa agresivamente ante las colisiones, devolviendo el control al objetivo primario en cuanto detecta que el área frontal está despejada.
+
 \section{Steering combinado (Árbitros)}
 \section{Formaciones}
 \subsection{Estructuras Fijas}
 \subsection{Criterio Leader Following}
 \section{LRTA*}
-\begin{justify}
+
 LRTA* (\textit{Learning Real-Time A*}) es un algoritmo de búsqueda en tiempo real que no necesita calcular la ruta completa antes de moverse. En cada decisión, el agente observa un entorno local, aprende (actualiza su estimación de coste) y ejecuta solo el siguiente movimiento. Este enfoque es especialmente útil en videojuegos porque permite reaccionar de forma continua, con coste computacional acotado por frame.
 
 Formalmente, LRTA* mantiene una función de coste aprendido $h(s)$ para cada celda $s$. En cada iteración se aplica una actualización local tipo Bellman:
@@ -226,10 +256,10 @@ Formalmente, LRTA* mantiene una función de coste aprendido $h(s)$ para cada cel
 h(u) \leftarrow \max\left(h(u),\; \min_{v \in N(u)}\left(c(u,v) + h(v)\right)\right)
 \]
 donde $N(u)$ son los vecinos transitables y $c(u,v)$ es el coste de transición.
-\end{justify}
+
 
 \subsection{Diseño e implementación aplicada en nuestro proyecto}
-\begin{justify}
+
 La implementación se ha organizado por módulos para separar claramente representación del mapa, heurística, construcción del espacio local y control del agente:
 \begin{itemize}
     \item \textbf{Representación del entorno (\texttt{Graph.cs})}: define la rejilla ($nFilas$, $nColumnas$, $tamCelda$), convierte coordenadas mundo-grid y detecta celdas bloqueadas mediante \texttt{Physics.OverlapBox} y etiqueta \texttt{OCUPADO}.
@@ -246,10 +276,10 @@ La estructura interna del flujo en \texttt{LRTAStar(start, goal)} sigue tres fas
 \end{enumerate}
 
 Con este diseño, el sistema está desacoplado: se pueden cambiar heurísticas, tamaño del LSS o política de recálculo sin rehacer el resto del algoritmo.
-\end{justify}
+
 
 \subsection{Generación y validación del grafo de búsqueda}
-\begin{justify}
+
 Antes de planificar, se validan inicio y objetivo: deben estar dentro de la rejilla y no ser celdas ocupadas. El coste aprendido se almacena en \texttt{cellCosts[row,col]}:
 \begin{itemize}
     \item Celdas bloqueadas $\rightarrow +\infty$.
@@ -266,19 +296,19 @@ c(u,v)=
 2 & \text{si el movimiento es diagonal}
 \end{cases}
 \]
-\end{justify}
+
 
 \subsection{LRTA* un paso (fase de preparación)}
-\begin{justify}
+
 Para verificar que el aprendizaje era correcto, primero trabajamos con una versión de comportamiento equivalente a \textbf{1 paso de decisión por iteración}: el agente calcula, aprende y avanza solo al mejor vecino. En esta fase observamos el patrón típico de LRTA*: en zonas ambiguas, el NPC puede avanzar y retroceder temporalmente hasta que los costes aprendidos penalizan la ruta mala.
 
 Ese comportamiento de ``ida y vuelta'' fue clave para validar que el aprendizaje estaba activo: cuando una zona intermedia del mapa acumula coste alto por repetición (máximo local de coste aprendido), el agente deja de insistir en ese corredor y estabiliza el avance por la alternativa correcta.
 
 En nuestra implementación, esta dinámica se ve reforzada porque se puede recalcular en cada celda (\texttt{recalculateEachCell}), y porque la acción final siempre se toma tras actualizar valores con \texttt{ValueUpdateStep}.
-\end{justify}
+
 
 \subsection{LRTA* con n-pasos y espacio local (LSS)}
-\begin{justify}
+
 Una vez validado el caso base, ampliamos a LRTA* con \textbf{n-pasos de exploración local} mediante LSS. El parámetro \texttt{maxLSSNodes} controla cuántos nodos del entorno se consideran antes de actuar:
 \begin{itemize}
     \item Si \texttt{maxLSSNodes} es pequeño, el comportamiento se aproxima al LRTA* más reactivo (muy local).
@@ -286,10 +316,10 @@ Una vez validado el caso base, ampliamos a LRTA* con \textbf{n-pasos de explorac
 \end{itemize}
 
 En términos prácticos, este espacio local mejora la eficiencia global porque evita ``reaprender'' lo mismo en cada celda con información mínima. En cada ciclo se actualiza un bloque de estados vecinos (no solo el estado actual), de forma que la política mejora más rápido con menos pasos físicos del NPC.
-\end{justify}
+
 
 \subsection{Ejemplo ficticio del cálculo de n-pasos}
-\begin{justify}
+
 Supongamos un mapa de $7\times7$, inicio en $(1,1)$, meta en $(5,5)$ y un obstáculo central que obliga a rodear. Si fijamos \texttt{maxLSSNodes = 6}:
 \begin{enumerate}
     \item El BFS del LSS toma 6 celdas alcanzables desde $(1,1)$.
@@ -301,36 +331,36 @@ Supongamos un mapa de $7\times7$, inicio en $(1,1)$, meta en $(5,5)$ y un obstá
 \end{enumerate}
 
 Si en una iteración el frente local detecta que seguir ``hacia el obstáculo'' implica valores crecientes, el coste aprendido de esa zona sube y en las siguientes decisiones el algoritmo prefiere bordear el bloqueo. Esa es la razón de que, con n-pasos, el comportamiento sea más estable y converja antes que en el caso puramente de 1 paso.
-\end{justify}
+
 
 \subsection{Heurísticas}
-\begin{justify}
+
 La selección de heurística se realiza mediante \texttt{enum} y un \texttt{switch} en tiempo de inicialización:
-\end{justify}
+
 \subsubsection{Manhattan}
-\begin{justify}
+
 \[
 h(n)=|x_n-x_g| + |y_n-y_g|
 \]
 No permite diagonales y es coherente con movimientos ortogonales en rejilla.
-\end{justify}
+
 \subsubsection{Chebychev}
-\begin{justify}
+
 \[
 h(n)=\max\left(|x_n-x_g|,|y_n-y_g|\right)
 \]
 Permite diagonales y modela bien desplazamientos en 8 direcciones con coste uniforme aproximado.
-\end{justify}
+
 \subsubsection{Euclídea}
-\begin{justify}
+
 \[
 h(n)=\sqrt{(x_n-x_g)^2 + (y_n-y_g)^2}
 \]
 Permite diagonales y aporta una estimación geométrica directa de la distancia al objetivo.
-\end{justify}
+
 
 \subsection{Integración con steering y depuración}
-\begin{justify}
+
 La salida de LRTA* se integra con el movimiento del NPC mediante un objetivo virtual, que alimenta el comportamiento \texttt{Seek}. Así se desacopla el razonamiento discreto (grid) del movimiento continuo del agente en mundo 3D.
 
 Además, se implementaron mecanismos de depuración visual muy útiles durante el desarrollo:
@@ -341,7 +371,7 @@ Además, se implementaron mecanismos de depuración visual muy útiles durante e
 \end{itemize}
 
 Esta instrumentación permitió comprobar en tiempo real cómo evolucionaban los valores aprendidos y por qué el agente cambiaba de decisión en cada iteración.
-\end{justify}
+
 \section{Mecanismo de depuración}
 \section{Conclusión}
 
