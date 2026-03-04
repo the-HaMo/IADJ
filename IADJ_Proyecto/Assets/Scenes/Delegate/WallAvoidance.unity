@@ -856,7 +856,7 @@ MonoBehaviour:
   _arrivalRadius: 3
   _interiorAngle: 4
   _exteriorAngle: 5
-  gizmos: 1
+  gizmos: 0
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
@@ -1146,7 +1146,7 @@ MonoBehaviour:
   _arrivalRadius: 3
   _interiorAngle: 4
   _exteriorAngle: 5
-  gizmos: 1
+  gizmos: 0
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
@@ -1942,9 +1942,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: TresBigotes+SeekPlayer
       objectReference: {fileID: 0}
+    - target: {fileID: 8625540651245984353, guid: 8e0a6622d44f340dcaaad3e958e43e0d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.7
+      objectReference: {fileID: 0}
     - target: {fileID: 9137904178190238727, guid: 8e0a6622d44f340dcaaad3e958e43e0d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 13.000184
+      value: 12.3
       objectReference: {fileID: 0}
     - target: {fileID: 9137904178190238727, guid: 8e0a6622d44f340dcaaad3e958e43e0d, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1952,7 +1956,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9137904178190238727, guid: 8e0a6622d44f340dcaaad3e958e43e0d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -9.959854
+      value: -7.99
       objectReference: {fileID: 0}
     - target: {fileID: 9137904178190238727, guid: 8e0a6622d44f340dcaaad3e958e43e0d, type: 3}
       propertyPath: m_LocalRotation.w

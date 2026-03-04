@@ -1451,7 +1451,7 @@ MonoBehaviour:
   _arrivalRadius: 3
   _interiorAngle: 4
   _exteriorAngle: 5
-  gizmos: 1
+  gizmos: 0
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
@@ -1488,9 +1488,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weight: 1
-  wanderOffset: 2
-  wanderRadius: 3
+  wanderOffset: 5
+  wanderRadius: 4.5
   wanderRate: 5
+  showGizmos: 1
 --- !u!1001 &1514986585
 PrefabInstance:
   m_ObjectHideFlags: 0

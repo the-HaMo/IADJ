@@ -10,6 +10,8 @@ public class Wander : SteeringBehaviour
     
     // Máximo cambio de orientación del wander por frame.
     public float wanderRate;
+
+    public bool showGizmos = true;
     
     // Orientación actual del objetivo de wander.
     private float wanderOrientation;
@@ -65,5 +67,38 @@ public class Wander : SteeringBehaviour
         
         // Devolver el steering
         return steering;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (!showGizmos) return;
+
+        Agent agent = GetComponent<Agent>();
+        if (agent == null) return;
+
+        // Mismo cálculo del centro que en GetSteering
+        Vector3 center = agent.Position + wanderOffset * agent.OrientationToVector(agent.Orientation);
+
+        // Dibujar el círculo base
+        Gizmos.color = Color.blue;
+        
+        // Dibujar un círculo manual con líneas para que se vea plano en el suelo (opcional, pero DrawWireSphere también vale)
+        Gizmos.DrawWireSphere(center, wanderRadius);
+
+        // Calcular la posición exacta del punto objetivo
+        float targetOrientation = wanderOrientation + agent.Orientation;
+        Vector3 target = center + wanderRadius * agent.OrientationToVector(targetOrientation);
+
+        // Dibujar una bolita roja en el punto objetivo sobre el círculo
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(target, 0.3f);
+
+        // Dibujar una línea verde desde el personaje hacia su objetivo
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(agent.Position, target);
+        
+        // Dibujar una línea de referencia gris hacia el centro del círculo
+        Gizmos.color = Color.gray;
+        Gizmos.DrawLine(agent.Position, center);
     }
 }

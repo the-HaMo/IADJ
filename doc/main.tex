@@ -169,81 +169,133 @@ Scenes/
 \section{Steering básicos acelerados}
 \subsection{Seek}
 \subsubsection{Introducción}
-\subsubsection{Implementación (Parametrización)}
+\subsubsection{Implementación}
 \subsubsection{Ejemplo de Uso}
 
 \subsection{Flee}
 \subsubsection{Introducción}
-\subsubsection{Implementación (Parametrización)}
+\subsubsection{Implementación}
 \subsubsection{Ejemplo de Uso}
 
 \subsection{Arrive}
 \subsubsection{Introducción}
-\subsubsection{Implementación (Parametrización)}
+\subsubsection{Implementación}
 \subsubsection{Ejemplo de Uso}
 
-\subsection{Leave}
+\subsection{Leave}SergioGarcia
 \subsubsection{Introducción}
-\subsubsection{Implementación (Parametrización)}
+\subsubsection{Implementación}
 \subsubsection{Ejemplo de Uso}
 
 \subsection{Align}
 \subsubsection{Introducción}
-\subsubsection{Implementación (Parametrización)}
+\subsubsection{Implementación}
 \subsubsection{Ejemplo de Uso}
 
-\subsection{anti-Align}
+\subsection{Anti-Align}
 \subsubsection{Introducción}
-\subsubsection{Implementación (Parametrización)}
+\subsubsection{Implementación}
 \subsubsection{Ejemplo de Uso}
 
 \section{Steering Delegado}
 \subsection{Face}
 \subsubsection{Introducción}
-\subsubsection{Implementación (Parametrización)}
+ESPACIO
+\subsubsection{Implementación}
 \subsubsection{Ejemplo de Uso}
 
 \subsection{Wander}
 \subsubsection{Introducción}
-\subsubsection{Implementación (Parametrización)}
+Para dotar de realismo y fluidez al entorno del juego, resulta fundamental evitar que los NPCs permanezcan estáticos cuando no tienen una tarea u objetivo definido. El comportamiento de \texttt{Wander} (o deambular) resuelve este problema dotando al agente de un movimiento autónomo. El objetivo principal con esta implementación fue conseguir un desplazamiento natural de movimiento aleatorio, evitando los giros bruscos o el movimiento tembloroso (\textit{jittering}) que produciría una simple selección de rotaciones aleatorias, y logrando así una sensación de movimiento natural en la escena.
+\\
+
+\textbf{Dificultades y Ajustes Experimentados:}
+
+Durante el desarrollo de \texttt{Wander}, nos encontramos con dos problemas visuales bastante molestos que tuvimos que corregir mediante código:
+
+\begin{itemize}
+    \item \textbf{El personaje daba vueltas sobre sí mismo:} Al principio, si el punto objetivo del círculo caía muy a la espalda del personaje, este a veces intentaba girar por el camino más largo (dando casi una vuelta completa) o giraba demasiado rápido pareciendo una peonza. Para solucionarlo, usamos la función \texttt{MapToRange} para asegurarnos de que el cálculo del ángulo siempre elija el giro más corto posible. Además, hicimos que la velocidad de rotación disminuya progresivamente a medida que termina de girar, evitando que se pase de largo y tiemble.
+
+    \item \textbf{El personaje se deslizaba de lado ("Patinaba"):} Otro problema fue que el personaje a veces aplicaba fuerza hacia el objetivo antes de haber terminado de rotar su cuerpo hacia él. Esto provocaba que caminara en diagonal o de lado, como si patinara sobre el hielo. La solución fue modificar el cálculo de la aceleración: obligamos a que el empuje hacia adelante siempre vaya estrictamente en la dirección a la que está mirando el personaje en ese momento (multiplicando su aceleración máxima por su vector direccional \textit{Forward}), sin importar dónde esté el objetivo calculando por el Wander.
+\end{itemize}
+
 \subsubsection{Ejemplo de Uso}
+En este proyecto, hemos compaginado el comportamiento de \texttt{Wander} con \texttt{WallAvoidance} para lograr que el agente deambule de forma autónoma y natural dentro de una zona delimitada. En la escena \texttt{Delegate/PathFollowing+Face+Wander.unity} utilizamos \texttt{Wander} como el estado base de movimiento. 
+
+Visualmente, el NPC calcula de forma constante su punto objetivo proyectado y se desplaza trazando curvas fluidas por el espacio continuo. Este "deambular" se mantiene activo como prioridad principal, pero está diseñado para ceder el control instantáneamente frente a otros steerings reactivos mediante el sistema de pesos del Árbitro. Así, si el agente detecta un obstáculo durante su patrulla aleatoria, el comportamiento de evasión toma el control temporalmente, demostrando una combinación perfecta entre exploración libre y navegación segura.
+\\
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{img/gizmo_wander.png}
+    \caption{Visualización en el editor (Gizmo) del comportamiento Wander.}
+    \label{fig:gizmo_wander}
+\end{figure}
+
+Como se aprecia en la Figura \ref{fig:gizmo_wander}, hemos creado un \textit{Gizmo} en Unity para facilitar la depuración visual de \texttt{Wander}:
+\begin{itemize}
+    \item \textbf{Círculo Azul:} Representa el área proyectada hacia el frente donde se generará nuestro objetivo. Su posición y tamaño se configuran desde el inspector con \texttt{wanderOffset} y \texttt{wanderRadius}.
+    \item \textbf{Esfera Roja:} Muestra la posición exacta del punto objetivo fluctuante que el agente intenta alcanzar en este instante. Este punto se desliza suavemente por el borde del círculo azul.
+    \item \textbf{Línea Verde:} Indica la dirección visual directa calculada desde el agente hacia la esfera roja, que es la dirección que en ese instante se usará para aplicar la fuerza matemática.
+\end{itemize}
+
 
 \subsection{Path Following sin PathOffset}
 \subsubsection{Introducción}
-\subsubsection{Implementación (Parametrización)}
+\subsubsection{Implementación}
 \subsubsection{Ejemplo de Uso}
 
 \section{Detección de colisiones (WallAvoidance)}
 \subsection{Introducción}
 
-Todo NPC debe ser capaz de detectar un obstáculo, ya sean paredes o decoración de una escena, para luego ser capaz de rodearlo y evitarlo. Sin esta implementación, el personaje simplemente atravesaría el escenario y no se vería realista. Para ello se usan "bigotes" como detectores para medir la distancia a la que está el obstáculo, aplicar las fuerzas necesarias y ser capaz de evitarlo a tiempo.
+Todo NPC debe ser capaz de detectar un obstáculo, ya sean paredes o decoración de una escena, para luego ser capaz de rodearlo y evitarlo. Sin esta implementación, el personaje simplemente atravesaría el escenario y no se vería realista. Para ello se usan $bigotes$ como detectores para medir la distancia a la que está el obstáculo, aplicar las fuerzas necesarias y ser capaz de evitarlo a tiempo.
 
 
-\subsection{Implementación (Parametrización)}
+\subsection{Implementación}
 
 \texttt{WallAvoidance} consta de la proyección de uno o más rayos desde la perspectiva del agente usando los siguientes parámetros:
 \begin{itemize}
     \item \texttt{lookahead}: Distancia máxima que los detectores pueden "ver" hacia adelante.
-    \item \texttt{numWhiskers}: Cantidad de "bigotes" extendidos radialmente para escanear el entorno.
-    \item \texttt{whiskerAngle}: Diferencia angular entre cada uno de los bigotes si \texttt{numWhiskers > 1}.
+    \item \texttt{numWhiskers}: Cantidad de "bigotes" que tiene el NPC para detectar los obstaculos
+    \item \texttt{whiskerAngle}: Distancia que tienen los bigotes entre ellos si \texttt{numWhiskers > 1}.
 \end{itemize}
 
-Durante la ejecución, el algoritmo calcula hacia dónde miran los bigotes en función de la velocidad y orientación actual del agente. Luego se utiliza la función \texttt{Physics.Raycast} de Unity, la cual lanza una línea invisible y devuelve información sobre qué es lo que ha tocado (esto último se conoce en programación como un \textit{Hit}).
+Durante la ejecución, el algoritmo calcula hacia dónde miran los bigotes en función de la velocidad y orientación actual del agente. Luego se utiliza la función \texttt{Physics.Raycast} de Unity, la cual lanza una línea invisible y devuelve información sobre qué es lo que ha tocado.
 
-Cuando el algoritmo detecta un \textit{Hit} (es decir, el bigote ha tocado algo), verifica cuál es la colisión más cercana e inminente de entre todos los bigotes. En el diseño teórico de este comportamiento se sugería calcular un punto alejado de la pared e ir a él mediante el comportamiento básico \textit{Seek}. Sin embargo, al implementarlo en código notamos que solicitar un punto nuevo generaba ciertas aceleraciones cruzadas o empujones imprecisos que incluso empujaban al agente contra la pared. Para solucionar eso sin depender del \textit{Seek}, programamos directamente que al confirmar un choque, el agente recupere qué geometría plana tiene la pared en el punto donde chocó el rayo (eso es la \texttt{hit.normal}) y simplemente le aplicamos el máximo de aceleración lineal del agente en esa dirección perpendicular para que este rebote hacia afuera y evite la pared de forma inmediata y realista.
+Cuando el algoritmo detecta un \textit{Hit} (es decir, el bigote ha hecho contacto con algo), se verifica cuál es la colisión más cercana de entre todos los bigotes. Para poder evitar el choque, usamos su componente normal. La \textit{Normal} de una pared no es más que un vector imaginario que sale apuntando completamente recto hacia afuera de forma perpendicular a la superficie (\texttt{closestHit.normal}). Una vez tenemos esa dirección, simplemente se empuja al agente multiplicando esa fuerza por su máxima aceleración (\texttt{MaxAcceleration}) causando que se aleje de golpe y evite el obstáculo satisfactoriamente.
+\\
 
 \textbf{Dificultades y Ajustes Experimentados:}
-A lo largo de su integración nos enfrentamos a desafíos técnicos dignos de mención:
+A lo largo del desarrollo del proyecto, nos encontramos con varios problemas:
 \begin{itemize}
-    \item \textbf{Falsos Positivos con el suelo:} Usando los mensajes de debug de los rayos nos dimos cuenta de que los bigotes detectaban de forma constante e inadvertida superficies del suelo (\textit{floor}), esto se omitió ajustando la lectura u omitiendo ese layer en particular para permitir que funcionase apropiadamente de frente, pero en consecuencia esto derivó en que puntualmente un agente de "1 bigote", o los bigotes laterales de "3 bigotes" atravesasen secciones errantes al depender tanto en el \textit{Seek}. 
-    \item \textbf{Interferencia de grupo (Agentes Bloqueándose entre sí):} En los testeos por separado de WallAvoidance en escenarios vacíos, este se desenvolvía correctamente. Pero en el contexto real de la escena, apareció un problema cuando colocamos al NPC de "1 bigote" justo detrás de un agente tipo "3 bigotes": Los rayos de WallAvoidance detectaron por error a un aliado como muro, obligando al agente perseguidor a esquivarlo tomando una dirección totalmente opuesta a la esperada, terminando con éste arrinconándose inevitablemente en una esquina del mapa.
-    \item \textbf{Rebote de Normales en Entornos Estrechos:} Otro factor interesante lo observamos al inicio de la escena en zonas constreñidas con el agente de "3 bigotes". Al arrancar rodeado de obstáculos cercanos a la vez, recibía lecturas cruzadas desde paredes en la izquierda y en la derecha. Las repulsiones procedentes de la sumatoria de estas normales ralentizaban mucho el despegue inicial por la latencia en las resoluciones opuestas. 
+    \item \textbf{Deteccion constante del Suelo:} Usando los mensajes de debug de los bigotes, nos dimos cuenta de que los bigotes detectaban de forma constante e inadvertida la superficie del suelo provocando que no detectase las paredes u otros obstaculos debido a que era el obstaculo mas cercano, esto se pudo solucionar ajustando la dsitancia minima con la que se tiene en contacto con un objeto, si era muy baja la distancia, esta se ignora ya que es el suelo. 
+    \item \textbf{Interferencia de grupo (Agentes Bloqueándose entre sí):} En los testeos por separado de WallAvoidance en escenarios vacíos, este se desenvolvía correctamente. Pero en el contexto real de la escena, apareció un problema cuando colocamos 2 NPC juntos uno detras de otro, los rayos de WallAvoidance detectaban a un NPC como obstaculo, obligando al agente perseguidor a esquivarlo tomando una dirección totalmente opuesta a la esperada.
+    \item \textbf{Rebote de Normales en Entornos Estrechos:} Otro factor interesante lo observamos al inicio de la escena en zonas estrechas con el agente de "3 bigotes" y el de "2 bigotes". Al arrancar rodeado de obstáculos cercanos a la vez, recibía lecturas ambas paredes en la izquierda y en la derecha. Las repulsiones procedentes de la sumatoria de estas normales ralentizaban mucho el movimiento inicial por la latencia en las resoluciones opuestas.
 \end{itemize}
 
 
 \subsection{Ejemplo de Uso}
 
-WallAvoidance se implementa universalmente como un comportamiento prioritario subordinado o mezclado. Actúa en segundo plano mientras el agente ejecuta otros Steerings (como Seek o Wander). Solo se activa agresivamente ante las colisiones, devolviendo el control al objetivo primario en cuanto detecta que el área frontal está despejada.
+WallAvoidance se implementa universalmente como un comportamiento prioritario en conjunto con otros comportamientos como puede ser Wander o Seek. Actúa en segundo plano mientras el agente ejecuta otros Steerings. Solo se activa  ante la posible deteccion de colisiones, devolviendo el control al objetivo primario en cuanto detecta que el área frontal está despejada.
+\\
+
+A continuacion se mostrara como se ven los bigotes gracias al Gizmo. En la Figura 2 se puede ver instantes antes de que se detecten una colision contra un muro. En este caso el NPC detectara la pared, y la normal de la pared hara posible el evitar la colision.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{img/gizmo_wallavoidance.png}
+    \caption{Gizmo de los bigotes de WallAvoidance.}
+    \label{fig:gizmo_wallavoidance}
+\end{figure}
+\\
+
+Como se comento anteriormente, el Steering de WallAvoidance se suele compaginar con otros scripts, por ejemplo en la escena "WallAvoidance" se aplica a un npc WallAvoidance y Seek. Como se puede ver en la Figura 3, Seek es de manera prinicpal el que controla el personaje pero en el momento que se detecte una colision a 3 de distancia, el script de deteccion de colisiones al tener mas peso este tomara el control sobre seek y evitara esta colision.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{img/inspector_wallavoidance.png}
+    \caption{Inspector del WallAvoidance con Seek.}
+    \label{fig:inspector_wallavoidance}
+\end{figure}
+
 
 \section{Steering combinado (Árbitros)}
 \section{Formaciones}
