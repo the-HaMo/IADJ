@@ -30,6 +30,8 @@ public struct Slot
 /// </summary>
 public class GridFormation : MonoBehaviour
 {
+    private const float FOLLOWER_FLEE_DISTANCE = 1.2f;
+
     // Columnas del grid
     public int numColumns;
     
@@ -212,21 +214,23 @@ public class GridFormation : MonoBehaviour
                     // Si es el líder, va hacia donde está el nuevo grid
                     if (slots[i, j].npc == leader)
                     {
-                        if (wander != null) wander.enabled = false;
-                        if (align != null) align.enabled = false;
+                        Flee flee = currentNPC.GetComponent<Flee>();
+                        Separation separation = currentNPC.GetComponent<Separation>();
+                        if (wander != null) { wander.enabled = false; wander.weight = 0f; }
+                        if (flee != null) { flee.enabled = false; flee.weight = 0f; }
+                        if (separation != null) { separation.enabled = false; separation.weight = 0f; }
+                        if (align != null) { align.enabled = false; align.weight = 0f; }
                         arrive.enabled = true;
                         face.enabled = true;
+                        arrive.weight = 1.0f;
+                        face.weight = 1.2f;
                         arrive.NewTarget(leaderVirtual);
                         face.NewTarget(leaderVirtual);
                     }
                     // Si es otro NPC, persigue al líder
                     else
                     {
-                        if (align != null) align.enabled = false;
-                        arrive.enabled = true;
-                        face.enabled = true;
-                        arrive.NewTarget(leader);
-                        face.NewTarget(leader);
+                        ConfigureFollowerLeaderFollowing(currentNPC);
                     }
                 }
             }
@@ -252,13 +256,19 @@ public class GridFormation : MonoBehaviour
                     Align align = currentNPC.GetComponent<Align>();
                     Face face = currentNPC.GetComponent<Face>();
                     Wander wander = currentNPC.GetComponent<Wander>();
+                    Flee flee = currentNPC.GetComponent<Flee>();
+                    Separation separation = currentNPC.GetComponent<Separation>();
 
                     if (arrive != null && align != null)
                     {
-                        if (wander != null) wander.enabled = false;
-                        if (face != null) face.enabled = false;
+                        if (wander != null) { wander.enabled = false; wander.weight = 0f; }
+                        if (flee != null) { flee.enabled = false; flee.weight = 0f; }
+                        if (separation != null) { separation.enabled = false; separation.weight = 0f; }
+                        if (face != null) { face.enabled = false; face.weight = 0f; }
                         arrive.enabled = true;
                         align.enabled = true;
+                        arrive.weight = 1.0f;
+                        align.weight = 1.0f;
                         arrive.NewTarget(slots[i, j].virtualAgent);
                         align.NewTarget(slots[i, j].virtualAgent);
                     }
@@ -288,11 +298,15 @@ public class GridFormation : MonoBehaviour
                     Align align = slots[i, j].npc.GetComponent<Align>();
                     Face face = slots[i, j].npc.GetComponent<Face>();
                     Wander wander = slots[i, j].npc.GetComponent<Wander>();
+                    Flee flee = slots[i, j].npc.GetComponent<Flee>();
+                    Separation separation = slots[i, j].npc.GetComponent<Separation>();
                     
                     if (arrive != null) arrive.enabled = false;
                     if (align != null) align.enabled = false;
                     if (face != null) face.enabled = false;
                     if (wander != null) wander.enabled = false;
+                    if (flee != null) flee.enabled = false;
+                    if (separation != null) separation.enabled = false;
                     
                     slots[i, j].npc = null;
                 }
@@ -304,11 +318,15 @@ public class GridFormation : MonoBehaviour
                     Align align = leader.GetComponent<Align>();
                     Face face = leader.GetComponent<Face>();
                     Wander wander = leader.GetComponent<Wander>();
+                    Flee flee = leader.GetComponent<Flee>();
+                    Separation separation = leader.GetComponent<Separation>();
                     
                     if (arrive != null) arrive.enabled = false;
                     if (align != null) align.enabled = false;
                     if (face != null) face.enabled = false;
                     if (wander != null) wander.enabled = false;
+                    if (flee != null) flee.enabled = false;
+                    if (separation != null) separation.enabled = false;
                 }
             }
         }
@@ -332,9 +350,13 @@ public class GridFormation : MonoBehaviour
                         Arrive arrive = leader.GetComponent<Arrive>();
                         Align align = leader.GetComponent<Align>();
                         Face face = leader.GetComponent<Face>();
+                        Flee flee = leader.GetComponent<Flee>();
+                        Separation separation = leader.GetComponent<Separation>();
                         if (arrive != null) arrive.enabled = false;
                         if (align != null) align.enabled = false;
                         if (face != null) face.enabled = false;
+                        if (flee != null) flee.enabled = false;
+                        if (separation != null) separation.enabled = false;
                         if (wander != null)
                         {
                             wander.enabled = true;
@@ -349,11 +371,7 @@ public class GridFormation : MonoBehaviour
                         
                         if (arrive != null && face != null)
                         {
-                            if (align != null) align.enabled = false;
-                            arrive.enabled = true;
-                            face.enabled = true;
-                            arrive.NewTarget(leader);
-                            face.NewTarget(leader);
+                            ConfigureFollowerLeaderFollowing(slots[i, j].npc);
                         }
                     }
                 }
@@ -362,6 +380,80 @@ public class GridFormation : MonoBehaviour
 
         if (formationController != null)
             formationController.StartTimer();
+    }
+
+    private void ConfigureFollowerLeaderFollowing(AgentNPC follower)
+    {
+        Arrive arrive = follower.GetComponent<Arrive>();
+        Face face = follower.GetComponent<Face>();
+        Align align = follower.GetComponent<Align>();
+        Wander wander = follower.GetComponent<Wander>();
+
+        if (arrive == null || face == null)
+        {
+            return;
+        }
+
+        Flee flee = GetOrAddFlee(follower);
+        Separation separation = GetOrAddSeparation(follower);
+
+        if (align != null) align.enabled = false;
+        if (align != null) align.weight = 0f;
+        if (wander != null) wander.enabled = false;
+        if (wander != null) wander.weight = 0f;
+
+        arrive.enabled = true;
+        face.enabled = true;
+        arrive.weight = 1.0f;
+        face.weight = 1.4f;
+        arrive.NewTarget(leader);
+        face.NewTarget(leader);
+
+        if (separation != null)
+        {
+            separation.enabled = true;
+            separation.weight = 0.9f;
+        }
+
+        if (flee != null)
+        {
+            float distanceToLeader = Vector3.Distance(follower.Position, leader.Position);
+            if (distanceToLeader < FOLLOWER_FLEE_DISTANCE)
+            {
+                flee.enabled = true;
+                flee.weight = 1.2f;
+                flee.NewTarget(leader);
+            }
+            else
+            {
+                flee.enabled = false;
+            }
+        }
+    }
+
+    private Flee GetOrAddFlee(AgentNPC npc)
+    {
+        Flee flee = npc.GetComponent<Flee>();
+        if (flee == null)
+        {
+            flee = npc.gameObject.AddComponent<Flee>();
+            flee.enabled = false;
+        }
+        return flee;
+    }
+
+    private Separation GetOrAddSeparation(AgentNPC npc)
+    {
+        Separation separation = npc.GetComponent<Separation>();
+        if (separation == null)
+        {
+            separation = npc.gameObject.AddComponent<Separation>();
+            separation.desiredSeparation = Mathf.Max(1.4f, cellSize * 0.7f);
+            separation.decayCoefficient = 1.2f;
+            separation.maxNeighbours = 8;
+            separation.enabled = false;
+        }
+        return separation;
     }
 
     /// <summary>

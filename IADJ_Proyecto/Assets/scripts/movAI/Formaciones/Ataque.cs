@@ -6,9 +6,9 @@ using UnityEngine;
 /// Patrón de formación ofensiva.
 /// Formación en cuña para ataque frontal.
 /// </summary>
-public class AttackPattern : FormationPattern
+public class Ataque : FormationPattern
 {
-    public AttackPattern()
+    public Ataque()
     {
         // Celda del líder (adelante en el centro)
         this.leaderSlot = (2, 1);

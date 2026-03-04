@@ -65,6 +65,7 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2023.2.20f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\scripts\movAI\Formaciones\Ataque.cs" />
     <Compile Include="Assets\scripts\movAI\Formaciones\FormationPattern.cs" />
     <Compile Include="Assets\scripts\movAI\Grafo\LssBuilder.cs" />
     <Compile Include="Assets\scripts\movAI\Grafo\Graph.cs" />
@@ -75,7 +76,6 @@
     <Compile Include="Assets\scripts\movAI\NPC\Agent.cs" />
     <Compile Include="Assets\scripts\movAI\NPC\Bodi.cs" />
     <Compile Include="Assets\scripts\movAI\NPC\AgentPlayer.cs" />
-    <Compile Include="Assets\scripts\movAI\Formaciones\DefensivePattern.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Generic\SteeringBehaviour.cs" />
     <Compile Include="Assets\Store_Unity\Characters\Mini Simple Characters Skeleton Demo\Readme\Scripts\Readme.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\Flee.cs" />
@@ -83,7 +83,6 @@
     <Compile Include="Assets\scripts\movAI\Steering\Delegate\Wander\Wander.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Delegate\Jumper\Jumper.cs" />
     <Compile Include="Assets\scripts\movAI\NPC\AgentPlayerWithAnimation.cs" />
-    <Compile Include="Assets\scripts\movAI\Formaciones\AttackPattern.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Delegate\Face\Face.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\Seek.cs" />
     <Compile Include="Assets\scripts\movAI\Formaciones\SeleccionarObjetivos.cs" />
@@ -94,8 +93,10 @@
     <Compile Include="Assets\scripts\movAI\Grafo\Chebyshev.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\Leave.cs" />
     <Compile Include="Assets\scripts\mov\MovimientoTeclado.cs" />
+    <Compile Include="Assets\scripts\movAI\Steering\Basic\Separation.cs" />
     <Compile Include="Assets\scripts\movAI\Grafo\LRTA.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Delegate\PathFollowing\PathFollowing.cs" />
+    <Compile Include="Assets\scripts\movAI\Formaciones\Defensa.cs" />
     <Compile Include="Assets\scripts\movAI\NPC\AgentNPC.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\Align.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Generic\Steering.cs" />

@@ -87,7 +87,7 @@ public class AgentNPC : Agent
 
         foreach (SteeringBehaviour behavior in listSteerings)
         {
-            if (behavior != null)
+            if (behavior != null) // behavior.isActiveAndEnabled
             {
                 Steering kinematic = behavior.GetSteering(this);
                 kinematicFinal.linear += kinematic.linear * behavior.weight;

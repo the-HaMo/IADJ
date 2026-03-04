@@ -6,9 +6,9 @@ using UnityEngine;
 /// Patrón de formación defensiva.
 /// Formación semicircular con el líder protegido en el centro.
 /// </summary>
-public class DefensivePattern : FormationPattern
+public class Defensa : FormationPattern
 {
-    public DefensivePattern()
+    public Defensa()
     {
         // Celda del líder (protegido en el centro-atrás)
         leaderSlot = (2, 3);

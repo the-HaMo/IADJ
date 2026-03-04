@@ -100,7 +100,11 @@ MonoBehaviour:
   m_MinSize: {x: 400, y: 100}
   m_MaxSize: {x: 32384, y: 16192}
   vertical: 0
+<<<<<<< HEAD
   controlID: 77
+=======
+  controlID: 133
+>>>>>>> f07d22ee (Formaciones seleccion multiple hecho)
 --- !u!114 &5
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -218,8 +222,8 @@ MonoBehaviour:
     y: 0
     width: 263.19995
     height: 722.8
-  m_MinSize: {x: 276, y: 71}
-  m_MaxSize: {x: 4001, y: 4021}
+  m_MinSize: {x: 275, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 13}
   m_Panes:
   - {fileID: 13}
@@ -269,9 +273,15 @@ MonoBehaviour:
     x: 0
     y: 396
     width: 785.6
+<<<<<<< HEAD
     height: 326.8
   m_MinSize: {x: 201, y: 221}
   m_MaxSize: {x: 4001, y: 4021}
+=======
+    height: 422.8
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
+>>>>>>> f07d22ee (Formaciones seleccion multiple hecho)
   m_ActualView: {fileID: 15}
   m_Panes:
   - {fileID: 15}
@@ -316,23 +326,29 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
+<<<<<<< HEAD
       m_SelectedIDs: 36600000
       m_LastClickedID: 0
       m_ExpandedIDs: b2faffff
+=======
+      m_SelectedIDs: b27c0000
+      m_LastClickedID: 0
+      m_ExpandedIDs: 3e39ffff823effffb440ffff8c44ffffb46bffff6675ffff127bffff5c81ffff1e86ffff0c8bffff128effff5692ffff6a97ffffd0dcffff88e3ffffa6e7ffffeefaffff90930000c49300009aa00000c2a10000fc4d0100
+>>>>>>> f07d22ee (Formaciones seleccion multiple hecho)
       m_RenameOverlay:
         m_UserAcceptedRename: 0
-        m_Name: 
-        m_OriginalName: 
+        m_Name: TresBigotes+SeekPlayer
+        m_OriginalName: TresBigotes+SeekPlayer
         m_EditFieldRect:
           serializedVersion: 2
           x: 0
           y: 0
           width: 0
           height: 0
-        m_UserData: 0
+        m_UserData: 102910
         m_IsWaitingForDelay: 0
         m_IsRenaming: 0
-        m_OriginalEventType: 11
+        m_OriginalEventType: 0
         m_IsRenamingFilename: 0
         m_TrimLeadingAndTrailingWhitespace: 0
         m_ClientGUIView: {fileID: 7}
@@ -439,7 +455,11 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
+<<<<<<< HEAD
     - Assets/scripts/movAI/Steering/Basic
+=======
+    - Assets/Scenes
+>>>>>>> f07d22ee (Formaciones seleccion multiple hecho)
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -457,7 +477,11 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: b0230000
     m_LastClickedID: 9136
+<<<<<<< HEAD
     m_ExpandedIDs: 00000000227c0000247c0000267c0000287c00002a7c00002c7c00002e7c0000307c0000327c0000347c0000367c0000387c0000
+=======
+    m_ExpandedIDs: 000000002a7c00002c7c00002e7c0000307c0000327c0000347c0000367c0000387c00003a7c00003c7c00003e7c0000407c0000427c0000447c0000467c0000487c00004a7c0000
+>>>>>>> f07d22ee (Formaciones seleccion multiple hecho)
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -483,10 +507,17 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_AssetTreeState:
+<<<<<<< HEAD
     scrollPos: {x: 0, y: 128.20001}
     m_SelectedIDs: 
     m_LastClickedID: 0
     m_ExpandedIDs: ffffffff00000000227c0000247c0000267c0000287c00002a7c00002c7c00002e7c0000307c0000327c0000347c0000367c0000387c0000
+=======
+    scrollPos: {x: 0, y: 0}
+    m_SelectedIDs: 
+    m_LastClickedID: 0
+    m_ExpandedIDs: ffffffff000000002a7c00002c7c00002e7c0000307c0000327c0000347c0000367c0000387c00003a7c00003c7c00003e7c0000407c0000427c0000447c0000467c0000487c00004a7c0000c47c0000ca7c0000
+>>>>>>> f07d22ee (Formaciones seleccion multiple hecho)
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1139,9 +1170,15 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
+<<<<<<< HEAD
     m_Target: {x: 9.362754, y: -14.779002, z: -20.925167}
     speed: 2
     m_Value: {x: -4.413101, y: -15.167377, z: -6.10624}
+=======
+    m_Target: {x: 1.1067356, y: -0.16936074, z: -4.7878723}
+    speed: 2
+    m_Value: {x: 1.1067356, y: -0.16936074, z: -4.7878723}
+>>>>>>> f07d22ee (Formaciones seleccion multiple hecho)
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1166,7 +1203,7 @@ MonoBehaviour:
         m_Value: 0
       m_Color: {r: 0.5, g: 0.5, b: 0.5, a: 0.4}
       m_Pivot: {x: 0, y: 0, z: 0}
-      m_Size: {x: 0, y: 0}
+      m_Size: {x: 1, y: 1}
     yGrid:
       m_Fade:
         m_Target: 1
@@ -1187,6 +1224,7 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
+<<<<<<< HEAD
     m_Target: {x: 0.013092029, y: -0.9550418, z: 0.29323146, w: 0.04271919}
     speed: 2
     m_Value: {x: -0.33555517, y: 0.6293711, z: -0.34660587, w: -0.6092938}
@@ -1194,10 +1232,19 @@ MonoBehaviour:
     m_Target: 19.372295
     speed: 2
     m_Value: 14.596915
-  m_Ortho:
-    m_Target: 0
+=======
+    m_Target: {x: 0.09413168, y: 0.73758656, z: -0.6603421, w: 0.105143346}
     speed: 2
-    m_Value: 0
+    m_Value: {x: 0.09413161, y: 0.737586, z: -0.6603416, w: 0.10514327}
+  m_Size:
+    m_Target: 7.304982
+    speed: 2
+    m_Value: 6.9904137
+>>>>>>> f07d22ee (Formaciones seleccion multiple hecho)
+  m_Ortho:
+    m_Target: 1
+    speed: 2
+    m_Value: 1
   m_CameraSettings:
     m_Speed: 2
     m_SpeedNormalized: 1

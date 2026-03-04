@@ -12,7 +12,6 @@ public enum TipoFormacion
 public enum Criterio
 {
     LeaderFollowing
-    // Pathfinding - Comentado por ahora
 }
 
 public class FormationController : MonoBehaviour
@@ -144,9 +143,9 @@ public class FormationController : MonoBehaviour
     public void CreatePattern()
     {
         if (tipoFormacion == TipoFormacion.Ataque)
-            pattern = new AttackPattern();
+            pattern = new Ataque();
         else
-            pattern = new DefensivePattern();
+            pattern = new Defensa();
     }
 
     public void AcabarFormacion()
@@ -174,19 +173,133 @@ public class FormationController : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+        if (!Physics.Raycast(ray, out hit, Mathf.Infinity))
         {
-            Vector3 point = hit.point;
-            
-            if (grid != null && grid.activated)
+            return;
+        }
+
+        Vector3 point = hit.point;
+        AgentNPC[] selectedAgents = ObtenerAgentesSeleccionados();
+
+        if (selectedAgents.Length == 0)
+        {
+            return;
+        }
+
+        if (grid != null && grid.activated)
+        {
+            bool allSelectedInFormation = true;
+
+            foreach (AgentNPC agent in selectedAgents)
             {
-                // Mover la formación
+                if (!IsAgentInCurrentFormation(agent))
+                {
+                    allSelectedInFormation = false;
+                    break;
+                }
+            }
+
+            if (allSelectedInFormation)
+            {
                 NoWait();
                 grid.MoveGrid(point);
                 grid.LeaderFollowing();
                 waitingLeaderArrival = true;
                 Debug.Log($"Formación moviéndose a: {point}");
+                return;
             }
+
+            NoWait();
+            waitingLeaderArrival = false;
+            doingWander = false;
+            grid.LiberarAgents();
+            Debug.Log("Selección mixta detectada. Se rompe formación y se mueven todos los seleccionados.");
+        }
+
+        MoveSelectedAgentsToPoint(selectedAgents, point);
+    }
+
+    private bool IsAgentInCurrentFormation(AgentNPC agent)
+    {
+        if (grid == null || grid.slots == null || agent == null)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < grid.numColumns; i++)
+        {
+            for (int j = 0; j < grid.numRows; j++)
+            {
+                if (grid.slots[i, j].npc == agent)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private void MoveSelectedAgentsToPoint(AgentNPC[] selectedAgents, Vector3 point)
+    {
+        int movedCount = 0;
+        float spacing = Mathf.Max(1.2f, cellSize * 0.8f);
+
+        for (int index = 0; index < selectedAgents.Length; index++)
+        {
+            AgentNPC agent = selectedAgents[index];
+            Arrive arrive = agent.GetComponent<Arrive>();
+            Face face = agent.GetComponent<Face>();
+            Align align = agent.GetComponent<Align>();
+            Wander wander = agent.GetComponent<Wander>();
+
+            if (arrive == null || face == null)
+            {
+                Debug.LogWarning($"NPC {agent.name} no tiene Arrive o Face para moverse a punto.");
+                continue;
+            }
+
+            Vector3 offset = GetOrderedOffset(index, spacing);
+            Vector3 targetPoint = point + offset;
+            Agent individualTarget = Agent.CreateStaticVirtual(
+                targetPoint,
+                intRadius: 0.5f,
+                arrRadius: 1.5f,
+                ori: 0f,
+                paint: false
+            );
+
+            if (align != null) align.enabled = false;
+            if (wander != null) wander.enabled = false;
+            arrive.enabled = true;
+            face.enabled = true;
+            arrive.NewTarget(individualTarget);
+            face.NewTarget(individualTarget);
+            movedCount++;
+        }
+
+        Debug.Log($"{movedCount} NPC(s) distribuidos alrededor de: {point}");
+    }
+
+    private Vector3 GetOrderedOffset(int index, float spacing)
+    {
+        int remaining = index;
+        int ring = 1;
+
+        while (true)
+        {
+            int slotsInRing = ring * 6;
+            if (remaining < slotsInRing)
+            {
+                float angleStep = 360f / slotsInRing;
+                float angle = remaining * angleStep;
+                float radians = angle * Mathf.Deg2Rad;
+                float radius = ring * spacing;
+                return new Vector3(Mathf.Cos(radians) * radius, 0f, Mathf.Sin(radians) * radius);
+            }
+
+            remaining -= slotsInRing;
+            ring++;
         }
     }
 
@@ -213,7 +326,6 @@ public class FormationController : MonoBehaviour
 
     private void VerificarComponentesNPCs(AgentNPC[] agentes)
     {
-        Debug.Log("=== Verificando componentes de NPCs ===");
         foreach (AgentNPC agent in agentes)
         {
             Arrive arrive = agent.GetComponent<Arrive>();
