@@ -124,12 +124,12 @@ public class GridFormation : MonoBehaviour
         this.slots[i, j].npc = npc;
         
         // La orientación relativa es la orientación respecto al líder
-        this.slots[i, j].relativeOrientation = Bodi.MapToRange(angle - leaderAngle, Range.Degrees);
+        this.slots[i, j].relativeOrientation = angle;
         
         Agent v = this.slots[i, j].virtualAgent;
         
         // Actualizar el agente virtual con la orientación necesaria
-        v.UpdateVirtual(v.Position, ori: angle);
+        v.UpdateVirtual(v.Position, ori: leaderAngle + angle);
     }
 
     /// <summary>
@@ -164,6 +164,7 @@ public class GridFormation : MonoBehaviour
             {
                 // La posición del virtual agent asociado cambiará
                 this.slots[i, j].virtualAgent.Position = GridToPlane(i, j);
+                this.slots[i, j].virtualAgent.Orientation = leaderAngle + this.slots[i, j].relativeOrientation;
             }
         }
 
@@ -266,16 +267,14 @@ public class GridFormation : MonoBehaviour
 
                     if (arrive != null && align != null)
                     {
-                        if (wander != null)     { wander.enabled = false;   wander.weight = 0f; }
-                        if (flee != null)       { flee.enabled = false;     flee.weight = 0f; }
-                        if (separation != null) { separation.enabled = false; separation.weight = 0f; }
-                        if (face != null)       { face.enabled = false;     face.weight = 0f; }
-
-                        // Apagar también los que se usan durante el Wander
-                        WallAvoidance wall = currentNPC.GetComponent<WallAvoidance>();
-                        Seek seek = currentNPC.GetComponent<Seek>();
-                        if (wall != null) { wall.enabled = false; wall.weight = 0; }
-                        if (seek != null) { seek.enabled = false; seek.weight = 0; }
+                        // En formacion solo deben influir Arrive+Align.
+                        SteeringBehaviour[] allSteerings = currentNPC.GetComponents<SteeringBehaviour>();
+                        foreach (SteeringBehaviour sb in allSteerings)
+                        {
+                            if (sb == null) continue;
+                            sb.enabled = false;
+                            sb.weight = 0f;
+                        }
 
                         arrive.enabled = true;
                         align.enabled = true;
@@ -515,7 +514,6 @@ public class GridFormation : MonoBehaviour
 
                         // Primera celda libre encontrada → reasignar
                         slots[bi, bj].npc = slots[i, j].npc;
-                        slots[bi, bj].relativeOrientation = slots[i, j].relativeOrientation;
                         slots[i, j].npc = null;
                         Debug.Log($"{slots[bi, bj].npc.name} reasignado a ({bi},{bj})");
                         encontrado = true;
