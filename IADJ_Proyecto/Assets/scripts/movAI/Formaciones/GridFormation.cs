@@ -166,6 +166,10 @@ public class GridFormation : MonoBehaviour
                 this.slots[i, j].virtualAgent.Position = GridToPlane(i, j);
             }
         }
+
+        // Ahora que las celdas están en su nueva posición,
+        // comprobamos si alguna está bloqueada y reasignamos NPCs
+        ReasignarCeldasOcupadas();
     }
 
     /// <summary>
@@ -262,10 +266,17 @@ public class GridFormation : MonoBehaviour
 
                     if (arrive != null && align != null)
                     {
-                        if (wander != null) { wander.enabled = false; wander.weight = 0f; }
-                        if (flee != null) { flee.enabled = false; flee.weight = 0f; }
+                        if (wander != null)     { wander.enabled = false;   wander.weight = 0f; }
+                        if (flee != null)       { flee.enabled = false;     flee.weight = 0f; }
                         if (separation != null) { separation.enabled = false; separation.weight = 0f; }
-                        if (face != null) { face.enabled = false; face.weight = 0f; }
+                        if (face != null)       { face.enabled = false;     face.weight = 0f; }
+
+                        // Apagar también los que se usan durante el Wander
+                        WallAvoidance wall = currentNPC.GetComponent<WallAvoidance>();
+                        Seek seek = currentNPC.GetComponent<Seek>();
+                        if (wall != null) { wall.enabled = false; wall.weight = 0; }
+                        if (seek != null) { seek.enabled = false; seek.weight = 0; }
+
                         arrive.enabled = true;
                         align.enabled = true;
                         arrive.weight = 1.0f;
@@ -387,14 +398,39 @@ public class GridFormation : MonoBehaviour
                     }
                     else
                     {
-                        // Los demás siguen al líder
-                        Arrive arrive = slots[i, j].npc.GetComponent<Arrive>();
-                        Face face = slots[i, j].npc.GetComponent<Face>();
-                        Align align = slots[i, j].npc.GetComponent<Align>();
-                        
-                        if (arrive != null && face != null)
+                        // Los seguidores: Seek al líder (simple y directo)
+                        // + WallAvoidance bajo para no meterse en paredes
+                        // + Separation muy bajo para no pisarse entre sí
+                        AgentNPC follower = slots[i, j].npc;
+
+                        Seek seek           = follower.GetComponent<Seek>();
+                        WallAvoidance wall  = follower.GetComponent<WallAvoidance>();
+                        Arrive arrive       = follower.GetComponent<Arrive>();
+                        Align align         = follower.GetComponent<Align>();
+                        Face face           = follower.GetComponent<Face>();
+                        Flee flee           = follower.GetComponent<Flee>();
+                        Wander wander       = follower.GetComponent<Wander>();
+
+                        // Apagar todo lo que no usamos
+                        if (arrive != null) { arrive.enabled = false; arrive.weight = 0f; }
+                        if (align != null)  { align.enabled = false;  align.weight = 0f; }
+                        if (face != null)   { face.enabled = false;   face.weight = 0f; }
+                        if (flee != null)   { flee.enabled = false;   flee.weight = 0f; }
+                        if (wander != null) { wander.enabled = false; wander.weight = 0f; }
+
+                        // Seek al líder: peso principal
+                        if (seek != null)
                         {
-                            ConfigureFollowerLeaderFollowing(slots[i, j].npc);
+                            seek.enabled = true;
+                            seek.weight = 10;
+                            seek.NewTarget(leader);
+                        }
+
+                        // WallAvoidance: peso bajo, solo para no chocar con paredes
+                        if (wall != null)
+                        {
+                            wall.enabled = true;
+                            wall.weight = 4;
                         }
                     }
                 }
@@ -453,6 +489,67 @@ public class GridFormation : MonoBehaviour
                 flee.weight = 0f;
             }
         }
+    }
+
+    /// <summary>
+    /// Cada NPC comprueba si su celda está libre.
+    /// Si está ocupada, se mueve a la primera celda libre que encuentre.
+    /// </summary>
+    public void ReasignarCeldasOcupadas()
+    {
+        for (int i = 0; i < numColumns; i++)
+        {
+            for (int j = 0; j < numRows; j++)
+            {
+                if (slots[i, j].npc == null || slots[i, j].leaderCell) continue;
+                if (EsCeldaLibre(i, j)) continue;
+
+                // La celda está ocupada → buscar la primera celda libre en orden
+                bool encontrado = false;
+                for (int bi = 0; bi < numColumns && !encontrado; bi++)
+                {
+                    for (int bj = 0; bj < numRows && !encontrado; bj++)
+                    {
+                        if (slots[bi, bj].npc != null || slots[bi, bj].leaderCell) continue;
+                        if (!EsCeldaLibre(bi, bj)) continue;
+
+                        // Primera celda libre encontrada → reasignar
+                        slots[bi, bj].npc = slots[i, j].npc;
+                        slots[bi, bj].relativeOrientation = slots[i, j].relativeOrientation;
+                        slots[i, j].npc = null;
+                        Debug.Log($"{slots[bi, bj].npc.name} reasignado a ({bi},{bj})");
+                        encontrado = true;
+                    }
+                }
+
+                if (!encontrado)
+                    Debug.LogWarning($"Sin celda libre para {slots[i, j].npc.name}. Se queda donde está.");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Devuelve true si la celda (i,j) no tiene tag OCUPADO ni un NPC ajeno a la formación.
+    /// </summary>
+    private bool EsCeldaLibre(int i, int j)
+    {
+        // Elevamos el punto ligeramente sobre el suelo para no detectar el terreno
+        Vector3 pos = GridToPlane(i, j) + Vector3.up * 0.5f;
+        Collider[] cols = Physics.OverlapSphere(pos, cellSize * 0.9f);
+        foreach (Collider col in cols)
+        {
+            if (col.CompareTag("OCUPADO")) return false;
+            AgentNPC npc = col.GetComponent<AgentNPC>();
+            if (npc != null && !NpcEstaEnFormacion(npc)) return false;
+        }
+        return true;
+    }
+
+    private bool NpcEstaEnFormacion(AgentNPC npc)
+    {
+        foreach (Slot s in slots)
+            if (s.npc == npc) return true;
+        return false;
     }
 
     /// <summary>

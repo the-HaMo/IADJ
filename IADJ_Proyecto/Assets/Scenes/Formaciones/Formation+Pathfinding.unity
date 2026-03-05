@@ -238,7 +238,7 @@ GameObject:
   - component: {fileID: 99635615}
   m_Layer: 0
   m_Name: Obstaculos
-  m_TagString: Untagged
+  m_TagString: OCUPADO
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -340,6 +340,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
       insertIndex: -1
       addedObject: {fileID: 131088715}
+    - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 131088721}
+    - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 131088720}
   m_SourcePrefab: {fileID: 100100000, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
 --- !u!1 &131088710 stripped
 GameObject:
@@ -394,7 +400,7 @@ MonoBehaviour:
   _arrivalRadius: 3
   _interiorAngle: 3
   _exteriorAngle: 8
-  gizmos: 1
+  gizmos: 0
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
@@ -423,7 +429,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 131088710}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ed4bff723ecd0bb4eb4ab243134ed442, type: 3}
   m_Name: 
@@ -446,6 +452,37 @@ MonoBehaviour:
   weight: 8
   target: {fileID: 0}
   timeToTarget: 0.3
+--- !u!114 &131088720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 131088710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c7dfc68f41c5494483c84f2ba2fdac2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 8
+  target: {fileID: 0}
+--- !u!114 &131088721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 131088710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b2113864723995498f08aacaf5ab915, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 10
+  lookahead: 2
+  avoidDistance: 1.5
+  numWhiskers: 3
+  whiskerAngle: 30
 --- !u!1001 &132114691
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -457,6 +494,10 @@ PrefabInstance:
     - target: {fileID: 1000011035781986, guid: 3d609541b623cc24a85fcc89ee9fa9e6, type: 3}
       propertyPath: m_Name
       value: ColumnSquare_Small1 (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000011035781986, guid: 3d609541b623cc24a85fcc89ee9fa9e6, type: 3}
+      propertyPath: m_TagString
+      value: OCUPADO
       objectReference: {fileID: 0}
     - target: {fileID: 4000011095560932, guid: 3d609541b623cc24a85fcc89ee9fa9e6, type: 3}
       propertyPath: m_LocalScale.x
@@ -616,6 +657,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
       insertIndex: -1
       addedObject: {fileID: 354082759}
+    - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 354082765}
+    - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 354082764}
   m_SourcePrefab: {fileID: 100100000, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
 --- !u!1 &354082754 stripped
 GameObject:
@@ -670,7 +717,7 @@ MonoBehaviour:
   _arrivalRadius: 3
   _interiorAngle: 3
   _exteriorAngle: 8
-  gizmos: 1
+  gizmos: 0
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
@@ -722,6 +769,37 @@ MonoBehaviour:
   weight: 8
   target: {fileID: 0}
   timeToTarget: 0.3
+--- !u!114 &354082764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 354082754}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c7dfc68f41c5494483c84f2ba2fdac2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 8
+  target: {fileID: 0}
+--- !u!114 &354082765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 354082754}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b2113864723995498f08aacaf5ab915, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 10
+  lookahead: 2
+  avoidDistance: 1.5
+  numWhiskers: 3
+  whiskerAngle: 30
 --- !u!1001 &455173624
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -793,6 +871,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
       insertIndex: -1
       addedObject: {fileID: 455173630}
+    - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 455173636}
+    - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 455173635}
   m_SourcePrefab: {fileID: 100100000, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
 --- !u!1 &455173625 stripped
 GameObject:
@@ -847,7 +931,7 @@ MonoBehaviour:
   _arrivalRadius: 3
   _interiorAngle: 3
   _exteriorAngle: 8
-  gizmos: 1
+  gizmos: 0
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
@@ -899,6 +983,37 @@ MonoBehaviour:
   weight: 8
   target: {fileID: 0}
   timeToTarget: 0.3
+--- !u!114 &455173635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 455173625}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c7dfc68f41c5494483c84f2ba2fdac2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 8
+  target: {fileID: 0}
+--- !u!114 &455173636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 455173625}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b2113864723995498f08aacaf5ab915, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 10
+  lookahead: 2
+  avoidDistance: 1.5
+  numWhiskers: 3
+  whiskerAngle: 30
 --- !u!1 &462271076 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1000011035781986, guid: 3d609541b623cc24a85fcc89ee9fa9e6, type: 3}
@@ -941,6 +1056,10 @@ PrefabInstance:
     - target: {fileID: 1000010572747236, guid: f159a1b75fe800545869a115d68acdcd, type: 3}
       propertyPath: m_Name
       value: Ram_Sharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000010572747236, guid: f159a1b75fe800545869a115d68acdcd, type: 3}
+      propertyPath: m_TagString
+      value: OCUPADO
       objectReference: {fileID: 0}
     - target: {fileID: 4000011556832164, guid: f159a1b75fe800545869a115d68acdcd, type: 3}
       propertyPath: m_LocalScale.x
@@ -1079,6 +1198,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ColumnSquare_Medium
       objectReference: {fileID: 0}
+    - target: {fileID: 1000011894741232, guid: a0304cd1c89ed5f47b1c609d88092942, type: 3}
+      propertyPath: m_TagString
+      value: OCUPADO
+      objectReference: {fileID: 0}
     - target: {fileID: 4000010998463236, guid: a0304cd1c89ed5f47b1c609d88092942, type: 3}
       propertyPath: m_LocalScale.x
       value: 11.68
@@ -1182,6 +1305,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ColumnSquare_Small1
       objectReference: {fileID: 0}
+    - target: {fileID: 1000011035781986, guid: 3d609541b623cc24a85fcc89ee9fa9e6, type: 3}
+      propertyPath: m_TagString
+      value: OCUPADO
+      objectReference: {fileID: 0}
     - target: {fileID: 4000011095560932, guid: 3d609541b623cc24a85fcc89ee9fa9e6, type: 3}
       propertyPath: m_LocalScale.x
       value: 30
@@ -1249,6 +1376,10 @@ PrefabInstance:
     - target: {fileID: 1000010390738104, guid: 09c2ce84a75b3324fb5c689e5ac6ce7e, type: 3}
       propertyPath: m_Name
       value: Desert_Obelisk_Stand (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000010390738104, guid: 09c2ce84a75b3324fb5c689e5ac6ce7e, type: 3}
+      propertyPath: m_TagString
+      value: OCUPADO
       objectReference: {fileID: 0}
     - target: {fileID: 4000012333492518, guid: 09c2ce84a75b3324fb5c689e5ac6ce7e, type: 3}
       propertyPath: m_LocalScale.x
@@ -1375,6 +1506,14 @@ PrefabInstance:
     - target: {fileID: 1000010390738104, guid: 09c2ce84a75b3324fb5c689e5ac6ce7e, type: 3}
       propertyPath: m_Name
       value: Desert_Obelisk_Stand (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000010390738104, guid: 09c2ce84a75b3324fb5c689e5ac6ce7e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000010390738104, guid: 09c2ce84a75b3324fb5c689e5ac6ce7e, type: 3}
+      propertyPath: m_TagString
+      value: OCUPADO
       objectReference: {fileID: 0}
     - target: {fileID: 4000012333492518, guid: 09c2ce84a75b3324fb5c689e5ac6ce7e, type: 3}
       propertyPath: m_LocalScale.x
@@ -1530,6 +1669,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
       insertIndex: -1
       addedObject: {fileID: 786670261}
+    - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 786670266}
   m_SourcePrefab: {fileID: 100100000, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
 --- !u!1 &786670256 stripped
 GameObject:
@@ -1584,7 +1726,7 @@ MonoBehaviour:
   _arrivalRadius: 3
   _interiorAngle: 3
   _exteriorAngle: 8
-  gizmos: 1
+  gizmos: 0
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
@@ -1636,6 +1778,23 @@ MonoBehaviour:
   weight: 8
   target: {fileID: 0}
   timeToTarget: 0.3
+--- !u!114 &786670266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 786670256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b2113864723995498f08aacaf5ab915, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 10
+  lookahead: 2
+  avoidDistance: 1.5
+  numWhiskers: 3
+  whiskerAngle: 30
 --- !u!1001 &873819594
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1703,10 +1862,16 @@ PrefabInstance:
       addedObject: {fileID: 873819602}
     - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 873819606}
+    - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 873819601}
     - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
       insertIndex: -1
       addedObject: {fileID: 873819600}
+    - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 873819605}
   m_SourcePrefab: {fileID: 100100000, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
 --- !u!1 &873819595 stripped
 GameObject:
@@ -1761,7 +1926,7 @@ MonoBehaviour:
   _arrivalRadius: 3
   _interiorAngle: 3
   _exteriorAngle: 8
-  gizmos: 1
+  gizmos: 0
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
@@ -1813,6 +1978,37 @@ MonoBehaviour:
   weight: 8
   target: {fileID: 0}
   timeToTarget: 0.3
+--- !u!114 &873819605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 873819595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b2113864723995498f08aacaf5ab915, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 10
+  lookahead: 2
+  avoidDistance: 1.5
+  numWhiskers: 3
+  whiskerAngle: 30
+--- !u!114 &873819606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 873819595}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c7dfc68f41c5494483c84f2ba2fdac2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 8
+  target: {fileID: 0}
 --- !u!1 &932836604 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1000011035781986, guid: 3d609541b623cc24a85fcc89ee9fa9e6, type: 3}
@@ -1915,6 +2111,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
       insertIndex: -1
       addedObject: {fileID: 986271528}
+    - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 986271534}
+    - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 986271533}
   m_SourcePrefab: {fileID: 100100000, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
 --- !u!1 &986271523 stripped
 GameObject:
@@ -1969,7 +2171,7 @@ MonoBehaviour:
   _arrivalRadius: 3
   _interiorAngle: 3
   _exteriorAngle: 8
-  gizmos: 1
+  gizmos: 0
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
@@ -2021,6 +2223,37 @@ MonoBehaviour:
   weight: 8
   target: {fileID: 0}
   timeToTarget: 0.3
+--- !u!114 &986271533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 986271523}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c7dfc68f41c5494483c84f2ba2fdac2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 8
+  target: {fileID: 0}
+--- !u!114 &986271534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 986271523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b2113864723995498f08aacaf5ab915, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 10
+  lookahead: 2
+  avoidDistance: 1.5
+  numWhiskers: 3
+  whiskerAngle: 30
 --- !u!1 &1007944332 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1000011894741232, guid: a0304cd1c89ed5f47b1c609d88092942, type: 3}
@@ -2063,6 +2296,10 @@ PrefabInstance:
     - target: {fileID: 1000010390738104, guid: 09c2ce84a75b3324fb5c689e5ac6ce7e, type: 3}
       propertyPath: m_Name
       value: Desert_Obelisk_Stand (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000010390738104, guid: 09c2ce84a75b3324fb5c689e5ac6ce7e, type: 3}
+      propertyPath: m_TagString
+      value: OCUPADO
       objectReference: {fileID: 0}
     - target: {fileID: 4000012333492518, guid: 09c2ce84a75b3324fb5c689e5ac6ce7e, type: 3}
       propertyPath: m_LocalScale.x
@@ -2158,6 +2395,10 @@ PrefabInstance:
     - target: {fileID: 1000011894741232, guid: a0304cd1c89ed5f47b1c609d88092942, type: 3}
       propertyPath: m_Name
       value: ColumnSquare_Medium (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000011894741232, guid: a0304cd1c89ed5f47b1c609d88092942, type: 3}
+      propertyPath: m_TagString
+      value: OCUPADO
       objectReference: {fileID: 0}
     - target: {fileID: 4000010998463236, guid: a0304cd1c89ed5f47b1c609d88092942, type: 3}
       propertyPath: m_LocalScale.x
@@ -2290,6 +2531,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1312684173}
+    - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1312684179}
+    - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1312684178}
   m_SourcePrefab: {fileID: 100100000, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
 --- !u!1 &1312684168 stripped
 GameObject:
@@ -2344,7 +2591,7 @@ MonoBehaviour:
   _arrivalRadius: 3
   _interiorAngle: 3
   _exteriorAngle: 8
-  gizmos: 1
+  gizmos: 0
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
@@ -2396,6 +2643,37 @@ MonoBehaviour:
   weight: 8
   target: {fileID: 0}
   timeToTarget: 0.3
+--- !u!114 &1312684178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1312684168}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c7dfc68f41c5494483c84f2ba2fdac2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 8
+  target: {fileID: 0}
+--- !u!114 &1312684179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1312684168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b2113864723995498f08aacaf5ab915, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 10
+  lookahead: 2
+  avoidDistance: 1.5
+  numWhiskers: 3
+  whiskerAngle: 30
 --- !u!1001 &1365940031
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2407,6 +2685,14 @@ PrefabInstance:
     - target: {fileID: 1000010390738104, guid: 09c2ce84a75b3324fb5c689e5ac6ce7e, type: 3}
       propertyPath: m_Name
       value: Desert_Obelisk_Stand (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000010390738104, guid: 09c2ce84a75b3324fb5c689e5ac6ce7e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000010390738104, guid: 09c2ce84a75b3324fb5c689e5ac6ce7e, type: 3}
+      propertyPath: m_TagString
+      value: OCUPADO
       objectReference: {fileID: 0}
     - target: {fileID: 4000012333492518, guid: 09c2ce84a75b3324fb5c689e5ac6ce7e, type: 3}
       propertyPath: m_LocalScale.x
@@ -2627,6 +2913,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Desert_Obelisk_Stand (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 1000010390738104, guid: 09c2ce84a75b3324fb5c689e5ac6ce7e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000010390738104, guid: 09c2ce84a75b3324fb5c689e5ac6ce7e, type: 3}
+      propertyPath: m_TagString
+      value: OCUPADO
+      objectReference: {fileID: 0}
     - target: {fileID: 4000012333492518, guid: 09c2ce84a75b3324fb5c689e5ac6ce7e, type: 3}
       propertyPath: m_LocalScale.x
       value: 2
@@ -2721,6 +3015,10 @@ PrefabInstance:
     - target: {fileID: 1000010390738104, guid: 09c2ce84a75b3324fb5c689e5ac6ce7e, type: 3}
       propertyPath: m_Name
       value: Desert_Obelisk_Stand (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000010390738104, guid: 09c2ce84a75b3324fb5c689e5ac6ce7e, type: 3}
+      propertyPath: m_TagString
+      value: OCUPADO
       objectReference: {fileID: 0}
     - target: {fileID: 4000012333492518, guid: 09c2ce84a75b3324fb5c689e5ac6ce7e, type: 3}
       propertyPath: m_LocalScale.x
@@ -2876,6 +3174,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1587759124}
+    - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1587759130}
+    - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1587759129}
   m_SourcePrefab: {fileID: 100100000, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
 --- !u!1 &1587759119 stripped
 GameObject:
@@ -2930,7 +3234,7 @@ MonoBehaviour:
   _arrivalRadius: 3
   _interiorAngle: 3
   _exteriorAngle: 8
-  gizmos: 1
+  gizmos: 0
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
@@ -2982,6 +3286,37 @@ MonoBehaviour:
   weight: 8
   target: {fileID: 0}
   timeToTarget: 0.3
+--- !u!114 &1587759129
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1587759119}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c7dfc68f41c5494483c84f2ba2fdac2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 8
+  target: {fileID: 0}
+--- !u!114 &1587759130
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1587759119}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b2113864723995498f08aacaf5ab915, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 10
+  lookahead: 2
+  avoidDistance: 1.5
+  numWhiskers: 3
+  whiskerAngle: 30
 --- !u!1001 &1629215807
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2993,6 +3328,10 @@ PrefabInstance:
     - target: {fileID: 1000011035781986, guid: 3d609541b623cc24a85fcc89ee9fa9e6, type: 3}
       propertyPath: m_Name
       value: ColumnSquare_Small1 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000011035781986, guid: 3d609541b623cc24a85fcc89ee9fa9e6, type: 3}
+      propertyPath: m_TagString
+      value: OCUPADO
       objectReference: {fileID: 0}
     - target: {fileID: 4000011095560932, guid: 3d609541b623cc24a85fcc89ee9fa9e6, type: 3}
       propertyPath: m_LocalScale.x
@@ -3061,6 +3400,10 @@ PrefabInstance:
     - target: {fileID: 1000011035781986, guid: 3d609541b623cc24a85fcc89ee9fa9e6, type: 3}
       propertyPath: m_Name
       value: ColumnSquare_Small1 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000011035781986, guid: 3d609541b623cc24a85fcc89ee9fa9e6, type: 3}
+      propertyPath: m_TagString
+      value: OCUPADO
       objectReference: {fileID: 0}
     - target: {fileID: 4000011095560932, guid: 3d609541b623cc24a85fcc89ee9fa9e6, type: 3}
       propertyPath: m_LocalScale.x
@@ -3283,10 +3626,13 @@ PrefabInstance:
       addedObject: {fileID: 1833212951}
     - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1833212968}
+      addedObject: {fileID: 1833212973}
     - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1833212969}
+    - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1833212972}
   m_SourcePrefab: {fileID: 100100000, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
 --- !u!1 &1833212946 stripped
 GameObject:
@@ -3341,7 +3687,7 @@ MonoBehaviour:
   _arrivalRadius: 3
   _interiorAngle: 3
   _exteriorAngle: 8
-  gizmos: 1
+  gizmos: 0
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
@@ -3393,23 +3739,6 @@ MonoBehaviour:
   weight: 8
   target: {fileID: 0}
   timeToTarget: 0.3
---- !u!114 &1833212968
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1833212946}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b2113864723995498f08aacaf5ab915, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weight: 100
-  lookahead: 3
-  avoidDistance: 2.5
-  numWhiskers: 3
-  whiskerAngle: 30
 --- !u!114 &1833212969
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3423,10 +3752,41 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weight: 1
-  wanderOffset: 2.19
-  wanderRadius: 0.49
-  wanderRate: 0.53
+  wanderOffset: 3
+  wanderRadius: 4
+  wanderRate: 10
   showGizmos: 1
+--- !u!114 &1833212972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1833212946}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c7dfc68f41c5494483c84f2ba2fdac2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 8
+  target: {fileID: 0}
+--- !u!114 &1833212973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1833212946}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b2113864723995498f08aacaf5ab915, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 10
+  lookahead: 3
+  avoidDistance: 2.5
+  numWhiskers: 3
+  whiskerAngle: 30
 --- !u!1 &1855120838
 GameObject:
   m_ObjectHideFlags: 0
@@ -3473,6 +3833,10 @@ PrefabInstance:
     - target: {fileID: 1000010390738104, guid: 09c2ce84a75b3324fb5c689e5ac6ce7e, type: 3}
       propertyPath: m_Name
       value: Desert_Obelisk_Stand
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000010390738104, guid: 09c2ce84a75b3324fb5c689e5ac6ce7e, type: 3}
+      propertyPath: m_TagString
+      value: OCUPADO
       objectReference: {fileID: 0}
     - target: {fileID: 4000012333492518, guid: 09c2ce84a75b3324fb5c689e5ac6ce7e, type: 3}
       propertyPath: m_LocalScale.x
@@ -3537,6 +3901,10 @@ PrefabInstance:
     - target: {fileID: 1000010390738104, guid: 09c2ce84a75b3324fb5c689e5ac6ce7e, type: 3}
       propertyPath: m_Name
       value: Desert_Obelisk_Stand (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000010390738104, guid: 09c2ce84a75b3324fb5c689e5ac6ce7e, type: 3}
+      propertyPath: m_TagString
+      value: OCUPADO
       objectReference: {fileID: 0}
     - target: {fileID: 4000012333492518, guid: 09c2ce84a75b3324fb5c689e5ac6ce7e, type: 3}
       propertyPath: m_LocalScale.x

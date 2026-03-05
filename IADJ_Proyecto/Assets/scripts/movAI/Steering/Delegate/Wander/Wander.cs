@@ -26,7 +26,7 @@ public class Wander : SteeringBehaviour
 
     public override Steering GetSteering(AgentNPC agent){
         Steering steering = new Steering();
-        
+
         // 1. Calcular el objetivo para delegar a face
         
         // Actualizar la orientación del wander
@@ -64,7 +64,11 @@ public class Wander : SteeringBehaviour
         
         // 3. Aceleración lineal a tope en la dirección de la orientación
         steering.linear = agent.MaxAcceleration * agent.OrientationToVector(agent.Orientation);
-        
+
+        // Safety: si el resultado tiene NaN (atasco + orientación corrupta), no propagar
+        if (float.IsNaN(steering.linear.x) || float.IsNaN(steering.linear.z))
+            return new Steering();
+
         // Devolver el steering
         return steering;
     }

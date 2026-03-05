@@ -75,14 +75,12 @@ public class FormationController : MonoBehaviour
             return;
         }
 
-        // Obtener todos los agentes seleccionados
         AgentNPC[] allAgents = ObtenerAgentesSeleccionados();
-
         Debug.Log($"Intentando formar con {allAgents.Length} agentes seleccionados");
 
         if (allAgents.Length == 0)
         {
-            Debug.LogWarning("No hay agentes seleccionados. Selecciona NPCs primero (clic izquierdo o Shift+clic).");
+            Debug.LogWarning("No hay agentes seleccionados. Selecciona NPCs primero.");
             return;
         }
 
@@ -92,57 +90,52 @@ public class FormationController : MonoBehaviour
             return;
         }
 
-        // Si todavía no se ha creado el grid, crearlo y prepararlo
-        if (grid == null)
+        // Siempre reiniciar el grid al pulsar F para evitar slots sucios
+        if (grid != null)
         {
-            leader = allAgents[0];
-            
-            // Crear el patrón de formación según el tipo seleccionado
-            CreatePattern();
-
-            // Celda del líder en la formación específica
-            (int, int) leaderSlot = pattern.GetLeaderSlot();
-            float leaderAngle = pattern.GetAngle(0);
-
-            // Crear y preparar el grid
-            grid = gameObject.AddComponent<GridFormation>();
-            grid.CreateGridManager(cellSize, leader, leaderSlot.Item1, leaderSlot.Item2, leaderAngle, 4, 4);
-            
-            Debug.Log($"Formación creada con líder: {leader.name}");
+            grid.LiberarAgents();
+            Destroy(grid);
+            grid = null;
         }
 
-        // Mover el grid a la posición del líder si no está ahí
-        if (!grid.activated)
-        {
-            grid.MoveGrid(leader.Position);
-            grid.activated = true;
-        }
+        leader = allAgents[0];
+        CreatePattern();
 
+        (int, int) leaderSlot = pattern.GetLeaderSlot();
+        float leaderAngle = pattern.GetAngle(0);
+
+        grid = gameObject.AddComponent<GridFormation>();
+        grid.CreateGridManager(cellSize, leader, leaderSlot.Item1, leaderSlot.Item2, leaderAngle, 4, 4);
+        grid.activated = true;
+
+        // Colocar el grid en la posición del líder (sin reasignar aún, los slots están vacíos)
+        grid.gridPosition = leader.Position;
+        for (int ci = 0; ci < grid.numColumns; ci++)
+            for (int cj = 0; cj < grid.numRows; cj++)
+                grid.slots[ci, cj].virtualAgent.Position = grid.GridToPlane(ci, cj);
+
+        // Ahora vincular los agentes a sus celdas
         int i = 1;
-        // Añadir cada agente al grid (menos el líder que ya fue añadido)
         foreach (var agent in allAgents)
         {
             if (agent != leader && pattern.SupportAgent(i))
             {
-                // Celda que le corresponde en la formación específica
                 (int, int) cell = pattern.GetSlot(i);
                 float angle = pattern.GetAngle(i);
-                
-                // Conectar el NPC a la celda correspondiente
                 grid.LinkToSlot(cell.Item1, cell.Item2, angle, agent);
                 Debug.Log($"Agente {agent.name} vinculado a celda ({cell.Item1}, {cell.Item2})");
                 i++;
             }
         }
 
-        // Verificar componentes necesarios
-        VerificarComponentesNPCs(allAgents);
+        // Ahora sí: los slots tienen NPCs → comprobar celdas bloqueadas
+        grid.ReasignarCeldasOcupadas();
 
-        // Posicionar a todos los agentes usando Leader Following
+        VerificarComponentesNPCs(allAgents);
         grid.LeaderFollowing();
         waitingLeaderArrival = true;
         CheckLeaderArrival();
-        
+
         Debug.Log($"Formación activada con {i} agentes.");
     }
 
@@ -249,7 +242,7 @@ public class FormationController : MonoBehaviour
     private void MoveSelectedAgentsToPoint(AgentNPC[] selectedAgents, Vector3 point)
     {
         int movedCount = 0;
-        float spacing = Mathf.Max(1.2f, cellSize * 0.8f);
+        float spacing = Mathf.Max(1.2f, cellSize * 1.0f);
 
         for (int index = 0; index < selectedAgents.Length; index++)
         {
@@ -409,31 +402,14 @@ public class FormationController : MonoBehaviour
 
     public void FinishTimer()
     {
-        if (waiting)
+        if (waiting && (Environment.TickCount - inicio) > 10000)
         {
-            if ((Environment.TickCount - inicio) > 10000)
+            if (grid != null && !doingWander)
             {
-                if (doingWander)
-                {
-                    if (grid != null)
-                    {
-                        // Volver al punto original de formacion: el lider regresa y los demas lo siguen.
-                        grid.LeaderFollowing();
-                        waitingLeaderArrival = true;
-                        doingWander = false;
-                    }
-                }
-                else
-                {
-                    if (grid != null)
-                    {
-                        grid.LeaderWander();
-                        doingWander = true;
-                    }
-                }
-                
-                StartTimer();
+                grid.LeaderWander();
+                doingWander = true;
             }
+            waiting = false; // Parar el timer, no seguir ciclando
         }
     }
 
