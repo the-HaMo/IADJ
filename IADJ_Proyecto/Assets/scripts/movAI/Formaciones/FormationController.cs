@@ -86,6 +86,12 @@ public class FormationController : MonoBehaviour
             return;
         }
 
+        if (allAgents.Length < 6)
+        {
+            Debug.LogWarning("Se necesitan al menos 6 NPCs seleccionados para crear una formacion.");
+            return;
+        }
+
         // Si todavía no se ha creado el grid, crearlo y prepararlo
         if (grid == null)
         {
@@ -411,7 +417,9 @@ public class FormationController : MonoBehaviour
                 {
                     if (grid != null)
                     {
-                        grid.AgentsToCell();
+                        // Volver al punto original de formacion: el lider regresa y los demas lo siguen.
+                        grid.LeaderFollowing();
+                        waitingLeaderArrival = true;
                         doingWander = false;
                     }
                 }

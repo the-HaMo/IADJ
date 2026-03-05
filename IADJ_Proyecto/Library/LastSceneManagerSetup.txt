@@ -1,9 +1,5 @@
 sceneSetups:
-<<<<<<< HEAD
-- path: Assets/Scenes/Delegate/PathFollowing+Face+Wander.unity
-=======
-- path: Assets/Scenes/Arbitros.unity
->>>>>>> f07d22ee (Formaciones seleccion multiple hecho)
+- path: Assets/Scenes/Formaciones/Formation+Pathfinding.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0

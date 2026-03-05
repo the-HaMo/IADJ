@@ -214,9 +214,10 @@ public class GridFormation : MonoBehaviour
                     // Si es el líder, va hacia donde está el nuevo grid
                     if (slots[i, j].npc == leader)
                     {
+                        Wander w = currentNPC.GetComponent<Wander>();
                         Flee flee = currentNPC.GetComponent<Flee>();
                         Separation separation = currentNPC.GetComponent<Separation>();
-                        if (wander != null) { wander.enabled = false; wander.weight = 0f; }
+                        if (w != null) { w.enabled = false; w.weight = 0f; }
                         if (flee != null) { flee.enabled = false; flee.weight = 0f; }
                         if (separation != null) { separation.enabled = false; separation.weight = 0f; }
                         if (align != null) { align.enabled = false; align.weight = 0f; }
@@ -302,11 +303,17 @@ public class GridFormation : MonoBehaviour
                     Separation separation = slots[i, j].npc.GetComponent<Separation>();
                     
                     if (arrive != null) arrive.enabled = false;
+                    if (arrive != null) arrive.weight = 0f;
                     if (align != null) align.enabled = false;
+                    if (align != null) align.weight = 0f;
                     if (face != null) face.enabled = false;
+                    if (face != null) face.weight = 0f;
                     if (wander != null) wander.enabled = false;
+                    if (wander != null) wander.weight = 0f;
                     if (flee != null) flee.enabled = false;
+                    if (flee != null) flee.weight = 0f;
                     if (separation != null) separation.enabled = false;
+                    if (separation != null) separation.weight = 0f;
                     
                     slots[i, j].npc = null;
                 }
@@ -322,11 +329,17 @@ public class GridFormation : MonoBehaviour
                     Separation separation = leader.GetComponent<Separation>();
                     
                     if (arrive != null) arrive.enabled = false;
+                    if (arrive != null) arrive.weight = 0f;
                     if (align != null) align.enabled = false;
+                    if (align != null) align.weight = 0f;
                     if (face != null) face.enabled = false;
+                    if (face != null) face.weight = 0f;
                     if (wander != null) wander.enabled = false;
+                    if (wander != null) wander.weight = 0f;
                     if (flee != null) flee.enabled = false;
+                    if (flee != null) flee.weight = 0f;
                     if (separation != null) separation.enabled = false;
+                    if (separation != null) separation.weight = 0f;
                 }
             }
         }
@@ -353,13 +366,23 @@ public class GridFormation : MonoBehaviour
                         Flee flee = leader.GetComponent<Flee>();
                         Separation separation = leader.GetComponent<Separation>();
                         if (arrive != null) arrive.enabled = false;
+                        if (arrive != null) arrive.weight = 0f;
                         if (align != null) align.enabled = false;
+                        if (align != null) align.weight = 0f;
                         if (face != null) face.enabled = false;
+                        if (face != null) face.weight = 0f;
                         if (flee != null) flee.enabled = false;
+                        if (flee != null) flee.weight = 0f;
                         if (separation != null) separation.enabled = false;
+                        if (separation != null) separation.weight = 0f;
                         if (wander != null)
                         {
                             wander.enabled = true;
+                            wander.weight = 1.0f;
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"El lider {leader.name} no tiene componente Wander en Inspector.");
                         }
                     }
                     else
@@ -394,8 +417,8 @@ public class GridFormation : MonoBehaviour
             return;
         }
 
-        Flee flee = GetOrAddFlee(follower);
-        Separation separation = GetOrAddSeparation(follower);
+        Flee flee = follower.GetComponent<Flee>();
+        Separation separation = follower.GetComponent<Separation>();
 
         if (align != null) align.enabled = false;
         if (align != null) align.weight = 0f;
@@ -427,33 +450,9 @@ public class GridFormation : MonoBehaviour
             else
             {
                 flee.enabled = false;
+                flee.weight = 0f;
             }
         }
-    }
-
-    private Flee GetOrAddFlee(AgentNPC npc)
-    {
-        Flee flee = npc.GetComponent<Flee>();
-        if (flee == null)
-        {
-            flee = npc.gameObject.AddComponent<Flee>();
-            flee.enabled = false;
-        }
-        return flee;
-    }
-
-    private Separation GetOrAddSeparation(AgentNPC npc)
-    {
-        Separation separation = npc.GetComponent<Separation>();
-        if (separation == null)
-        {
-            separation = npc.gameObject.AddComponent<Separation>();
-            separation.desiredSeparation = Mathf.Max(1.4f, cellSize * 0.7f);
-            separation.decayCoefficient = 1.2f;
-            separation.maxNeighbours = 8;
-            separation.enabled = false;
-        }
-        return separation;
     }
 
     /// <summary>
