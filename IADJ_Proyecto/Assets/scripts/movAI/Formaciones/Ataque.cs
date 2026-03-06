@@ -10,17 +10,34 @@ public class Ataque : FormationPattern
 {
     public Ataque()
     {
-        // Celda del líder (adelante en el centro)
-        this.leaderSlot = (2, 1);
-        
-        // Celdas a usar por los NPCs (no se incluye la del líder)
-        // Disposición en cuña hacia adelante
-        validSlots = new[] { (1, 3), (2, 3), (3, 2), (2, 2), (1, 2), (0, 2), (1, 1), (2, 0), (1, 0) };
-        
-        // Orientación en cada celda (se incluye la del líder)
-        // Diferentes orientaciones para cumplir requisito de al menos 3 orientaciones distintas
-        relativeAngles = new[] { 0f, 30f, -30f, -30f, 0f, 0f, 30f, 0f, 60f, -60f };
-        
-        this.numAgents = 10; // Líder + 9 seguidores
+        // Ataque de 6 NPCs:
+        // - 4 delante
+        // - 2 detrás
+        // - el lider es el de atras a la izquierda.
+        this.leaderSlot = (1, 2);
+
+        // Orden de asignacion para los 5 seguidores:
+        // 4 del frente + 1 atras derecha.
+        validSlots = new[]
+        {
+            (0, 1), // frente izquierda
+            (1, 3), // frente centro-izquierda
+            (2, 3), // frente centro-derecha
+            (3, 1), // frente derecha
+            (2, 2)  // atras derecha
+        };
+
+        // [0] lider, [1..5] seguidores.
+        relativeAngles = new[]
+        {
+            180f,  // lider (atras izquierda) mirando hacia atras
+            -45f,   // frente izquierda mirando hacia su lado
+            0f,    // frente centro-izquierda
+            0f,    // frente centro-derecha
+            45f,  // frente derecha mirando hacia su lado
+            180f   // atras derecha mirando hacia atras
+        };
+
+        this.numAgents = 6; // Lider + 5 seguidores
     }
 }

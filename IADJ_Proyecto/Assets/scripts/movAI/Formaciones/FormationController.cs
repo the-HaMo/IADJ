@@ -106,11 +106,23 @@ public class FormationController : MonoBehaviour
         CreatePattern();
 
         (int, int) leaderSlot = pattern.GetLeaderSlot();
-        float leaderAngle = pattern.GetAngle(0);
+        float leaderRelativeAngle = pattern.GetAngle(0);
+
+        // El angulo base del grid debe mantenerse neutro para no rotar
+        // toda la formacion al cambiar solo la orientacion del lider.
+        float leaderAngle = 0f;
 
         grid = gameObject.AddComponent<GridFormation>();
         grid.CreateGridManager(cellSize, leader, leaderSlot.Item1, leaderSlot.Item2, leaderAngle, 4, 4);
         grid.activated = true;
+
+        // Aplicar la orientacion deseada del lider solo a su propia celda,
+        // sin afectar a la geometria global del grid.
+        grid.slots[leaderSlot.Item1, leaderSlot.Item2].relativeOrientation = leaderRelativeAngle;
+        grid.slots[leaderSlot.Item1, leaderSlot.Item2].virtualAgent.UpdateVirtual(
+            grid.slots[leaderSlot.Item1, leaderSlot.Item2].virtualAgent.Position,
+            ori: leaderAngle + leaderRelativeAngle
+        );
 
         // Colocar el grid en la posición del líder (sin reasignar aún, los slots están vacíos)
         grid.gridPosition = leader.Position;
@@ -161,6 +173,11 @@ public class FormationController : MonoBehaviour
             grid.LiberarAgents();
             Debug.Log("Formación disuelta.");
         }
+    }
+    // Añade esto a FormationController.cs
+    public FormationPattern GetPattern()
+    {
+        return pattern;
     }
 
     public void NotifyLeaderArrival()

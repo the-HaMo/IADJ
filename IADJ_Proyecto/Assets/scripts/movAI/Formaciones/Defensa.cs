@@ -10,17 +10,34 @@ public class Defensa : FormationPattern
 {
     public Defensa()
     {
-        // Celda del líder (protegido en el centro-atrás)
-        leaderSlot = (2, 3);
-        
-        // Celdas a usar por los NPCs (no se incluye la del líder)
-        // Disposición semicircular defensiva
-        validSlots = new[] { (1, 3), (3, 2), (0, 2), (3, 1), (0, 1), (2, 0), (1, 0) };
-        
-        // Orientación en cada celda (se incluye la del líder)
-        // Diferentes orientaciones mirando hacia afuera para defender
-        relativeAngles = new[] { 0f, 0f, 45f, -45f, 135f, -135f, 180f, 180f };
-        
-        this.numAgents = 8; // Líder + 7 defensores
+        // Defensa de 6 NPCs:
+        // - 4 delante
+        // - 2 detrás
+        // - el lider es el de atras a la izquierda.
+        this.leaderSlot = (1, 2);
+
+        // Orden de asignacion para los 5 seguidores:
+        // 4 del frente + 1 atras derecha.
+        validSlots = new[]
+        {
+            (0, 3), // frente izquierda
+            (1, 3), // frente centro-izquierda
+            (2, 3), // frente centro-derecha
+            (3, 3), // frente derecha
+            (2, 2)  // atras derecha
+        };
+
+        // [0] lider, [1..5] seguidores.
+        relativeAngles = new[]
+        {
+            180f,  // lider (atras izquierda) mirando hacia atras
+            -45f,   // frente izquierda mirando hacia su lado
+            0f,    // frente centro-izquierda
+            0f,    // frente centro-derecha
+            45f,  // frente derecha mirando hacia su lado
+            180f   // atras derecha mirando hacia atras
+        };
+
+        this.numAgents = 6; // Lider + 5 seguidores
     }
 }

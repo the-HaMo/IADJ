@@ -31,6 +31,7 @@ public struct Slot
 public class GridFormation : MonoBehaviour
 {
     private const float FOLLOWER_FLEE_DISTANCE = 1.2f;
+    [SerializeField] private bool debugReubicaciones = true;
 
     // Columnas del grid
     public int numColumns;
@@ -157,27 +158,79 @@ public class GridFormation : MonoBehaviour
     {
         this.gridPosition = newPosition;
         
-        // Actualizar la posición de todos los agentes virtuales
+        // 1. ANTES de mover, recuperamos la lista de seguidores actuales.
+        // Luego reconstruiremos la asignacion desde el patron para evitar
+        // arrastrar la celda reasignada del movimiento anterior.
+        List<AgentNPC> listaTemporalNPCs = new List<AgentNPC>();
+
+        // Guardar seguidores actuales (no lider)
         for (int i = 0; i < numColumns; i++)
         {
             for (int j = 0; j < numRows; j++)
             {
-                // La posición del virtual agent asociado cambiará
+                if (slots[i, j].npc != null && slots[i, j].npc != leader)
+                {
+                    listaTemporalNPCs.Add(slots[i, j].npc);
+                }
+
+                // Limpiar todas las asignaciones previas para reconstruir desde patron
+                slots[i, j].npc = null;
+                slots[i, j].leaderCell = false;
+            }
+        }
+
+        // 2. Restaurar asignacion base del patron (incluido lider en su slot original)
+        if (formationController != null)
+        {
+            FormationPattern activePattern = formationController.GetPattern();
+            (int leaderI, int leaderJ) = activePattern.GetLeaderSlot();
+
+            slots[leaderI, leaderJ].npc = leader;
+            slots[leaderI, leaderJ].leaderCell = true;
+            slots[leaderI, leaderJ].relativeOrientation = activePattern.GetAngle(0);
+
+            // Re-asignamos los seguidores en los slots válidos del patrón original
+            var validSlots = activePattern.GetValidSlots();
+            for (int k = 0; k < listaTemporalNPCs.Count && k < validSlots.Length; k++)
+            {
+                int f = validSlots[k].Item1;
+                int c = validSlots[k].Item2;
+                slots[f, c].npc = listaTemporalNPCs[k];
+                // Importante: restaurar el ángulo relativo original del slot del patrón
+                slots[f, c].relativeOrientation = activePattern.GetAngle(k + 1);
+            }
+        }
+
+        // 3. Ahora actualizamos las posiciones de los virtual agents como antes
+        for (int i = 0; i < numColumns; i++)
+        {
+            for (int j = 0; j < numRows; j++)
+            {
                 this.slots[i, j].virtualAgent.Position = GridToPlane(i, j);
                 this.slots[i, j].virtualAgent.Orientation = leaderAngle + this.slots[i, j].relativeOrientation;
             }
         }
 
-        // Ahora que las celdas están en su nueva posición,
-        // comprobamos si alguna está bloqueada y reasignamos NPCs
+        // 4. Finalmente, si el nuevo punto TIENE obstáculos, la reasignación actuará DE NUEVO
+        // pero partiendo de la formación ideal, no de la formación "rota" anterior.
         ReasignarCeldasOcupadas();
     }
-
     /// <summary>
     /// Devuelve la celda del líder
     /// </summary>
     public Slot GetLeaderSlot()
     {
+        // Prioridad: la celda donde realmente esta el objeto lider.
+        for (int i = 0; i < numColumns; i++)
+        {
+            for (int j = 0; j < numRows; j++)
+            {
+                if (slots[i, j].npc == leader)
+                    return slots[i, j];
+            }
+        }
+
+        // Fallback por flag (si hubo un estado intermedio sin referencia directa).
         for (int i = 0; i < numColumns; i++)
         {
             for (int j = 0; j < numRows; j++)
@@ -186,6 +239,8 @@ public class GridFormation : MonoBehaviour
                     return slots[i, j];
             }
         }
+
+        // Ultimo fallback seguro.
         return slots[0, 0];
     }
 
@@ -203,6 +258,7 @@ public class GridFormation : MonoBehaviour
                 {
                     Agent leaderVirtual = GetLeaderSlot().virtualAgent;
                     AgentNPC currentNPC = slots[i, j].npc;
+                    Agent slotVirtual = slots[i, j].virtualAgent;
 
                     // Obtener componentes de steering
                     Arrive arrive = currentNPC.GetComponent<Arrive>();
@@ -231,10 +287,22 @@ public class GridFormation : MonoBehaviour
                         arrive.NewTarget(leaderVirtual);
                         face.NewTarget(leaderVirtual);
                     }
-                    // Si es otro NPC, persigue al líder
+                    // Si es seguidor, debe ir a SU slot del patron.
+                    // Asi, sin obstaculos, la forma se mantiene estable en cualquier punto.
                     else
                     {
-                        ConfigureFollowerLeaderFollowing(currentNPC);
+                        Flee flee = currentNPC.GetComponent<Flee>();
+                        Separation separation = currentNPC.GetComponent<Separation>();
+
+                        if (align != null) align.enabled = false;
+                        if (wander != null) wander.enabled = false;
+                        if (flee != null) flee.enabled = false;
+                        if (separation != null) separation.enabled = false;
+
+                        arrive.enabled = true;
+                        face.enabled = true;
+                        arrive.NewTarget(slotVirtual);
+                        face.NewTarget(slotVirtual);
                     }
                 }
             }
@@ -460,6 +528,9 @@ public class GridFormation : MonoBehaviour
     /// </summary>
     public void ReasignarCeldasOcupadas()
     {
+        int totalReubicados = 0;
+        List<string> detalleReubicaciones = debugReubicaciones ? new List<string>() : null;
+
         for (int i = 0; i < numColumns; i++)
         {
             for (int j = 0; j < numRows; j++)
@@ -469,7 +540,6 @@ public class GridFormation : MonoBehaviour
 
                 // La celda está bloqueada → buscar la primera celda libre
                 AgentNPC npcAReasignar     = slots[i, j].npc;
-                float orientacionOriginal  = slots[i, j].relativeOrientation;
                 bool esLider               = slots[i, j].leaderCell;
                 bool encontrado            = false;
 
@@ -483,14 +553,17 @@ public class GridFormation : MonoBehaviour
 
                         // Reasignar el NPC a la nueva celda
                         slots[bi, bj].npc                 = npcAReasignar;
-                        slots[bi, bj].relativeOrientation = orientacionOriginal;
                         // Si es el líder, transferir también el flag leaderCell
                         slots[bi, bj].leaderCell          = esLider;
+
+                        // Mantener orientacion de la celda destino (patron),
+                        // para que la formacion no arrastre orientaciones anteriores.
+                        float orientacionDestino = slots[bi, bj].relativeOrientation;
 
                         // Actualizar el virtualAgent de la nueva celda con la orientación correcta
                         slots[bi, bj].virtualAgent.UpdateVirtual(
                             slots[bi, bj].virtualAgent.Position,
-                            ori: leaderAngle + orientacionOriginal
+                            ori: leaderAngle + orientacionDestino
                         );
 
                         // Limpiar la celda original
@@ -498,7 +571,9 @@ public class GridFormation : MonoBehaviour
                         slots[i, j].leaderCell = false;
 
                         string quien = esLider ? "LÍDER" : npcAReasignar.name;
-                        Debug.Log($"{quien} reasignado de ({i},{j}) a ({bi},{bj}) por celda bloqueada.");
+                        totalReubicados++;
+                        if (debugReubicaciones)
+                            detalleReubicaciones.Add($"{quien}: ({i},{j}) -> ({bi},{bj})");
                         encontrado = true;
                     }
                 }
@@ -509,6 +584,14 @@ public class GridFormation : MonoBehaviour
                     Debug.LogWarning($"Sin celda libre para {quien}. Se queda en ({i},{j}) aunque esté bloqueada.");
                 }
             }
+        }
+
+        if (debugReubicaciones && totalReubicados > 0)
+        {
+            Debug.LogWarning(
+                $"Reubicaciones por obstaculos: {totalReubicados}\n" +
+                string.Join("\n", detalleReubicaciones)
+            );
         }
     }
 
