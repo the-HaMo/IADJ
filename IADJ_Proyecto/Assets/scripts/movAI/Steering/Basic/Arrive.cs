@@ -7,7 +7,7 @@ public class Arrive : SteeringBehaviour
 
     // Declara las variables que necesites para este SteeringBehaviour
     public Agent target;
-    public float timeToTarget = 0.1f;
+    public float timeToTarget;
     private bool isArriving = false;
     
     void Start()

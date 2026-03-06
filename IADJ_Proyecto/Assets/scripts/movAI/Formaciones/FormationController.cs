@@ -91,6 +91,10 @@ public class FormationController : MonoBehaviour
         }
 
         // Siempre reiniciar el grid al pulsar F para evitar slots sucios
+        // y resetear los flags de timer para que la nueva formación pueda romperse después de 10s
+        doingWander = false;
+        waiting = false;
+
         if (grid != null)
         {
             grid.LiberarAgents();
@@ -409,7 +413,7 @@ public class FormationController : MonoBehaviour
                 grid.LeaderWander();
                 doingWander = true;
             }
-            waiting = false; // Parar el timer, no seguir ciclando
+            waiting = false;
         }
     }
 

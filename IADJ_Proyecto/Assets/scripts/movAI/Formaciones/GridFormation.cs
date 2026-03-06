@@ -222,14 +222,12 @@ public class GridFormation : MonoBehaviour
                         Wander w = currentNPC.GetComponent<Wander>();
                         Flee flee = currentNPC.GetComponent<Flee>();
                         Separation separation = currentNPC.GetComponent<Separation>();
-                        if (w != null) { w.enabled = false; w.weight = 0f; }
-                        if (flee != null) { flee.enabled = false; flee.weight = 0f; }
-                        if (separation != null) { separation.enabled = false; separation.weight = 0f; }
-                        if (align != null) { align.enabled = false; align.weight = 0f; }
+                        if (w != null) w.enabled = false;
+                        if (flee != null) flee.enabled = false;
+                        if (separation != null) separation.enabled = false;
+                        if (align != null) align.enabled = false;
                         arrive.enabled = true;
                         face.enabled = true;
-                        arrive.weight = 1.0f;
-                        face.weight = 1.2f;
                         arrive.NewTarget(leaderVirtual);
                         face.NewTarget(leaderVirtual);
                     }
@@ -246,43 +244,49 @@ public class GridFormation : MonoBehaviour
     /// <summary>
     /// Cuando el líder ha llegado a la nueva posición del grid.
     /// Esta función hace que cada NPC vaya a su celda correspondiente y se orienten.
+    /// Antes de enviarlos, vuelve a chequear celdas bloqueadas (el estado puede haber
+    /// cambiado desde que se llamó a MoveGrid/Formar).
     /// </summary>
     public void AgentsToCell()
     {
+        // Rechequear celdas bloqueadas justo antes de que los NPCs partan a sus destinos.
+        // Esto cubre el caso en que un objeto con tag OCUPADO esté exactamente en la posición
+        // final de la celda, no en la posición inicial cuando se hizo F o clic derecho.
+        ReasignarCeldasOcupadas();
+
         for (int i = 0; i < numColumns; i++)
         {
             for (int j = 0; j < numRows; j++)
             {
-                if (slots[i, j].npc != null)
+                if (slots[i, j].npc == null) continue;
+
+                AgentNPC currentNPC = slots[i, j].npc;
+
+                // Obtener componentes
+                Arrive arrive = currentNPC.GetComponent<Arrive>();
+                Align align   = currentNPC.GetComponent<Align>();
+
+                if (arrive != null && align != null)
                 {
-                    AgentNPC currentNPC = slots[i, j].npc;
-                    
-                    // Obtener componentes
-                    Arrive arrive = currentNPC.GetComponent<Arrive>();
-                    Align align = currentNPC.GetComponent<Align>();
-                    Face face = currentNPC.GetComponent<Face>();
-                    Wander wander = currentNPC.GetComponent<Wander>();
-                    Flee flee = currentNPC.GetComponent<Flee>();
-                    Separation separation = currentNPC.GetComponent<Separation>();
-
-                    if (arrive != null && align != null)
+                    // En formación solo deben influir Arrive + Align.
+                    SteeringBehaviour[] allSteerings = currentNPC.GetComponents<SteeringBehaviour>();
+                    foreach (SteeringBehaviour sb in allSteerings)
                     {
-                        // En formacion solo deben influir Arrive+Align.
-                        SteeringBehaviour[] allSteerings = currentNPC.GetComponents<SteeringBehaviour>();
-                        foreach (SteeringBehaviour sb in allSteerings)
-                        {
-                            if (sb == null) continue;
-                            sb.enabled = false;
-                            sb.weight = 0f;
-                        }
-
-                        arrive.enabled = true;
-                        align.enabled = true;
-                        arrive.weight = 1.0f;
-                        align.weight = 1.0f;
-                        arrive.NewTarget(slots[i, j].virtualAgent);
-                        align.NewTarget(slots[i, j].virtualAgent);
+                        if (sb == null) continue;
+                        sb.enabled = false;
                     }
+
+                    arrive.enabled = true;
+                    align.enabled  = true;
+
+                    // Usamos el virtualAgent de la celda que tiene asignada el NPC
+                    // DESPUÉS de la reasignación (slots[i,j] ya es la celda correcta).
+                    arrive.NewTarget(slots[i, j].virtualAgent);
+                    align.NewTarget(slots[i, j].virtualAgent);
+                }
+                else
+                {
+                    Debug.LogWarning($"NPC {currentNPC.name} no tiene Arrive o Align necesarios para ir a celda.");
                 }
             }
         }
@@ -313,17 +317,11 @@ public class GridFormation : MonoBehaviour
                     Separation separation = slots[i, j].npc.GetComponent<Separation>();
                     
                     if (arrive != null) arrive.enabled = false;
-                    if (arrive != null) arrive.weight = 0f;
                     if (align != null) align.enabled = false;
-                    if (align != null) align.weight = 0f;
                     if (face != null) face.enabled = false;
-                    if (face != null) face.weight = 0f;
                     if (wander != null) wander.enabled = false;
-                    if (wander != null) wander.weight = 0f;
                     if (flee != null) flee.enabled = false;
-                    if (flee != null) flee.weight = 0f;
                     if (separation != null) separation.enabled = false;
-                    if (separation != null) separation.weight = 0f;
                     
                     slots[i, j].npc = null;
                 }
@@ -339,17 +337,11 @@ public class GridFormation : MonoBehaviour
                     Separation separation = leader.GetComponent<Separation>();
                     
                     if (arrive != null) arrive.enabled = false;
-                    if (arrive != null) arrive.weight = 0f;
                     if (align != null) align.enabled = false;
-                    if (align != null) align.weight = 0f;
                     if (face != null) face.enabled = false;
-                    if (face != null) face.weight = 0f;
                     if (wander != null) wander.enabled = false;
-                    if (wander != null) wander.weight = 0f;
                     if (flee != null) flee.enabled = false;
-                    if (flee != null) flee.weight = 0f;
                     if (separation != null) separation.enabled = false;
-                    if (separation != null) separation.weight = 0f;
                 }
             }
         }
@@ -375,25 +367,16 @@ public class GridFormation : MonoBehaviour
                         Face face = leader.GetComponent<Face>();
                         Flee flee = leader.GetComponent<Flee>();
                         Separation separation = leader.GetComponent<Separation>();
+                        WallAvoidance wallAvoidance = leader.GetComponent<WallAvoidance>();
                         if (arrive != null) arrive.enabled = false;
-                        if (arrive != null) arrive.weight = 0f;
                         if (align != null) align.enabled = false;
-                        if (align != null) align.weight = 0f;
                         if (face != null) face.enabled = false;
-                        if (face != null) face.weight = 0f;
                         if (flee != null) flee.enabled = false;
-                        if (flee != null) flee.weight = 0f;
                         if (separation != null) separation.enabled = false;
-                        if (separation != null) separation.weight = 0f;
-                        if (wander != null)
-                        {
-                            wander.enabled = true;
-                            wander.weight = 1.0f;
-                        }
-                        else
-                        {
-                            Debug.LogWarning($"El lider {leader.name} no tiene componente Wander en Inspector.");
-                        }
+                        if (wander != null) wander.enabled = true;
+                        else Debug.LogWarning($"El líder {leader.name} no tiene Wander en el Inspector.");
+                        if (wallAvoidance != null) wallAvoidance.enabled = true;
+                        else Debug.LogWarning($"El líder {leader.name} no tiene WallAvoidance en el Inspector.");
                     }
                     else
                     {
@@ -411,26 +394,14 @@ public class GridFormation : MonoBehaviour
                         Wander wander       = follower.GetComponent<Wander>();
 
                         // Apagar todo lo que no usamos
-                        if (arrive != null) { arrive.enabled = false; arrive.weight = 0f; }
-                        if (align != null)  { align.enabled = false;  align.weight = 0f; }
-                        if (face != null)   { face.enabled = false;   face.weight = 0f; }
-                        if (flee != null)   { flee.enabled = false;   flee.weight = 0f; }
-                        if (wander != null) { wander.enabled = false; wander.weight = 0f; }
+                        if (arrive != null) arrive.enabled = false;
+                        if (align != null)  align.enabled = false;
+                        if (face != null)   face.enabled = false;
+                        if (flee != null)   flee.enabled = false;
+                        if (wander != null) wander.enabled = false;
 
-                        // Seek al líder: peso principal
-                        if (seek != null)
-                        {
-                            seek.enabled = true;
-                            seek.weight = 10;
-                            seek.NewTarget(leader);
-                        }
-
-                        // WallAvoidance: peso bajo, solo para no chocar con paredes
-                        if (wall != null)
-                        {
-                            wall.enabled = true;
-                            wall.weight = 4;
-                        }
+                        if (seek != null) { seek.enabled = true; seek.NewTarget(leader); }
+                        if (wall != null)  wall.enabled = true;
                     }
                 }
             }
@@ -439,6 +410,7 @@ public class GridFormation : MonoBehaviour
         if (formationController != null)
             formationController.StartTimer();
     }
+
 
     private void ConfigureFollowerLeaderFollowing(AgentNPC follower)
     {
@@ -456,22 +428,14 @@ public class GridFormation : MonoBehaviour
         Separation separation = follower.GetComponent<Separation>();
 
         if (align != null) align.enabled = false;
-        if (align != null) align.weight = 0f;
         if (wander != null) wander.enabled = false;
-        if (wander != null) wander.weight = 0f;
 
         arrive.enabled = true;
         face.enabled = true;
-        arrive.weight = 1.0f;
-        face.weight = 1.4f;
         arrive.NewTarget(leader);
         face.NewTarget(leader);
 
-        if (separation != null)
-        {
-            separation.enabled = true;
-            separation.weight = 0.9f;
-        }
+        if (separation != null) separation.enabled = true;
 
         if (flee != null)
         {
@@ -479,20 +443,20 @@ public class GridFormation : MonoBehaviour
             if (distanceToLeader < FOLLOWER_FLEE_DISTANCE)
             {
                 flee.enabled = true;
-                flee.weight = 1.2f;
                 flee.NewTarget(leader);
             }
             else
             {
                 flee.enabled = false;
-                flee.weight = 0f;
             }
         }
     }
 
     /// <summary>
-    /// Cada NPC comprueba si su celda está libre.
-    /// Si está ocupada, se mueve a la primera celda libre que encuentre.
+    /// Cada NPC (incluido el líder) comprueba si su celda de destino está libre
+    /// (tag OCUPADO u obstáculo). Si está bloqueada, se reasigna a la primera celda
+    /// libre encontrada. Para el líder, el flag leaderCell se transfiere también a la
+    /// nueva celda para que el sistema siga reconociéndolo como líder.
     /// </summary>
     public void ReasignarCeldasOcupadas()
     {
@@ -500,28 +464,50 @@ public class GridFormation : MonoBehaviour
         {
             for (int j = 0; j < numRows; j++)
             {
-                if (slots[i, j].npc == null || slots[i, j].leaderCell) continue;
-                if (EsCeldaLibre(i, j)) continue;
+                if (slots[i, j].npc == null) continue;   // celda vacía → ignorar
+                if (EsCeldaLibre(i, j)) continue;         // celda libre → nada que hacer
 
-                // La celda está ocupada → buscar la primera celda libre en orden
-                bool encontrado = false;
+                // La celda está bloqueada → buscar la primera celda libre
+                AgentNPC npcAReasignar     = slots[i, j].npc;
+                float orientacionOriginal  = slots[i, j].relativeOrientation;
+                bool esLider               = slots[i, j].leaderCell;
+                bool encontrado            = false;
+
                 for (int bi = 0; bi < numColumns && !encontrado; bi++)
                 {
                     for (int bj = 0; bj < numRows && !encontrado; bj++)
                     {
-                        if (slots[bi, bj].npc != null || slots[bi, bj].leaderCell) continue;
+                        // La celda destino debe estar vacía y sin obstáculo
+                        if (slots[bi, bj].npc != null) continue;
                         if (!EsCeldaLibre(bi, bj)) continue;
 
-                        // Primera celda libre encontrada → reasignar
-                        slots[bi, bj].npc = slots[i, j].npc;
-                        slots[i, j].npc = null;
-                        Debug.Log($"{slots[bi, bj].npc.name} reasignado a ({bi},{bj})");
+                        // Reasignar el NPC a la nueva celda
+                        slots[bi, bj].npc                 = npcAReasignar;
+                        slots[bi, bj].relativeOrientation = orientacionOriginal;
+                        // Si es el líder, transferir también el flag leaderCell
+                        slots[bi, bj].leaderCell          = esLider;
+
+                        // Actualizar el virtualAgent de la nueva celda con la orientación correcta
+                        slots[bi, bj].virtualAgent.UpdateVirtual(
+                            slots[bi, bj].virtualAgent.Position,
+                            ori: leaderAngle + orientacionOriginal
+                        );
+
+                        // Limpiar la celda original
+                        slots[i, j].npc        = null;
+                        slots[i, j].leaderCell = false;
+
+                        string quien = esLider ? "LÍDER" : npcAReasignar.name;
+                        Debug.Log($"{quien} reasignado de ({i},{j}) a ({bi},{bj}) por celda bloqueada.");
                         encontrado = true;
                     }
                 }
 
                 if (!encontrado)
-                    Debug.LogWarning($"Sin celda libre para {slots[i, j].npc.name}. Se queda donde está.");
+                {
+                    string quien = esLider ? "LÍDER" : npcAReasignar.name;
+                    Debug.LogWarning($"Sin celda libre para {quien}. Se queda en ({i},{j}) aunque esté bloqueada.");
+                }
             }
         }
     }
