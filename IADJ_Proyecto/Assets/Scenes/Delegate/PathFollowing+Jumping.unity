@@ -887,7 +887,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mass: 1
-  _maxSpeed: 5
+  _maxSpeed: 4
   _maxRotation: 120
   _maxAcceleration: 10
   _maxAngularAcc: 200
@@ -931,7 +931,7 @@ MonoBehaviour:
     customJumpSpeed: 0
     hasBeenUsed: 0
   maxYVelocity: 10
-  maxSpeed: 5
+  maxSpeed: 10
   customGravity: 0
   landingTolerance: 1
   airborneHeight: 1
