@@ -28,14 +28,10 @@ public class Leave : SteeringBehaviour
         Steering steer = new Steering();
         float distance = (agent.Position - target.Position).magnitude;
 
-        // Si el agente ya está suficientemente lejos del objetivo, frena activamente
         if (distance >= escapeRadius)
         {
-            // Aplicamos fuerza de frenado contraria a la velocidad actual (igual que Arrive)
-            steer.linear = -agent.Velocity / Time.deltaTime;
-            steer.linear = Vector3.ClampMagnitude(steer.linear, agent.MaxAcceleration);
-            steer.angular = 0f;
-            return steer;
+            // Devuelve un Steering vacío para no interferir con otros comportamientos como Wander
+            return new Steering();
         }
 
         // Si todavía está dentro del radio de escape, huye del objetivo (igual que Flee)
