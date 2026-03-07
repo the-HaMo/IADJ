@@ -74,7 +74,7 @@
     \vspace{0.3cm}
     {\normalsize Mohammed Amrou Labied Nasser, 49857930W\par}
     \vspace{0.15cm}
-    {\normalsize Sergio García García, \par}
+    {\normalsize Sergio García García, 49308323A\par}
     \vspace{0.15cm}
     {\normalsize Diego Sergio Ballesta Gonzaléz de la Higuera, - \par}
     
@@ -169,50 +169,79 @@ Scenes/
 \section{Steering básicos acelerados}
 \subsection{Seek}
 \subsubsection{Introducción}
-\subsubsection{Implementación}
+\subsubsection{Implementación y Parametrización}
 \subsubsection{Ejemplo de Uso}
 
 \subsection{Flee}
 \subsubsection{Introducción}
-\subsubsection{Implementación}
+\subsubsection{Implementación y Parametrización}
 \subsubsection{Ejemplo de Uso}
 
 \subsection{Arrive}
 \subsubsection{Introducción}
-\subsubsection{Implementación}
+\subsubsection{Implementación y Parametrización}
 \subsubsection{Ejemplo de Uso}
 
 \subsection{Leave}SergioGarcia
 \subsubsection{Introducción}
-\subsubsection{Implementación}
+\subsubsection{Implementación y Parametrización}
 \subsubsection{Ejemplo de Uso}
 
 \subsection{Align}
 \subsubsection{Introducción}
-\subsubsection{Implementación}
+\subsubsection{Implementación y Parametrización}
 \subsubsection{Ejemplo de Uso}
 
 \subsection{Anti-Align}
 \subsubsection{Introducción}
-\subsubsection{Implementación}
+\subsubsection{Implementación y Parametrización}
 \subsubsection{Ejemplo de Uso}
 
 \section{Steering Delegado}
 \subsection{Face}
 \subsubsection{Introducción}
-ESPACIO
-\subsubsection{Implementación}
+El comportamiento de \textbf{Face} tiene como objetivo lograr que el agente gire sobre s\'i mismo hasta mirar directamente hacia el objetivo. Resulta fundamental para que las interacciones entre entidades sean creíbles, permitiendo, por ejemplo, que un NPC se gire a mirar al jugador cuando tiene que interactuar con el, o que un enemigo apunte visualmente hacia su presa antes de perseguirla. 
+
+\subsubsection{Implementación y Parametrización}
+Face consta del calculo geométrico del angulo necesario para mirar hacia un punto en el espacio usando los siguientes parámetros:
+
+\begin{itemize}
+    \item \textbf{target}: El objetivo hacia el cual el bot debe rotar para mirarlo de frente.
+    \item \textbf{timeToTarget}: El tiempo en segundos en el que el NPC intentar\'a alcanzar la velocidad de rotación necesaria. Funciona como un suavizador del movimiento.
+\end{itemize}
+\\
+En la practica, el script de Face se encarga de calcular la rotación que necesita hacer el NPC para mirar a su objetivo. Una vez se haya calculado esta orientación, el comportamiento no realiza un giro brusco sobre si mismo, sino que calcula el camino mas corto a recorrer, lo que genera un movimiento mas realista y fluido.
+\\
 \subsubsection{Ejemplo de Uso}
+En este proyecto, hemos implementado el comportamiento de Face en escenarios donde se necesita precisión visual o dirigir la atención del personaje. Por ejemplo, en la escena \texttt{Delegate/PathFollowing+Face+Wander.unity}, se utiliza \textbf{Face} como una funcionalidad diseñada para conseguir que el NPC siempre fije la mirada en un punto de interés especifico.
+
+Como se puede apreciar en la Figura \ref{fig:face_direccion}, el funcionamiento practico es muy sencillo y directo. Al asignar otro objeto o personaje en el parámetro \texttt{Target} del Inspector, el agente evalúa constantemente su posición. Mediante el sistema de pesos del script, se puede compaginar la ejecución simultanea del comportamiento Face con otras acciones como \textit{PathFollowing}, como se muestra en el ejemplo a continuación:
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/face_direccion.png} 
+    \caption{NPC orienta su rotación hacia un \textit{Target} en escena mientras sigue una ruta.}
+    \label{fig:face_direccion}
+\end{figure}
+En la imagen se muestra al personaje avanzando por un camino mediante PathFollowing (flecha roja). Durante este desplazamiento, el comportamiento Face actúa en segundo plano corrigiendo la rotación en tiempo real, garantizando que el modelo mire siempre de frente al objetivo (flecha verde).
 
 \subsection{Wander}
 \subsubsection{Introducción}
 Para dotar de realismo y fluidez al entorno del juego, resulta fundamental evitar que los NPCs permanezcan estáticos cuando no tienen una tarea u objetivo definido. El comportamiento de \texttt{Wander} (o deambular) resuelve este problema dotando al agente de un movimiento autónomo. El objetivo principal con esta implementación fue conseguir un desplazamiento natural de movimiento aleatorio, evitando los giros bruscos o el movimiento tembloroso (\textit{jittering}) que produciría una simple selección de rotaciones aleatorias, y logrando así una sensación de movimiento natural en la escena.
+\subsubsection{Implementación y Parametrización}
+\\
+Wander consta de la proyección de un circulo imaginario por delante del personaje usando los siguientes parámetros:
+\begin{itemize}
+    \item \textbf{wanderOffset}: Distancia proyectada hacia adelante desde el personaje hasta el centro del circulo imaginario.
+    \item \textbf{wanderRadius}: El radio de dicho circulo sobre el cual se calcula el movimiento aleatorio.
+    \item \textbf{wanderRate}: La variación máxima del angulo objetivo en cada \textit{frame}.
+    \item \textbf{showGizmos}: Permite visualizar en la escena las guías de depuración.
+\end{itemize}
+Durante la ejecución, el algoritmo calcula un punto objetivo posicionado sobre el perímetro de ese circulo, el cual va rotando aleatoriamente en cada \textit{frame}. Luego, se halla el angulo de giro mas corto posible y se ajusta la rotación del personaje de forma suave hacia ese punto.
 \\
 
 \textbf{Dificultades y Ajustes Experimentados:}
-
 Durante el desarrollo de \texttt{Wander}, nos encontramos con dos problemas visuales bastante molestos que tuvimos que corregir mediante código:
-
 \begin{itemize}
     \item \textbf{El personaje daba vueltas sobre sí mismo:} Al principio, si el punto objetivo del círculo caía muy a la espalda del personaje, este a veces intentaba girar por el camino más largo (dando casi una vuelta completa) o giraba demasiado rápido pareciendo una peonza. Para solucionarlo, usamos la función \texttt{MapToRange} para asegurarnos de que el cálculo del ángulo siempre elija el giro más corto posible. Además, hicimos que la velocidad de rotación disminuya progresivamente a medida que termina de girar, evitando que se pase de largo y tiemble.
 
@@ -242,7 +271,7 @@ Como se aprecia en la Figura \ref{fig:gizmo_wander}, hemos creado un \textit{Giz
 
 \subsection{Path Following sin PathOffset}
 \subsubsection{Introducción}
-\subsubsection{Implementación}
+\subsubsection{Implementación y Parametrización}
 \subsubsection{Ejemplo de Uso}
 
 \section{Detección de colisiones (WallAvoidance)}
@@ -251,7 +280,7 @@ Como se aprecia en la Figura \ref{fig:gizmo_wander}, hemos creado un \textit{Giz
 Todo NPC debe ser capaz de detectar un obstáculo, ya sean paredes o decoración de una escena, para luego ser capaz de rodearlo y evitarlo. Sin esta implementación, el personaje simplemente atravesaría el escenario y no se vería realista. Para ello se usan $bigotes$ como detectores para medir la distancia a la que está el obstáculo, aplicar las fuerzas necesarias y ser capaz de evitarlo a tiempo.
 
 
-\subsection{Implementación}
+\subsection{Implementación y Parametrización}
 
 \texttt{WallAvoidance} consta de la proyección de uno o más rayos desde la perspectiva del agente usando los siguientes parámetros:
 \begin{itemize}
@@ -276,10 +305,10 @@ A lo largo del desarrollo del proyecto, nos encontramos con varios problemas:
 
 \subsection{Ejemplo de Uso}
 
-WallAvoidance se implementa universalmente como un comportamiento prioritario en conjunto con otros comportamientos como puede ser Wander o Seek. Actúa en segundo plano mientras el agente ejecuta otros Steerings. Solo se activa  ante la posible deteccion de colisiones, devolviendo el control al objetivo primario en cuanto detecta que el área frontal está despejada.
+WallAvoidance se implementa universalmente como un comportamiento prioritario en conjunto con otros comportamientos como puede ser Wander o Seek. Actúa en segundo plano mientras el agente ejecuta otros Steerings. Solo se activa  ante la posible detección de colisiones, devolviendo el control al objetivo primario en cuanto detecta que el área frontal está despejada.
 \\
 
-A continuacion se mostrara como se ven los bigotes gracias al Gizmo. En la Figura 2 se puede ver instantes antes de que se detecten una colision contra un muro. En este caso el NPC detectara la pared, y la normal de la pared hara posible el evitar la colision.
+A continuación se mostrara como se ven los bigotes gracias al Gizmo. En la Figura 2 se puede ver instantes antes de que se detecten una colisión contra un muro. En este caso el NPC detectara la pared, y la normal de la pared hará posible el evitar la colisión.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.6\textwidth]{img/gizmo_wallavoidance.png}
@@ -288,7 +317,7 @@ A continuacion se mostrara como se ven los bigotes gracias al Gizmo. En la Figur
 \end{figure}
 \\
 
-Como se comento anteriormente, el Steering de WallAvoidance se suele compaginar con otros scripts, por ejemplo en la escena "WallAvoidance" se aplica a un npc WallAvoidance y Seek. Como se puede ver en la Figura 3, Seek es de manera prinicpal el que controla el personaje pero en el momento que se detecte una colision a 3 de distancia, el script de deteccion de colisiones al tener mas peso este tomara el control sobre seek y evitara esta colision.
+Como se comento anteriormente, el Steering de WallAvoidance se suele compaginar con otros scripts, por ejemplo en la escena "WallAvoidance" se aplica a un NPC WallAvoidance y Seek. Como se puede ver en la Figura 3, Seek es de manera principal el que controla el personaje pero en el momento que se detecte una colisión a 3 de distancia, el script de detección de colisiones al tener mas peso este tomara el control sobre seek y evitara esta colisión.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.6\textwidth]{img/inspector_wallavoidance.png}
@@ -299,6 +328,85 @@ Como se comento anteriormente, el Steering de WallAvoidance se suele compaginar 
 
 \section{Steering combinado (Árbitros)}
 \section{Formaciones}
+(PROBLEMAS TENIDOS SERIOG)
+Problema 1 — Celdas del destino no se verificaban al crear la formación Al pulsar F, la comprobación de celdas bloqueadas se ejecutaba dentro de 
+
+MoveGrid()
+, antes de que los agentes estuvieran asignados a sus slots. Como los slots estaban vacíos, la función no encontraba nada que reasignar y quedaba inútil. Solución: se movió la llamada a 
+
+ReasignarCeldasOcupadas()
+ para que se ejecute justo después del bucle de 
+
+LinkToSlot()
+, cuando todos los NPCs ya están vinculados a sus celdas.
+
+Problema 2 — Formación incorrecta al pulsar F más de una vez Al disolver la formación con G y volver a pulsar F con nuevos agentes, el objeto 
+
+GridFormation
+ seguía existiendo con datos de la formación anterior (slots con referencias antiguas). Al reutilizarlo, los nuevos agentes se asignaban sobre un estado corrupto y la formación salía incorrecta. Solución: en 
+
+Formar()
+ se libera y destruye siempre el grid existente antes de crear uno nuevo, garantizando un estado limpio en cada nueva formación.
+
+Problema 3 — OverlapSphere detectaba el terreno como obstáculo Al comprobar si una celda estaba libre de obstáculos, el OverlapSphere se lanzaba al ras del suelo y con radio igual a cellSize, lo que hacía que el collider del terreno entrara en la esfera y todas las celdas se consideraran bloqueadas. Esto impedía colocar la formación en cualquier punto del mapa. Solución: se elevó el punto de muestreo 0.5 unidades sobre el suelo y se redujo el radio a cellSize * 0.9f, suficiente para detectar paredes y objetos reales sin interferir con el terreno.
+
+Problema 4 — 
+
+WallAvoidance
+ y 
+
+Seek
+ activos durante el reposicionamiento en celda Tras la fase de Wander, los seguidores tenían 
+
+WallAvoidance
+ y 
+
+Seek
+ activos. Al llamar a 
+
+AgentsToCell()
+ para reformar, estos behaviours seguían empujando a los NPCs y competían con Arrive + Align, causando que los agentes no llegaran correctamente a sus posiciones. Solución: se añadió la desactivación explícita de 
+
+WallAvoidance
+ y 
+
+Seek
+ dentro de 
+
+AgentsToCell()
+, antes de activar los behaviours de posicionamiento.
+
+Problema 5 — El bucle Wander intentaba volver al destino original Al terminar el Wander, el código llamaba a grid.LeaderFollowing(), que mandaba al líder de vuelta al último punto de clic en el mapa. El comportamiento correcto es que los seguidores se formen alrededor de donde esté el líder en ese momento, sin que este se mueva a ningún sitio previo. Solución: se simplificó 
+
+FinishTimer()
+ para que, al expirar el temporizador, el grid se recentre en la posición actual del líder y se llame directamente a 
+
+AgentsToCell()
+, sin forzar ningún desplazamiento previo.
+
+Descripción del problema
+En el sistema de formaciones (Ataque y Defensa), cada patrón define una celda fija para el líder (
+
+(2,1)
+ en Ataque, 
+
+(2,3)
+ en Defensa). Cuando se ordena mover la formación, el sistema comprueba si las celdas del grid están libres de obstáculos (objetos con tag OCUPADO) y reasigna los seguidores a celdas alternativas en caso de colisión. Sin embargo, el líder estaba excluido explícitamente de este proceso:
+
+csharp
+if (slots[i, j].npc == null || slots[i, j].leaderCell) continue;
+Esto provocaba que, si la celda destino del líder coincidía con un obstáculo, el líder se desplazara igualmente hasta esa posición, superponiéndose con el objeto. Adicionalmente, 
+
+AgentsToCell()
+ no volvía a comprobar si las celdas seguían libres en el momento en que los NPCs partían hacia ellas.
+
+Solución aplicada
+Se aplicaron dos correcciones en 
+
+GridFormation.cs
+:
+
+1. El líder participa en la reasignación. Se eliminó la condición que lo excluía. Si su celda está bloqueada, se busca la primera celda libre y se reubica allí. El flag leaderCell se transfiere a la nueva celda, por lo que el resto del sistema sigue identificando correctamente al líder sin cambios adicionales:
 \subsection{Estructuras Fijas}
 \subsection{Criterio Leader Following}
 \section{LRTA*}

@@ -6,7 +6,7 @@ public class Face : SteeringBehaviour
 {
     // Overrides the Align.target member
     public Agent target;
-    public float timeToTarget = 0.3f;
+    public float timeToTarget;
     
     void Awake()
     {
