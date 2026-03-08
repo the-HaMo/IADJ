@@ -41,7 +41,7 @@ public class Seek : SteeringBehaviour
         Vector3 destino = target.Position;
         Vector3 direccion = destino - origen;
 
-        // Si estamos encima del objetivo, no hay dirección válida → parar
+        // Si estamos encima del objetivo, no hay dirección válida parar
         if (direccion.magnitude < 0.01f)
             return steer;
 

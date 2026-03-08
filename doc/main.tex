@@ -169,18 +169,106 @@ Scenes/
 \section{Steering básicos acelerados}
 \subsection{Seek}
 \subsubsection{Introducción}
+El comportamiento \textbf{Seek} hace que un agente persiga de forma directa un objetivo, calculando continuamente la dirección entre su posición actual y la del \texttt{target}. A diferencia de otros steerings con frenado, Seek mantiene una tendencia de avance constante, por lo que el movimiento es muy reactivo y simple.
+
+En nuestra implementación, el agente obtiene un vector dirección hacia el objetivo y genera una aceleración lineal en ese sentido. Como no existe una fase de desaceleración al aproximarse, cuando llega con velocidad alta puede sobrepasar el objetivo, girar para volver a encararlo y repetir este ciclo de ida y vuelta de manera indefinida.
+
 \subsubsection{Implementación y Parametrización}
+Para ejecutar Seek son necesarios los siguientes parámetros:
+
+\begin{itemize}
+    \item \textbf{target} (\texttt{Agent}): referencia al agente u objeto que se quiere perseguir.
+    \item \textbf{weight} (heredado de \texttt{SteeringBehaviour}): peso con el que Seek contribuye al resultado final cuando se combina con otros comportamientos.
+    \item \textbf{MaxSpeed} del agente perseguidor: valor que determina la magnitud del vector lineal calculado por Seek.
+\end{itemize}
+
+El algoritmo es directo: primero valida que exista \texttt{target}; si no existe, devuelve aceleración nula. Después calcula \texttt{direccion = target.Position - agent.Position}. Si la distancia es casi cero, no aplica fuerza para evitar inestabilidades numéricas. En caso contrario, normaliza esa dirección y construye el steering lineal con magnitud de \texttt{MaxSpeed}, manteniendo \texttt{angular = 0}. Finalmente, en \texttt{AgentNPC} ese vector se usa como aceleración y actualiza la velocidad y la posición cada frame.
+
 \subsubsection{Ejemplo de Uso}
+En la Figura \ref{fig:seek_basico} se muestra un caso de uso básico en el que un NPC persigue un objetivo fijo en escena mediante Seek.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/seek.png}
+    \caption{Comportamiento Seek persiguiendo un objetivo en escena.}
+    \label{fig:seek_basico}
+\end{figure}
+
+La línea rosa indica visualmente la posición del objetivo, facilitando comprobar que el agente recalcula su dirección de persecución en tiempo real. También se aprecia el comportamiento típico de Seek: movimiento muy directo y respuesta inmediata, pero con posibilidad de sobrepaso del punto objetivo al no aplicar desaceleración cerca del destino.
 
 \subsection{Flee}
 \subsubsection{Introducción}
+El comportamiento \textbf{Flee} es conceptualmente el opuesto directo a Seek: en lugar de perseguir a un objetivo, el agente huye de él lo más rápido posible. Conceptualmente puede entenderse como el resultado de invertir la dirección que calcularía Seek, es decir, multiplicar ese vector por $-1$ para obtener la orientación contraria. El agente evalúa continuamente su posición relativa al \texttt{target} y acelera en sentido opuesto, manteniéndose así alejándose de forma constante sin ningún criterio de parada.
+
 \subsubsection{Implementación y Parametrización}
+Para ejecutar Flee es necesario el siguiente parámetro:
+
+\begin{itemize}
+    \item \textbf{target} (\texttt{Agent}): referencia al agente u objeto del que se quiere huir.
+\end{itemize}
+
+El algoritmo calcula la velocidad deseada como \texttt{(agent.Position - target.Position).normalized * MaxSpeed}, es decir, la dirección que va del objetivo al agente escalada a la velocidad máxima. A continuación obtiene el steering lineal restando la velocidad actual del agente a esa velocidad deseada, lo que convierte el resultado en una corrección de aceleración que orienta y empuja al agente en la dirección contraria al objetivo. El componente angular se mantiene en cero.
+
 \subsubsection{Ejemplo de Uso}
+En la Figura \ref{fig:flee_basico} se muestra el comportamiento Flee en acción: el NPC se aleja de un objetivo fijo situado en escena.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/flee.png}
+    \caption{Comportamiento Flee alejándose de un objetivo en escena.}
+    \label{fig:flee_basico}
+\end{figure}
+
+De manera muy similar a la imagen de Seek, la línea rosa indica la posición del objetivo. En este caso, sin embargo, el agente se desplaza en la dirección opuesta, alejándose de dicho punto de forma continua. Si el agente alcanza el límite del escenario y no hay ningún mecanismo de rebote o parada, continuará intentando huir indefinidamente.
 
 \subsection{Arrive}
 \subsubsection{Introducción}
+El comportamiento \textbf{Arrive} es una evolución directa de Seek: el agente también se dirige hacia un objetivo, pero a diferencia de Seek no lo sobrepasa indefinidamente, sino que reduce su velocidad de forma progresiva conforme se acerca y se detiene de manera suave al alcanzarlo. Esto lo convierte en el comportamiento idóneo para cualquier situación en la que el NPC deba llegar a un punto concreto y quedar estático en él, como posicionarse en una formación o acudir a un punto de interés.
+
 \subsubsection{Implementación y Parametrización}
+Para ejecutar Arrive son necesarios los siguientes parámetros:
+
+\begin{itemize}
+    \item \textbf{target} (\texttt{Agent}): referencia al agente u objeto al que se quiere llegar.
+    \item \textbf{timeToTarget}: tiempo en segundos en el que el agente intentará alcanzar la velocidad deseada. Actúa como suavizador de la aceleración.
+\end{itemize}
+
+El algoritmo distingue tres zonas en función de la distancia al objetivo. 
+Si el agente se encuentra fuera del radio de llegada \texttt{ArrivalRadius}, se desplaza a velocidad máxima, de forma equivalente al comportamiento \textit{Seek}. 
+
+En la corona anular comprendida entre \texttt{ArrivalRadius} y \texttt{InteriorRadius}, la velocidad objetivo se reduce de forma lineal según la distancia al objetivo:
+
+\[
+v_{\text{target}} = v_{\text{max}} \cdot \frac{d}{R_{\text{arrival}}}
+\]
+
+donde \(d\) representa la distancia al objetivo, \(v_{\text{max}}\) la velocidad máxima del agente y \(R_{\text{arrival}}\) el radio de llegada. Esta relación produce una desaceleración progresiva a medida que el agente se aproxima al destino.
+
+Cuando el agente se encuentra dentro del radio interior \texttt{InteriorRadius}, se aplica una fuerza de frenado destinada a cancelar la velocidad actual:
+
+\[
+\mathbf{a} = - \frac{\mathbf{v}}{\Delta t}
+\]
+
+donde \(\mathbf{v}\) es la velocidad actual del agente y \(\Delta t\) el intervalo temporal de simulación. Esta aceleración se limita posteriormente por la aceleración máxima permitida.
+
+Finalmente, el vector de \textit{steering} lineal se calcula como:
+
+\[
+\mathbf{a}_{\text{steering}} = \frac{\mathbf{v}_{\text{target}} - \mathbf{v}}{t_{\text{target}}}
+\]
+
 \subsubsection{Ejemplo de Uso}
+En la Figura \ref{fig:arrive_basico} se muestra el comportamiento Arrive en acción: el NPC se aproxima al objetivo y reduce su velocidad hasta detenerse sobre él.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/arrive.png}
+    \caption{Comportamiento Arrive aproximándose y deteniéndose sobre el objetivo.}
+    \label{fig:arrive_basico}
+\end{figure}
+
+Al igual que en Seek y Flee, la línea rosa indica la posición del objetivo. La diferencia visual clave respecto a Seek es que el agente no sobrepasa el punto de destino: a medida que se acerca, la trayectoria se va suavizando hasta quedar estático sobre él. Esto hace que Arrive sea especialmente adecuado cuando se requiere precisión en el posicionamiento final del agente.
 
 \subsection{Leave}SergioGarcia
 \subsubsection{Introducción}
