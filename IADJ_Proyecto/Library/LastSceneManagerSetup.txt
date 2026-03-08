@@ -1,5 +1,5 @@
 sceneSetups:
-- path: Assets/Scenes/Arbitros.unity
+- path: Assets/Scenes/Basic/Align-AntiAlign.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0

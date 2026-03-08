@@ -275,15 +275,102 @@ Al igual que en Seek y Flee, la línea rosa indica la posición del objetivo. La
 \subsubsection{Implementación y Parametrización}
 \subsubsection{Ejemplo de Uso}
 
+
 \subsection{Align}
 \subsubsection{Introducción}
+El comportamiento \textbf{Align} controla exclusivamente la rotación del agente: su objetivo es hacer que el NPC iguale su orientación a la del \texttt{target}, girando con suavidad y sin sacudidas. A diferencia de Seek o Arrive, Align no aplica ninguna fuerza lineal; solo genera aceleración angular. Es la base de otros comportamientos delegados como \textit{Face}, que internamente delegan en Align para calcular el giro necesario.
+
+El agente calcula continuamente la diferencia angular con el objetivo, reduce esa diferencia al intervalo $(-180°, 180°)$ para elegir siempre el camino de rotación más corto, y ajusta su velocidad angular de forma proporcional hasta detenerse al coincidir con la orientación del \texttt{target}.
+
 \subsubsection{Implementación y Parametrización}
+Para ejecutar Align son necesarios los siguientes parámetros:
+
+\begin{itemize}
+    \item \textbf{target} (\texttt{Agent}): referencia al agente cuya orientación se quiere igualar.
+    \item \textbf{timeToTarget}: tiempo en segundos en el que el agente intentará alcanzar la velocidad de rotación deseada. Actúa como suavizador del giro.
+\end{itemize}
+
+El algoritmo calcula la diferencia angular entre el objetivo y el agente:
+
+\[
+\theta = \theta_{\text{target}} - \theta_{\text{agent}}
+\]
+
+y la normaliza al rango \((-180^\circ, 180^\circ)\) mediante la función \texttt{MapToRange}. 
+
+Si el valor absoluto de esta diferencia es menor que \texttt{InteriorAngle} (propiedad del \texttt{target}), se aplica un frenado angular activo para detener la rotación. 
+Si la diferencia supera \texttt{ExteriorAngle} (propiedad del \texttt{target}), el agente gira a la velocidad angular máxima \( \omega_{\text{max}} \). 
+En caso contrario, la velocidad de rotación objetivo se escala linealmente en función del ángulo:
+
+\[
+\omega_{\text{target}} = \omega_{\text{max}} \cdot \frac{|\theta|}{\theta_{\text{exterior}}}
+\]
+
+El signo de \(\theta\) determina el sentido del giro. Finalmente, la aceleración angular de \textit{steering} se calcula como:
+
+\[
+\alpha_{\text{steering}} = \frac{\omega_{\text{target}} - \omega}{t_{\text{target}}}
+\]
+
+donde \(\omega\) es la velocidad angular actual del agente. Este valor se limita posteriormente por la aceleración angular máxima \texttt{MaxAngularAcc}.
+
 \subsubsection{Ejemplo de Uso}
+En la Figura \ref{fig:align_basico} se muestra el comportamiento Align en acción: el NPC ajusta su orientación para igualar la del objetivo.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/align.png}
+    \caption{Comportamiento Align igualando la orientación del agente a la del objetivo.}
+    \label{fig:align_basico}
+\end{figure}
+
+En la imagen se puede apreciar cómo el agente gira progresivamente hasta quedar orientado en la misma dirección que el \texttt{target}. El giro no es instantáneo sino que se suaviza gracias a \texttt{timeToTarget}, evitando sacudidas bruscas. A diferencia de los comportamientos lineales anteriores, aquí no hay desplazamiento en el espacio: el agente permanece en su posición y únicamente modifica su rotación.
 
 \subsection{Anti-Align}
 \subsubsection{Introducción}
+El comportamiento \textbf{Anti-Align} es el opuesto directo a Align: en lugar de igualar su orientación a la del \texttt{target}, el agente busca girar hasta quedar orientado exactamente en sentido contrario, es decir, $180°$ alejado de la orientación del objetivo. Al igual que Align, no aplica ninguna fuerza lineal, solo aceleración angular, y emplea el mismo mecanismo de suavizado y zonas de velocidad.
+
 \subsubsection{Implementación y Parametrización}
+Para ejecutar Anti-Align son necesarios los siguientes parámetros:
+
+\begin{itemize}
+    \item \textbf{target} (\texttt{Agent}): referencia al agente cuya orientación opuesta se quiere alcanzar.
+    \item \textbf{timeToTarget}: tiempo en segundos en el que el agente intentará alcanzar la velocidad de rotación deseada. Actúa como suavizador del giro.
+\end{itemize}
+
+El algoritmo es idéntico al de Align salvo en el cálculo inicial de la diferencia angular, donde se suma $180°$ a la orientación del objetivo antes de restar la del agente:
+
+\[
+\theta = (\theta_{\text{target}} + 180°) - \theta_{\text{agent}}
+\]
+
+Este desplazamiento hace que el ángulo de referencia apunte en dirección contraria al \texttt{target}. A partir de ahí, la diferencia se normaliza al rango $(-180°, 180°)$ con \texttt{MapToRange} y se aplican las mismas tres zonas que en Align:
+
+Si $|\theta| < \theta_{\text{interior}}$, se frena la rotación activamente. Si $|\theta| > \theta_{\text{exterior}}$, se gira a velocidad máxima $\omega_{\text{max}}$. En caso contrario:
+
+\[
+\omega_{\text{target}} = \omega_{\text{max}} \cdot \frac{|\theta|}{\theta_{\text{exterior}}}
+\]
+
+El signo de $\theta$ determina el sentido del giro y la aceleración final es:
+
+\[
+\alpha_{\text{steering}} = \frac{\omega_{\text{target}} - \omega}{t_{\text{target}}}
+\]
+
+acotada por \texttt{MaxAngularAcc}.
+
 \subsubsection{Ejemplo de Uso}
+En la Figura \ref{fig:antialign_basico} se muestra el comportamiento Anti-Align en acción: el NPC gira hasta quedar orientado en dirección opuesta a la del objetivo.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/anti-align.png}
+    \caption{Comportamiento Anti-Align orientando al agente en dirección opuesta al objetivo.}
+    \label{fig:antialign_basico}
+\end{figure}
+
+La imagen es visualmente muy similar a la de Align: el agente permanece en su posición y solo modifica su rotación. La diferencia clave es la orientación final resultante: si en Align el agente acaba mirando en la misma dirección que el \texttt{target}, aquí termina mirando exactamente hacia el lado contrario. El giro se suaviza de igual forma gracias a \texttt{timeToTarget}, evitando cualquier sacudida brusca.
 
 \section{Steering Delegado}
 \subsection{Face}
