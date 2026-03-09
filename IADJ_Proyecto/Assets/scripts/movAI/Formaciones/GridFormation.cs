@@ -258,7 +258,6 @@ public class GridFormation : MonoBehaviour
                 {
                     Agent leaderVirtual = GetLeaderSlot().virtualAgent;
                     AgentNPC currentNPC = slots[i, j].npc;
-                    Agent slotVirtual = slots[i, j].virtualAgent;
 
                     // Obtener componentes de steering
                     Arrive arrive = currentNPC.GetComponent<Arrive>();
@@ -288,21 +287,11 @@ public class GridFormation : MonoBehaviour
                         face.NewTarget(leaderVirtual);
                     }
                     // Si es seguidor, debe ir a SU slot del patron.
-                    // Asi, sin obstaculos, la forma se mantiene estable en cualquier punto.
+                    // Durante el desplazamiento la formacion se rompe:
+                    // siguen al lider con Arrive + Separation + Flee (condicional por cercania).
                     else
                     {
-                        Flee flee = currentNPC.GetComponent<Flee>();
-                        Separation separation = currentNPC.GetComponent<Separation>();
-
-                        if (align != null) align.enabled = false;
-                        if (wander != null) wander.enabled = false;
-                        if (flee != null) flee.enabled = false;
-                        if (separation != null) separation.enabled = false;
-
-                        arrive.enabled = true;
-                        face.enabled = true;
-                        arrive.NewTarget(slotVirtual);
-                        face.NewTarget(slotVirtual);
+                        ConfigureFollowerLeaderFollowing(currentNPC);
                     }
                 }
             }
@@ -449,8 +438,7 @@ public class GridFormation : MonoBehaviour
                     else
                     {
                         // Los seguidores: Seek al líder (simple y directo)
-                        // + WallAvoidance bajo para no meterse en paredes
-                        // + Separation muy bajo para no pisarse entre sí
+                        // El líder ya evita paredes; los seguidores solo lo persiguen.
                         AgentNPC follower = slots[i, j].npc;
 
                         Seek seek           = follower.GetComponent<Seek>();
@@ -468,15 +456,62 @@ public class GridFormation : MonoBehaviour
                         if (flee != null)   flee.enabled = false;
                         if (wander != null) wander.enabled = false;
 
-                        if (seek != null) { seek.enabled = true; seek.NewTarget(leader); }
-                        if (wall != null)  wall.enabled = true;
+                        if (seek != null)
+                        {
+                            seek.enabled = true;
+                            seek.NewTarget(leader);
+                        }
+                        else
+                        {
+                            // Fallback robusto: si falta Seek, seguir al líder con la
+                            // configuración de Leader Following (Arrive + Separation + Flee condicional).
+                            ConfigureFollowerLeaderFollowing(follower);
+                        }
+
+                        if (wall != null)  wall.enabled = false;
                     }
                 }
             }
         }
+    }
 
-        if (formationController != null)
-            formationController.StartTimer();
+    /// <summary>
+    /// Detiene el modo wander-follow actual: apaga steerings de ese modo y frena a todos.
+    /// </summary>
+    public void StopLeaderWander()
+    {
+        for (int i = 0; i < numColumns; i++)
+        {
+            for (int j = 0; j < numRows; j++)
+            {
+                AgentNPC npc = slots[i, j].npc;
+                if (npc == null) continue;
+
+                Arrive arrive = npc.GetComponent<Arrive>();
+                Align align = npc.GetComponent<Align>();
+                Face face = npc.GetComponent<Face>();
+                Seek seek = npc.GetComponent<Seek>();
+                Wander wander = npc.GetComponent<Wander>();
+                Flee flee = npc.GetComponent<Flee>();
+                Separation separation = npc.GetComponent<Separation>();
+                WallAvoidance wallAvoidance = npc.GetComponent<WallAvoidance>();
+
+                if (arrive != null) arrive.enabled = false;
+                if (align != null) align.enabled = false;
+                if (face != null) face.enabled = false;
+                if (seek != null) seek.enabled = false;
+                if (wander != null) wander.enabled = false;
+                if (flee != null) flee.enabled = false;
+                if (separation != null) separation.enabled = false;
+                if (wallAvoidance != null) wallAvoidance.enabled = false;
+
+                // Frenar al instante para marcar la fase de pausa del bucle.
+                npc.Velocity = Vector3.zero;
+                npc.Acceleration = Vector3.zero;
+                npc.Rotation = 0f;
+                npc.AngularAcc = 0f;
+            }
+        }
     }
 
 
@@ -486,6 +521,7 @@ public class GridFormation : MonoBehaviour
         Face face = follower.GetComponent<Face>();
         Align align = follower.GetComponent<Align>();
         Wander wander = follower.GetComponent<Wander>();
+        Seek seek = follower.GetComponent<Seek>();
 
         if (arrive == null || face == null)
         {
@@ -497,6 +533,7 @@ public class GridFormation : MonoBehaviour
 
         if (align != null) align.enabled = false;
         if (wander != null) wander.enabled = false;
+        if (seek != null) seek.enabled = false;
 
         arrive.enabled = true;
         face.enabled = true;

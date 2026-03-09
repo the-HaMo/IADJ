@@ -16,10 +16,25 @@ public enum Criterio
 
 public class FormationController : MonoBehaviour
 {
+    private enum WanderLoopState
+    {
+        Inactive,
+        WaitingToWander,
+        Wandering,
+        Paused
+    }
+
     // Parámetros de configuración
     public float cellSize = 2.0f;
     public TipoFormacion tipoFormacion = TipoFormacion.Ataque;
     public Criterio criterio = Criterio.LeaderFollowing;
+
+    [Header("Bucle Wander del líder")]
+    [Tooltip("Si está activo, al llegar al destino el líder entra en Wander por ciclos")]
+    [SerializeField] private bool autoWanderLoop = true;
+    [SerializeField] private float waitBeforeWander = 10f;
+    [SerializeField] private float wanderDuration = 6f;
+    [SerializeField] private float pauseBetweenWanders = 2f;
 
     // Referencias
     private GridFormation grid;
@@ -27,10 +42,10 @@ public class FormationController : MonoBehaviour
     private AgentNPC leader;
     private SeleccionarObjetivos selectorObjetivos;
 
-    // Control de tiempo para Wander
-    private int inicio;
-    private bool waiting = false;
-    private bool doingWander = false;
+    // Control de ciclo Wander
+    private WanderLoopState wanderLoopState = WanderLoopState.Inactive;
+    private float wanderLoopTimer = 0f;
+    private bool wanderLoopStoppedByUser = false;
     private bool waitingLeaderArrival = false;
 
     void Start()
@@ -41,6 +56,8 @@ public class FormationController : MonoBehaviour
         {
             Debug.LogError("No se encontró SeleccionarObjetivos en la escena. Añade el componente a un GameObject.");
         }
+
+        Debug.Log("Bucle Wander: pulsa W para detenerlo.");
     }
 
     void Update()
@@ -63,8 +80,13 @@ public class FormationController : MonoBehaviour
             MoverAPunto();
         }
 
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            StopWanderLoop();
+        }
+
         CheckLeaderArrival();
-        FinishTimer();
+        UpdateWanderLoop();
     }
 
     public void Formar()
@@ -91,9 +113,9 @@ public class FormationController : MonoBehaviour
         }
 
         // Siempre reiniciar el grid al pulsar F para evitar slots sucios
-        // y resetear los flags de timer para que la nueva formación pueda romperse después de 10s
-        doingWander = false;
-        waiting = false;
+        // y resetear los estados del bucle de wander.
+        wanderLoopStoppedByUser = false;
+        NoWait();
 
         if (grid != null)
         {
@@ -169,7 +191,6 @@ public class FormationController : MonoBehaviour
         {
             NoWait();
             waitingLeaderArrival = false;
-            doingWander = false;
             grid.LiberarAgents();
             Debug.Log("Formación disuelta.");
         }
@@ -185,6 +206,7 @@ public class FormationController : MonoBehaviour
         if (grid != null)
         {
             grid.AgentsToCell();
+            StartTimer();
         }
     }
 
@@ -231,7 +253,6 @@ public class FormationController : MonoBehaviour
 
             NoWait();
             waitingLeaderArrival = false;
-            doingWander = false;
             grid.LiberarAgents();
             Debug.Log("Selección mixta detectada. Se rompe formación y se mueven todos los seleccionados.");
         }
@@ -407,31 +428,106 @@ public class FormationController : MonoBehaviour
 
     public void StartTimer()
     {
-        inicio = Environment.TickCount;
-        waiting = true;
+        if (!autoWanderLoop || grid == null || !grid.activated)
+        {
+            NoWait();
+            return;
+        }
+
+        wanderLoopState = WanderLoopState.WaitingToWander;
+    // Añade una pausa inicial entre ciclos antes de contar waitBeforeWander.
+    wanderLoopTimer = -Mathf.Max(0f, pauseBetweenWanders);
     }
 
     public void NoWait()
     {
-        waiting = false;
+        wanderLoopState = WanderLoopState.Inactive;
+        wanderLoopTimer = 0f;
     }
 
     public void Wait()
     {
-        waiting = true;
+        StartTimer();
     }
 
     public void FinishTimer()
     {
-        if (waiting && (Environment.TickCount - inicio) > 10000)
+        UpdateWanderLoop();
+    }
+
+    private void UpdateWanderLoop()
+    {
+        if (grid == null || !grid.activated || leader == null || waitingLeaderArrival)
         {
-            if (grid != null && !doingWander)
-            {
-                grid.LeaderWander();
-                doingWander = true;
-            }
-            waiting = false;
+            return;
         }
+
+        if (!autoWanderLoop)
+        {
+            return;
+        }
+
+        if (wanderLoopStoppedByUser)
+        {
+            return;
+        }
+
+        if (wanderLoopState == WanderLoopState.Inactive)
+        {
+            return;
+        }
+
+        wanderLoopTimer += Time.deltaTime;
+
+        if (wanderLoopState == WanderLoopState.WaitingToWander && wanderLoopTimer >= waitBeforeWander)
+        {
+            grid.LeaderWander();
+            wanderLoopState = WanderLoopState.Wandering;
+            wanderLoopTimer = 0f;
+            return;
+        }
+
+        if (wanderLoopState == WanderLoopState.Wandering && wanderLoopTimer >= wanderDuration)
+        {
+            grid.StopLeaderWander();
+            // Al terminar wander, reconstruir la formación en la zona actual del líder.
+            grid.MoveGrid(leader.Position);
+            grid.LeaderFollowing();
+            waitingLeaderArrival = true;
+
+            // Estado transitorio hasta que CheckLeaderArrival/NotifyLeaderArrival completen AgentsToCell.
+            wanderLoopState = WanderLoopState.Paused;
+            wanderLoopTimer = 0f;
+            return;
+        }
+
+        if (wanderLoopState == WanderLoopState.Paused && wanderLoopTimer >= pauseBetweenWanders)
+        {
+            wanderLoopState = WanderLoopState.WaitingToWander;
+            wanderLoopTimer = 0f;
+        }
+    }
+
+    private void StopWanderLoop()
+    {
+        if (grid == null || !grid.activated)
+        {
+            return;
+        }
+
+        wanderLoopStoppedByUser = true;
+        NoWait();
+        grid.StopLeaderWander();
+
+        // Reancla la formación al líder actual para dejarla estable donde esté.
+        if (leader != null)
+        {
+            grid.MoveGrid(leader.Position);
+            grid.LeaderFollowing();
+            waitingLeaderArrival = true;
+        }
+
+        Debug.Log("Bucle Wander detenido por usuario (W).");
     }
 
     public void DisactivateGrid()
@@ -456,7 +552,6 @@ public class FormationController : MonoBehaviour
     {
         if (grid != null)
         {
-            doingWander = false;
             grid.LeaderFollowing();
             Debug.Log("Reformando la formación.");
         }
