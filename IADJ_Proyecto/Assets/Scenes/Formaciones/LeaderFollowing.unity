@@ -410,7 +410,7 @@ MonoBehaviour:
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
-  useGravity: 1
+  useGravity: 0
   customGravity: 0
   groundLevel: 0
 --- !u!114 &131088715
@@ -482,7 +482,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 131088710}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bad51f055e2454a4cbf4a92cb503b1ba, type: 3}
   m_Name: 
@@ -498,7 +498,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 131088710}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f5e4b30a2142c114a9a8b11b531f3a59, type: 3}
   m_Name: 
@@ -766,7 +766,7 @@ MonoBehaviour:
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
-  useGravity: 1
+  useGravity: 0
   customGravity: 0
   groundLevel: 0
 --- !u!114 &354082759
@@ -838,7 +838,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 354082754}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bad51f055e2454a4cbf4a92cb503b1ba, type: 3}
   m_Name: 
@@ -854,7 +854,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 354082754}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f5e4b30a2142c114a9a8b11b531f3a59, type: 3}
   m_Name: 
@@ -1019,7 +1019,7 @@ MonoBehaviour:
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
-  useGravity: 1
+  useGravity: 0
   customGravity: 0
   groundLevel: 0
 --- !u!114 &455173630
@@ -1091,7 +1091,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 455173625}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bad51f055e2454a4cbf4a92cb503b1ba, type: 3}
   m_Name: 
@@ -1107,7 +1107,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 455173625}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f5e4b30a2142c114a9a8b11b531f3a59, type: 3}
   m_Name: 
@@ -1283,8 +1283,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c09f59168927074b97e089cbd6f077b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  materialSeleccionado: {fileID: 2100000, guid: 135cd516c311d4c039fc5f3f2f03539c, type: 2}
-  materialOriginal: {fileID: 0}
+  materialSeleccionado: {fileID: 2100000, guid: 5b83cc4ca03f34089b3f7af0310af69c, type: 2}
+  materialOriginal: {fileID: 2100000, guid: 135cd516c311d4c039fc5f3f2f03539c, type: 2}
   npcLayer:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -1307,7 +1307,6 @@ MonoBehaviour:
   waitBeforeWander: 5
   wanderDuration: 6
   pauseBetweenWanders: 1
-  stopWanderLoopKey: 32
 --- !u!1001 &630221878
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1865,7 +1864,7 @@ MonoBehaviour:
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
-  useGravity: 1
+  useGravity: 0
   customGravity: 0
   groundLevel: 0
 --- !u!114 &786670261
@@ -1937,7 +1936,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 786670256}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bad51f055e2454a4cbf4a92cb503b1ba, type: 3}
   m_Name: 
@@ -1953,7 +1952,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 786670256}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f5e4b30a2142c114a9a8b11b531f3a59, type: 3}
   m_Name: 
@@ -2118,7 +2117,7 @@ MonoBehaviour:
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
-  useGravity: 1
+  useGravity: 0
   customGravity: 0
   groundLevel: 0
 --- !u!114 &873819600
@@ -2190,7 +2189,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 873819595}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bad51f055e2454a4cbf4a92cb503b1ba, type: 3}
   m_Name: 
@@ -2206,7 +2205,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 873819595}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f5e4b30a2142c114a9a8b11b531f3a59, type: 3}
   m_Name: 
@@ -2402,7 +2401,7 @@ MonoBehaviour:
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
-  useGravity: 1
+  useGravity: 0
   customGravity: 0
   groundLevel: 0
 --- !u!114 &986271528
@@ -2474,7 +2473,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 986271523}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bad51f055e2454a4cbf4a92cb503b1ba, type: 3}
   m_Name: 
@@ -2490,7 +2489,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 986271523}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f5e4b30a2142c114a9a8b11b531f3a59, type: 3}
   m_Name: 
@@ -2861,7 +2860,7 @@ MonoBehaviour:
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
-  useGravity: 1
+  useGravity: 0
   customGravity: 0
   groundLevel: 0
 --- !u!114 &1312684173
@@ -2933,7 +2932,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1312684168}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bad51f055e2454a4cbf4a92cb503b1ba, type: 3}
   m_Name: 
@@ -2949,7 +2948,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1312684168}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f5e4b30a2142c114a9a8b11b531f3a59, type: 3}
   m_Name: 
@@ -3543,7 +3542,7 @@ MonoBehaviour:
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
-  useGravity: 1
+  useGravity: 0
   customGravity: 0
   groundLevel: 0
 --- !u!114 &1587759124
@@ -3615,7 +3614,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1587759119}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bad51f055e2454a4cbf4a92cb503b1ba, type: 3}
   m_Name: 
@@ -3631,7 +3630,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1587759119}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f5e4b30a2142c114a9a8b11b531f3a59, type: 3}
   m_Name: 
@@ -4032,7 +4031,7 @@ MonoBehaviour:
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
-  useGravity: 1
+  useGravity: 0
   customGravity: 0
   groundLevel: 0
 --- !u!114 &1833212951
@@ -4104,7 +4103,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1833212946}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bad51f055e2454a4cbf4a92cb503b1ba, type: 3}
   m_Name: 
@@ -4120,7 +4119,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1833212946}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f5e4b30a2142c114a9a8b11b531f3a59, type: 3}
   m_Name: 

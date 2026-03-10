@@ -10,6 +10,7 @@
 \usepackage{fancyhdr}
 \usepackage{titlesec}
 \usepackage{tocloft}
+\usepackage{amsmath}
 \usepackage{ragged2e}
 \usepackage{placeins}  % Para FloatBarrier
 \usepackage{float}     % Para usar [H] en figuras
@@ -76,7 +77,7 @@
     \vspace{0.15cm}
     {\normalsize Sergio García García, 49308323A\par}
     \vspace{0.15cm}
-    {\normalsize Diego Sergio Ballesta Gonzaléz de la Higuera, - \par}
+    {\normalsize Diego Sergio Ballesta Gonzaléz de la Higuera, 30299322L \par}
     
     \vspace{0.4cm}
     
@@ -161,12 +162,15 @@ Scenes/
         \item \textbf{Formaciones/LeaderFollowing.unity}: Implementa la lógica de formaciones, donde varios agentes siguen a un líder, manteniendo posiciones relativas y desplazándose como un grupo coordinado.
     \end{itemize}
 
-\section{Roles de los NPCs}
+\section{Diseño de Agentes}
+\subsection{Componente física Body}
+\subsection{Componente Agent}
+\subsection{Componente AgentNPC}
+\subsection{Roles de los NPCs}
+Deben existir 3 NPCs con distintos parametros del body
 
-    Deben existir 3 NPCs con distintos parametros del body
-
-\section{Seleccion y control de personajes}
 \section{Steering básicos acelerados}
+
 \subsection{Seek}
 \subsubsection{Introducción}
 El comportamiento \textbf{Seek} hace que un agente persiga de forma directa un objetivo, calculando continuamente la dirección entre su posición actual y la del \texttt{target}. A diferencia de otros steerings con frenado, Seek mantiene una tendencia de avance constante, por lo que el movimiento es muy reactivo y simple.
@@ -178,16 +182,38 @@ Para ejecutar Seek son necesarios los siguientes parámetros:
 
 \begin{itemize}
     \item \textbf{target} (\texttt{Agent}): referencia al agente u objeto que se quiere perseguir.
-    \item \textbf{weight} (heredado de \texttt{SteeringBehaviour}): peso con el que Seek contribuye al resultado final cuando se combina con otros comportamientos.
-    \item \textbf{MaxSpeed} del agente perseguidor: valor que determina la magnitud del vector lineal calculado por Seek.
 \end{itemize}
 
-El algoritmo es directo: primero valida que exista \texttt{target}; si no existe, devuelve aceleración nula. Después calcula \texttt{direccion = target.Position - agent.Position}. Si la distancia es casi cero, no aplica fuerza para evitar inestabilidades numéricas. En caso contrario, normaliza esa dirección y construye el steering lineal con magnitud de \texttt{MaxSpeed}, manteniendo \texttt{angular = 0}. Finalmente, en \texttt{AgentNPC} ese vector se usa como aceleración y actualiza la velocidad y la posición cada frame.
+El algoritmo comienza comprobando la existencia de un objetivo \texttt{target}. 
+En caso de no existir, se devuelve una aceleración nula.
+
+A continuación, se calcula el vector dirección entre el agente y el objetivo:
+
+\[
+\mathbf{d} = \mathbf{p}_{\text{target}} - \mathbf{p}_{\text{agent}}
+\]
+
+donde \(\mathbf{p}_{\text{target}}\) y \(\mathbf{p}_{\text{agent}}\) representan las posiciones del objetivo y del agente, respectivamente.
+
+Si la magnitud de este vector es cercana a cero, es decir, si \( \|\mathbf{d}\| \approx 0 \), no se aplica ninguna fuerza con el fin de evitar inestabilidades numéricas. 
+En caso contrario, el vector se normaliza para obtener la dirección de movimiento:
+
+\[
+\hat{\mathbf{d}} = \frac{\mathbf{d}}{\|\mathbf{d}\|}
+\]
+
+El \textit{steering} lineal se construye entonces con magnitud igual a la velocidad máxima del agente, manteniendo la componente angular igual a cero.
+
+\[
+\mathbf{v}_{\text{target}} = v_{\text{max}} \, \hat{\mathbf{d}}
+\]
+
+Finalmente, en \texttt{AgentNPC}, este vector se utiliza como aceleración para actualizar el estado del agente en cada fotograma, integrando la velocidad y la posición del agente a lo largo del tiempo.
 
 \subsubsection{Ejemplo de Uso}
 En la Figura \ref{fig:seek_basico} se muestra un caso de uso básico en el que un NPC persigue un objetivo fijo en escena mediante Seek.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{img/seek.png}
     \caption{Comportamiento Seek persiguiendo un objetivo en escena.}
@@ -207,12 +233,38 @@ Para ejecutar Flee es necesario el siguiente parámetro:
     \item \textbf{target} (\texttt{Agent}): referencia al agente u objeto del que se quiere huir.
 \end{itemize}
 
-El algoritmo calcula la velocidad deseada como \texttt{(agent.Position - target.Position).normalized * MaxSpeed}, es decir, la dirección que va del objetivo al agente escalada a la velocidad máxima. A continuación obtiene el steering lineal restando la velocidad actual del agente a esa velocidad deseada, lo que convierte el resultado en una corrección de aceleración que orienta y empuja al agente en la dirección contraria al objetivo. El componente angular se mantiene en cero.
+El algoritmo calcula en primer lugar la velocidad objetivo a partir del vector que va desde el objetivo hasta el agente:
+
+\[
+\mathbf{d} = \mathbf{p}_{\text{agent}} - \mathbf{p}_{\text{target}}
+\]
+
+donde \(\mathbf{p}_{\text{agent}}\) y \(\mathbf{p}_{\text{target}}\) representan las posiciones del agente y del objetivo, respectivamente.
+
+Este vector se normaliza para obtener únicamente la dirección de movimiento:
+
+\[
+\hat{\mathbf{d}} = \frac{\mathbf{d}}{\|\mathbf{d}\|}
+\]
+
+y se escala posteriormente por la velocidad máxima del agente para calcular la velocidad objetivo:
+
+\[
+\mathbf{v}_{\text{target}} = v_{\text{max}} \, \hat{\mathbf{d}}
+\]
+
+A continuación, el \textit{steering} lineal se obtiene restando la velocidad actual del agente a esta velocidad objetivo:
+
+\[
+\mathbf{a}_{\text{steering}} = \mathbf{v}_{\text{target}} - \mathbf{v}
+\]
+
+lo que produce una corrección de aceleración que orienta y empuja al agente en dirección opuesta al objetivo, siendo este el único aspecto que diferencia al \textit{steering} del seek. El componente angular se mantiene igual a cero.
 
 \subsubsection{Ejemplo de Uso}
 En la Figura \ref{fig:flee_basico} se muestra el comportamiento Flee en acción: el NPC se aleja de un objetivo fijo situado en escena.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{img/flee.png}
     \caption{Comportamiento Flee alejándose de un objetivo en escena.}
@@ -261,20 +313,37 @@ Finalmente, el vector de \textit{steering} lineal se calcula como:
 \subsubsection{Ejemplo de Uso}
 En la Figura \ref{fig:arrive_basico} se muestra el comportamiento Arrive en acción: el NPC se aproxima al objetivo y reduce su velocidad hasta detenerse sobre él.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{img/arrive.png}
     \caption{Comportamiento Arrive aproximándose y deteniéndose sobre el objetivo.}
     \label{fig:arrive_basico}
 \end{figure}
 
-Al igual que en Seek y Flee, la línea rosa indica la posición del objetivo. La diferencia visual clave respecto a Seek es que el agente no sobrepasa el punto de destino: a medida que se acerca, la trayectoria se va suavizando hasta quedar estático sobre él. Esto hace que Arrive sea especialmente adecuado cuando se requiere precisión en el posicionamiento final del agente.
+Al igual que en Seek y Flee, la línea rosa (no visible en la imagen) indica la posición del objetivo. La diferencia visual clave respecto a Seek es que el agente no sobrepasa el punto de destino: a medida que se acerca, la trayectoria se va suavizando hasta quedar estático sobre él. Esto hace que Arrive sea especialmente adecuado cuando se requiere precisión en el posicionamiento final del agente.
 
-\subsection{Leave}SergioGarcia
+\subsection{Leave}
 \subsubsection{Introducción}
-\subsubsection{Implementación y Parametrización}
-\subsubsection{Ejemplo de Uso}
+El comportamiento \textit{Leave} (Alejarse y Parar) es un movimiento uniformemente acelerado que nace como una evolución del comportamiento \textit{Flee}. Mientras que en \textit{Flee} el agente se aleja de un objetivo de manera indefinida e infinita (acelerando constantemente en dirección contraria), el comportamiento \textit{Leave} introduce el concepto de \textbf{distancia segura}.
 
+Su objetivo principal es dotar de realismo a la huida: una vez que el personaje ha recorrido una distancia suficiente y se encuentra fuera del "radio de huida", dejará de correr y frenará hasta detenerse por completo. Es el equivalente a un animal que huye ante una presencia, pero se detiene y recupera la calma en cuanto se aleja a una distancia prudencial.
+
+\subsubsection{Implementación y Parametrización}
+Para que este comportamiento funcione correctamente, en el script (\texttt{Leave.cs}) se definen los siguientes parámetros clave:
+
+\begin{itemize}
+    \item \texttt{Target}: Es el objetivo del que nuestro agente quiere huir (el jugador, un enemigo o un peligro estático). A partir de su posición, el algoritmo calcula el vector de dirección opuesta.
+    \item \texttt{Escape Radius}: Es el radio de seguridad. Representa la distancia a partir de la cual el agente deja de acelerar en dirección contraria al perseguidor. Si la distancia actual entre el NPC y el objetivo es mayor o igual a este radio, el personaje iniciará el proceso de frenado. 
+\end{itemize}
+\\
+El comportamiento Leave es una variación avanzada del Flee (Huir). Funciona como un movimiento acelerado que hace que un agente huya en dirección opuesta a una amenaza, pero introduce un importante límite espacial: el Radio de Escape (escapeRadius).
+
+Mientras la distancia entre el agente y el objetivo sea menor que este radio, el personaje intentará escapar a su máxima velocidad. Sin embargo, en el momento que la distancia sea igual o mayor al Radio de Escape, el agente considerará que está en una "distancia segura" y desactivará su huida.
+
+\subsubsection{Ejemplo de Uso}
+Este comportamiento se utiliza principalmente en NPCs que deben reaccionar ante la proximidad de otros agentes o peligros. En la escena \texttt{Arbitros.unity}, se puede observar cómo el NPC mantiene una "distancia de respeto": si el objetivo se acerca demasiado, el comportamiento \textit{Leave} se activa para alejar al NPC. 
+
+Una vez que el agente supera el radio de huida y alcanza una zona segura, el comportamiento \textit{Leave} devuelve un vector nulo (desactivando su influencia), lo que permite ceder de nuevo el control principal al comportamiento \textit{Wander}. Esta transición permite compaginar varias funcionalidades a la vez: el agente puede deambular de forma autónoma por el escenario, pero reaccionará de manera reactiva y orgánica ante la presencia de amenazas, deteniendo su huida en el momento preciso para retomar su movimiento.
 
 \subsection{Align}
 \subsubsection{Introducción}
@@ -365,7 +434,7 @@ En la Figura \ref{fig:antialign_basico} se muestra el comportamiento Anti-Align 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{img/anti-align.png}
+    \includegraphics[width=0.8\textwidth]{img/antialign.png}
     \caption{Comportamiento Anti-Align orientando al agente en dirección opuesta al objetivo.}
     \label{fig:antialign_basico}
 \end{figure}
@@ -392,7 +461,7 @@ En este proyecto, hemos implementado el comportamiento de Face en escenarios don
 
 Como se puede apreciar en la Figura \ref{fig:face_direccion}, el funcionamiento practico es muy sencillo y directo. Al asignar otro objeto o personaje en el parámetro \texttt{Target} del Inspector, el agente evalúa constantemente su posición. Mediante el sistema de pesos del script, se puede compaginar la ejecución simultanea del comportamiento Face con otras acciones como \textit{PathFollowing}, como se muestra en el ejemplo a continuación:
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{img/face_direccion.png} 
     \caption{NPC orienta su rotación hacia un \textit{Target} en escena mientras sigue una ruta.}
@@ -584,6 +653,23 @@ GridFormation.cs
 1. El líder participa en la reasignación. Se eliminó la condición que lo excluía. Si su celda está bloqueada, se busca la primera celda libre y se reubica allí. El flag leaderCell se transfiere a la nueva celda, por lo que el resto del sistema sigue identificando correctamente al líder sin cambios adicionales:
 \subsection{Estructuras Fijas}
 \subsection{Criterio Leader Following}
+El criterio \textbf{Leader Following} define cómo se mueven los agentes de la formación una vez que el patrón ha sido creado. La lógica se divide en dos fases diferenciadas según el estado del grupo.
+
+\textbf{Fase de desplazamiento al destino:}\\
+Cuando el usuario hace clic derecho en un punto del mapa, el líder se dirige a ese punto utilizando \textit{Seek}. Los seguidores, mientras tanto, no persiguen directamente al líder sino que se dirigen cada uno a su \textit{agente virtual}, una posición relativa al líder calculada a partir del grid. Para ello se usa \textit{Arrive} combinado con \textit{Align}, de forma que cada seguidor llega a su celda con una orientación específica predefinida en el patrón. Una vez que el líder alcanza el destino, los seguidores también ejecutan \textit{Arrive} y \textit{Align} para ajustar su posición y orientación final dentro de la formación.
+
+\textbf{Fase de Wander (patrulla autónoma):}\\
+Tras posicionarse, el líder activa \textit{Wander} y \textit{WallAvoidance} para deambular libremente por el escenario. Durante esta fase, los seguidores cambian su comportamiento: en lugar de apuntar a un agente virtual fijo, ejecutan \textit{Seek} directamente sobre el líder para mantenerse cerca de él. Así el grupo se desplaza de forma cohesionada mientras el líder patrulla.
+
+\textbf{Patrones de formación disponibles:}\\
+El tipo de formación se configura en el inspector del \texttt{FormationController} mediante el parámetro \texttt{tipoFormacion}:
+\begin{itemize}
+    \item \textbf{Ataque}: formación en cuña ofensiva. El líder ocupa la celda trasera izquierda del grid $(1,2)$, con cuatro soldados desplegados en la línea frontal y uno adicional atrás a su derecha. Los soldados de los flancos giran $\pm 45°$ para cubrir los laterales.
+    \item \textbf{Defensa}: formación con cobertura. El líder se posiciona igualmente en la celda $(1,2)$, pero los cuatro soldados frontales se desplazan a la fila más alejada del grid para crear una pantalla protectora delante del líder.
+\end{itemize}
+
+En ambos patrones la formación requiere exactamente \textbf{6 agentes} (1 líder + 5 seguidores) y cada slot tiene asignada una orientación relativa que el \textit{Align} aplica al llegar a la celda.
+
 \section{LRTA*}
 
 LRTA* (\textit{Learning Real-Time A*}) es un algoritmo de búsqueda en tiempo real que no necesita calcular la ruta completa antes de moverse. En cada decisión, el agente observa un entorno local, aprende (actualiza su estimación de coste) y ejecuta solo el siguiente movimiento. Este enfoque es especialmente útil en videojuegos porque permite reaccionar de forma continua, con coste computacional acotado por frame.
@@ -709,7 +795,118 @@ Además, se implementaron mecanismos de depuración visual muy útiles durante e
 
 Esta instrumentación permitió comprobar en tiempo real cómo evolucionaban los valores aprendidos y por qué el agente cambiaba de decisión en cada iteración.
 
+\section{Implementación de elementos Opcionales}
+\subsection{Jumper}
+Introduccion:
+Implementacion y Parametrizacion:
+Ejemplo de Uso:
 \section{Mecanismo de depuración}
+GIZMO
+\section{Manual de uso}
+\subsection{Arbitros.unity (Automático)}
+
+Esta escena funciona de manera autónoma sin necesidad de que el usuario controle a los personajes. En ella se pueden observar tres NPCs en una zona con puntos que forman un camino y un obstáculo en medio. Cada NPC tiene una configuración distinta que demuestra cómo los scripts se pueden combinar para dar más realismo y personalidad al movimiento.
+
+\begin{itemize}
+    \item \textbf{NPC PathFollower + Face + Jumper:} 
+    Este agente realiza un seguimiento de camino (\textit{Path Following}) y, en determinados puntos de su recorrido, realiza un salto. Esto se consigue ajustando los pesos: el comportamiento de salto tiene prioridad sobre el seguir el camino en el momento del salto. Además, se mantiene siempre orientado (\textit{Face}) hacia otro NPC mientras se desplaza.
+
+    \item \textbf{NPC Wander + Leave + WallAvoidance:} 
+    Es un agente que se mueve de forma libre por el escenario. 
+    \begin{itemize}
+        \item \textbf{Movimiento genérico:} Deambula aleatoriamente por el escenario gracias al \textit{Wander} y evita chocar con las paredes usando un \textit{WallAvoidance} de 3 bigotes.
+        \item \textbf{Maniobra de Huida:} En el momento en que otro NPC se le acerca demasiado, se activa el comportamiento \textit{Leave}. Como este tiene más peso que el deambular, el NPC deja de dar vueltas e intenta alejarse del perseguidor hasta que alcanza una distancia segura; una vez lejos, retoma su movimiento aleatorio.
+    \end{itemize}
+
+    \item \textbf{NPC Seek + Face + WallAvoidance:} 
+    Este personaje se encarga de perseguir constantemente a su objetivo. Su lógica combina la persecución directa (\textit{Seek}) con la orientación constante hacia lo que persigue. Sus movimientos están limitados por el \textit{WallAvoidance}, lo que garantiza que, aunque quiera alcanzar a su objetivo, no atraviese paredes ni objetos del escenario.
+\end{itemize}
+
+Al ver la escena, se aprecia cómo los tres interactúan: mientras uno huye y otro persigue, el sistema de pesos evita que choquen con el entorno, logrando que el movimiento sea fluido y no se quede bloqueado contra los obstáculos.
+
+\subsection{PathFinding.unity (Automático / Selección de Heurística)}
+Esta escena se basa en la resolución de un pequeño laberinto donde el NPC debe llegar hasta la meta mediante el sistema de búsqueda de rutas \textit{LRTA*} mencionado anteriormente. El funcionamiento es sencillo: el algoritmo que se seleccione en el inspector del NPC será el que se use para la heurística, pudiendo elegir entre \textbf{Manhattan}, \textbf{Chebyshev} o \textbf{Euclídea} según se prefiera. Durante el recorrido, el NPC detecta y evita las paredes y obstáculos del escenario por sí mismo hasta que consigue alcanzar la meta.
+
+\subsection{Seek-Flee-Arrive.unity (Manual)}
+
+Esta escena es distinta a las anteriores, ya que requiere la intervención del usuario para funcionar. En ella existen tres NPCs y un jugador controlado manualmente. Cada NPC presenta un comportamiento reactivo diferente:
+
+\begin{itemize}
+    \item \textbf{NPC Seek:} Se encarga de localizar al jugador y dirigirse hacia su posición en todo momento. Su movimiento es constante y no reduce la velocidad al acercarse, intentando alcanzar el objetivo de forma directa.
+    \item \textbf{NPC Flee:} Realiza el comportamiento opuesto a \textit{Seek}. Su lógica se basa en detectar la posición del jugador y huir de él, alejándose de manera constante para mantener la mayor distancia posible.
+    \item \textbf{NPC Arrive:} Actúa de manera similar a \textit{Seek} en cuanto a la dirección, pero con una diferencia clave en la gestión de la velocidad. \textit{Arrive} detecta cuándo está cerca del jugador y comienza a desacelerar progresivamente para detenerse exactamente en su posición, a diferencia de \textit{Seek}, que mantendría su velocidad máxima hasta el final.
+\end{itemize}
+
+\textbf{Controles e Interacción:}
+\begin{itemize}
+    \item \textbf{WASD / Flechas:} Permiten mover al \texttt{AgentPlayer} por el escenario para observar cómo los NPCs reaccionan y cambian sus trayectorias en tiempo real según los movimientos del usuario.
+\end{itemize}
+
+\subsection{Align-AntiAlign.unity (Manual)}
+
+En esta escena se presentan dos NPCs y un jugador para demostrar los comportamientos de orientación. El funcionamiento se centra exclusivamente en el ajuste del ángulo del agente respecto al objetivo:
+
+\begin{itemize}
+    \item \textbf{NPC Align:} Su única función es observar la orientación del jugador y alinear su propio ángulo con el de este. El NPC rotará sobre su eje hasta que su frente coincida exactamente con la dirección hacia la que mira el jugador.
+    \item \textbf{NPC Anti-Align:} Como su nombre indica, realiza el comportamiento opuesto. Este agente detecta la orientación del jugador y se orienta en la dirección contraria, manteniendo siempre su espalda hacia el frente del jugador.
+\end{itemize}
+
+\textbf{Controles e Interacción:}
+\begin{itemize}
+    \item \textbf{WASD / Flechas:} Se utilizan para mover y, sobre todo, para rotar al personaje del jugador. Al girar al \texttt{AgentPlayer}, se puede observar cómo ambos NPCs calculan la rotación más corta para ajustarse a sus respectivas consignas de alineación.
+\end{itemize}
+
+\subsection{PathFollowing+Face+Wander.unity (Automático)}
+
+Esta escena funciona de manera autónoma e independiente de cualquier entrada por parte del usuario. En ella interactúan dos agentes para demostrar la combinación de comportamientos delegados:
+
+\begin{itemize}
+    \item \textbf{NPC PathFollower + Face:} Este agente se encarga de recorrer en bucle un camino trazado por una serie de marcas en el suelo (\textit{Path Following}). Mientras navega por el circuito, mantiene su orientación (\textit{Face}) fijada en el segundo NPC, demostrando que puede moverse en una dirección mientras mira hacia otra distinta.
+    \item \textbf{NPC Wander:} Su comportamiento principal es deambular por el escenario de manera aleatoria. Para evitar que la aleatoriedad lo saque del area o provoque colisiones evitables, este agente funciones de detecion de colisiones para todo posible obstáculo gracias a \textit{WallAvoidance}.
+\end{itemize}
+
+El objetivo de esta escena es mostrar cómo los algoritmos de movimiento autónomo pueden convivir en un mismo lugar sin colisionar y manteniendo comportamientos secundarios (como el encaramiento) de forma fluida.
+
+\subsection{PathFollowing+Jumping.unity (Automático)}
+
+En esta escena, al igual que en las anteriores de seguimiento de rutas, se presenta un circuito formado por una serie de puntos que definen el camino. Sin embargo, el escenario incluye una pared o valla en mitad del trayecto, posicionada de tal manera que corta el paso directo del agente.
+
+\begin{itemize}
+    \item \textbf{Lógica del Salto:} Cuando el NPC detecta que el siguiente punto de su ruta está bloqueado por este obstáculo y alcanza una zona de salto predefinida, activa el comportamiento de \textit{Jumping}. Este script calcula la parábola necesaria para superar la altura del objeto sin detener su avance lateral.
+    \item \textbf{Conjunto de Comportamientos:} El comportamiento demuestra la transición entre la navegación por suelo y el movimiento vertical. Una vez que el agente supera la barrera y vuelve a tocar suelo, el sistema retoma el control del \textit{Path Following} para continuar con el circuito de manera fluida.
+\end{itemize}
+
+
+\subsection{LeaderFollowing.unity (Manual)}
+
+Esta escena requiere la intervención activa del usuario para crear y gestionar formaciones de combate. En ella aparecen \textbf{9 NPCs} (denominados \textit{Soldado (1)} a \textit{Soldado (9)}) distribuidos en un escenario cerrado con obstáculos como pilares y muros interiores que pueden bloquear celdas de la formación. El jugador debe seleccionar un grupo de soldados, asignar un líder y ordenar la formación, pudiendo después moverla a cualquier punto del mapa.
+
+\textbf{Selección de NPCs:}
+\begin{itemize}
+    \item \textbf{Clic izquierdo} sobre un NPC: selecciona un NPC (reemplaza cualquier selección anterior). El NPC seleccionado es informado en el debug.
+    \item \textbf{Shift + Clic izquierdo} sobre un NPC: lo añade a la selección existente sin deseleccionar los anteriores. Así se puede construir un grupo de varios soldados.
+    \item \textbf{Shift + Clic izquierdo} sobre un NPC ya seleccionado: lo elimina de la selección.
+    \item \textbf{ESC}: deselecciona todos los NPCs a la vez.
+\end{itemize}
+
+\textbf{Asignación del líder:}\\
+El \textbf{primer NPC seleccionado} en la lista de selección actúa automáticamente como líder de la formación al pulsar \texttt{F}. El resto de agentes seleccionados se asignan como seguidores. Por este motivo, el orden de selección es importante: si se quiere cambiar de líder basta con deseleccionar todos con \texttt{ESC} y volver a seleccionar primero al soldado deseado.
+
+\textbf{Formación y movimiento:}
+\begin{itemize}
+    \item \textbf{F}: crea la formación con los NPCs seleccionados. Se requieren \textbf{6 agentes} seleccionados. El primer seleccionado se convierte en líder y ocupa su celda dentro del patrón (\textit{Ataque} o \textit{Defensa}, configurable en el inspector del \texttt{FormationController}). El sistema verifica automáticamente si alguna celda destino está bloqueada por un obstáculo y reasigna a los soldados afectados a celdas libres alternativas.
+    \item \textbf{Clic derecho} en el suelo con formación activa: mueve la formación completa al punto señalado. El líder se desplaza hacia ese destino y los seguidores lo siguen con el criterio de \textit{LeaderFollowing}. Una vez llegan al destino se construye la formación.
+    \item \textbf{Clic derecho} en el suelo sin formación: los NPCs seleccionados se dirigen al punto indicado distribuyéndose en anillos concéntricos alrededor de él. El primer NPC ocupa el centro y los demás se colocan en coronas hexagonales sucesivas, de forma que cuantos más agentes haya seleccionados, mayor es el radio del círculo resultante.
+    \item \textbf{Clic derecho} con selección mixta (algún NPC dentro de la formación y alguno fuera): la formación se rompe automáticamente y todos los agentes seleccionados se desplazan al punto indicado distribuyéndose en círculo, como en el caso anterior.
+    \item \textbf{G}: disuelve la formación actual, liberando a todos los agentes de sus slots y devolviendo el control individual a cada NPC.
+\end{itemize}
+
+\textbf{Ciclo Wander automático:}\\
+Tras llegar al destino, el líder entra en un bucle de \textit{Wander}: deambula por el escenario durante unos segundos, lo que hace que el resto de la formación lo siga. Al terminar el bucle se realiza nuevamente la formación.
+\begin{itemize}
+    \item \textbf{W}: detiene el bucle Wander del líder en cualquier momento, dejando la formación estática en su posición actual.
+\end{itemize}
+
 \section{Conclusión}
 
 \end{document}
