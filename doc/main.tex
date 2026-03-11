@@ -653,22 +653,67 @@ GridFormation.cs
 1. El líder participa en la reasignación. Se eliminó la condición que lo excluía. Si su celda está bloqueada, se busca la primera celda libre y se reubica allí. El flag leaderCell se transfiere a la nueva celda, por lo que el resto del sistema sigue identificando correctamente al líder sin cambios adicionales:
 \subsection{Estructuras Fijas}
 \subsection{Criterio Leader Following}
-El criterio \textbf{Leader Following} define cómo se mueven los agentes de la formación una vez que el patrón ha sido creado. La lógica se divide en dos fases diferenciadas según el estado del grupo.
 
-\textbf{Fase de desplazamiento al destino:}\\
-Cuando el usuario hace clic derecho en un punto del mapa, el líder se dirige a ese punto utilizando \textit{Seek}. Los seguidores, mientras tanto, no persiguen directamente al líder sino que se dirigen cada uno a su \textit{agente virtual}, una posición relativa al líder calculada a partir del grid. Para ello se usa \textit{Arrive} combinado con \textit{Align}, de forma que cada seguidor llega a su celda con una orientación específica predefinida en el patrón. Una vez que el líder alcanza el destino, los seguidores también ejecutan \textit{Arrive} y \textit{Align} para ajustar su posición y orientación final dentro de la formación.
+El \textbf{Leader Following} es un criterio de movimiento en formación en el que un conjunto de agentes seguidores se desplazan dinámicamente persiguiendo a un líder, manteniendo su cohesión como grupo sin colisionar entre sí ni solaparse con el propio líder. A diferencia de las estructuras fijas, en las que cada NPC se dirige directamente a su celda, durante el Leader Following los seguidores siguen al líder en tiempo real mientras este se mueve, y solo se recolocan en sus celdas exactas una vez que el líder ha llegado a destino.
 
-\textbf{Fase de Wander (patrulla autónoma):}\\
-Tras posicionarse, el líder activa \textit{Wander} y \textit{WallAvoidance} para deambular libremente por el escenario. Durante esta fase, los seguidores cambian su comportamiento: en lugar de apuntar a un agente virtual fijo, ejecutan \textit{Seek} directamente sobre el líder para mantenerse cerca de él. Así el grupo se desplaza de forma cohesionada mientras el líder patrulla.
+El movimiento de cada seguidor resulta de la \textbf{combinación ponderada} de tres comportamientos de steering:
 
-\textbf{Patrones de formación disponibles:}\\
-El tipo de formación se configura en el inspector del \texttt{FormationController} mediante el parámetro \texttt{tipoFormacion}:
+\subsubsection{Arrive}
+
+Actúa como el motor principal del seguimiento. Cada seguidor tiene como objetivo directo el líder y se desplaza hacia él con frenado progresivo. Gracias a la zona de frenado de Arrive, el seguidor no sobrepasa al líder ni oscila alrededor de él, lo que produce un movimiento fluido y controlado conforme reduce la distancia.
+
+\subsubsection{Flee}
+
+Funciona como mecanismo anti-solapamiento con el líder. El comportamiento Flee solo se activa cuando la distancia entre el seguidor y el líder cae por debajo de un umbral crítico (establecido en 1.2 unidades en la implementación), momento en el que el seguidor es empujado en sentido contrario para evitar que se incruste sobre el líder. Cuando el seguidor está suficientemente lejos, Flee permanece desactivado para no interferir con Arrive.
+
+\subsubsection{Separation}
+
+La Separación es un steering que genera fuerzas de repulsión entre agentes vecinos para impedir que se solapen entre sí. A diferencia de Flee, que reacciona frente al líder, Separation actúa entre los propios seguidores.
+
+El algoritmo detecta, mediante un \texttt{OverlapSphere} con radio \texttt{desiredSeparation}, todos los agentes \texttt{AgentNPC} que se encuentren en el entorno inmediato del seguidor. Para cada vecino encontrado, calcula una fuerza de repulsión proporcional a la inversa del cuadrado de la distancia:
+
+\[
+f_i = \min\!\left(\texttt{maxAcceleration},\; \frac{\texttt{decayCoefficient}}{d_i^2}\right)
+\]
+
+La dirección de esta fuerza apunta desde el vecino hacia el propio agente, de modo que cuanto más cerca esté el vecino, mayor es la repulsión. Las contribuciones de todos los vecinos se suman y el resultado se limita a la aceleración máxima del agente.
+
+Los parámetros que controlan el comportamiento son:
+
 \begin{itemize}
-    \item \textbf{Ataque}: formación en cuña ofensiva. El líder ocupa la celda trasera izquierda del grid $(1,2)$, con cuatro soldados desplegados en la línea frontal y uno adicional atrás a su derecha. Los soldados de los flancos giran $\pm 45°$ para cubrir los laterales.
-    \item \textbf{Defensa}: formación con cobertura. El líder se posiciona igualmente en la celda $(1,2)$, pero los cuatro soldados frontales se desplazan a la fila más alejada del grid para crear una pantalla protectora delante del líder.
+    \item \textbf{Desired Separation (1.8)}: radio de influencia en unidades de mundo. Solo los agentes dentro de esta esfera generan fuerza de repulsión.
+    \item \textbf{Decay Coefficient (1)}: controla la intensidad de la repulsión. Un valor de 1 produce una caída cuadrática natural; aumentarlo haría la separación más agresiva incluso a distancias mayores.
+    \item \textbf{Max Neighbours (8)}: límite de vecinos procesados por frame. Evita picos de coste computacional en situaciones de alta densidad de agentes.
 \end{itemize}
 
-En ambos patrones la formación requiere exactamente \textbf{6 agentes} (1 líder + 5 seguidores) y cada slot tiene asignada una orientación relativa que el \textit{Align} aplica al llegar a la celda.
+\subsubsection{Resultado del movimiento combinado}
+
+La suma de los tres comportamientos produce un movimiento coherente: Arrive arrastra al seguidor hacia el líder, Flee lo empuja si se acerca demasiado, y Separation le impide fusionarse con sus compañeros. El resultado visible es que el grupo se desplaza como una masa orgánica y cohesionada detrás del líder, sin apilamientos ni cruces.
+
+En la Figura \ref{fig:leader_following} se muestra el comportamiento del grupo durante el desplazamiento: los seguidores mantienen distancias razonables entre sí mientras persiguen al líder a través de la escena.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.82\textwidth]{img/leaderfollowing.png}
+    \caption{Grupo de seguidores en movimiento aplicando Leader Following. El líder avanza hacia su destino mientras los seguidores se mantienen cohesionados gracias a la combinación de Arrive, Flee y Separation.}
+    \label{fig:leader_following}
+\end{figure}
+
+\FloatBarrier
+
+\subsubsection{Pesos aplicados y justificación}
+
+Los pesos asignados a cada steering (visibles en el Inspector de Unity) determinan la importancia relativa de cada comportamiento en el vector de aceleración final:
+
+\begin{itemize}
+    \item \textbf{Arrive (peso 4)}: recibe el peso más alto porque es el único responsable de que los seguidores alcancen y mantengan su posición relativa al líder. Sin una contribución dominante de Arrive, los demás comportamientos podrían desviar al seguidor indefinidamente y perder al líder.
+
+    \item \textbf{Separation (peso 3)}: el segundo peso en importancia, ya que los seguidores se mueven en grupo y los solapamientos laterales son constantes. Una contribución de separación relativamente alta garantiza que los agentes mantengan distancias razonables entre sí durante todo el trayecto, sin que la cohesión del grupo se rompa por acumulación.
+
+    \item \textbf{Flee (peso 2)}: es el de menor peso porque solo interviene de forma puntual cuando la distancia al líder cae por debajo de 1.2 u. Su contribución ha de ser suficiente para empujar al seguidor hacia atrás en ese momento crítico, pero sin dominar el movimiento general; de lo contrario, el seguidor se alejaría del líder en lugar de mantenerse cerca de él.
+\end{itemize}
+
+Esta jerarquía de pesos (4-3-2) asegura que el grupo siga al líder de forma robusta, mantenga orden interno entre seguidores, y se separe del líder solo cuando es estrictamente necesario.
 
 \section{LRTA*}
 
