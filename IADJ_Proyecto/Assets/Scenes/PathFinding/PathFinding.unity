@@ -1788,7 +1788,7 @@ PrefabInstance:
       addedObject: {fileID: 1431405709}
     - targetCorrespondingSourceObject: {fileID: 100070, guid: 3353e4f866c39d043a315b41717c9bb7, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1431405715}
+      addedObject: {fileID: 1431405718}
   m_SourcePrefab: {fileID: 100100000, guid: 3353e4f866c39d043a315b41717c9bb7, type: 3}
 --- !u!1 &1431405706 stripped
 GameObject:
@@ -1824,7 +1824,7 @@ MonoBehaviour:
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
-  useGravity: 1
+  useGravity: 0
   customGravity: 0
   groundLevel: 0
 --- !u!114 &1431405709
@@ -1846,11 +1846,10 @@ MonoBehaviour:
   drawLearnedCosts: 1
   learnedCostColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   goal: {fileID: 354082757}
-  stopAtGoal: 1
   initializeCostsOnPathRequest: 1
   recalculateEachCell: 1
   maxLSSNodes: 100
---- !u!114 &1431405715
+--- !u!114 &1431405718
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1859,11 +1858,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1431405706}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c7dfc68f41c5494483c84f2ba2fdac2, type: 3}
+  m_Script: {fileID: 11500000, guid: ed4bff723ecd0bb4eb4ab243134ed442, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   weight: 1
   target: {fileID: 0}
+  timeToTarget: 0.1
 --- !u!1 &1546862027 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1000012128009412, guid: b667959c85aac0840abd65af9a3e1517, type: 3}

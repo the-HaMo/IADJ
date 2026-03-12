@@ -5,30 +5,32 @@ using UnityEngine;
 /// <summary>
 /// Controla la selección de NPCs mediante ratón y teclado.
 /// Los NPCs seleccionados se mantienen hasta que el usuario los descarte.
+/// Al seleccionar un NPC se muestra una pirámide invertida encima de él.
 /// </summary>
 public class SeleccionarObjetivos : MonoBehaviour
 {
     // Lista de NPCs seleccionados
     private List<GameObject> listNPCs = new List<GameObject>();
 
-    // Material para resaltar NPCs seleccionados
-    [SerializeField] private Material materialSeleccionado;
-    [SerializeField] private Material materialOriginal;
+    // Pirámides activas por NPC
+    private Dictionary<GameObject, GameObject> piramides = new Dictionary<GameObject, GameObject>();
 
-    // Referencia a la capa de NPCs
-    [SerializeField] private LayerMask npcLayer;
+    // Configuración visual de la pirámide
+    [SerializeField] private float alturaSobreNPC = 2.0f;
+    [SerializeField] private float tamañoBase = 0.4f;
+    [SerializeField] private Color colorPiramide = Color.yellow;
 
     void Update()
     {
-        // Añadir NPC a selección con Shift + Clic (verificar primero)
+        // Añadir NPC a selección con Shift + Clic
         if (Input.GetKey(KeyCode.LeftShift) && Input.GetMouseButtonDown(0))
         {
-            SeleccionarNPC(true); // true = añadir a selección existente
+            SeleccionarNPC(true);
         }
-        // Seleccionar NPC con clic izquierdo (reemplazar selección)
+        // Seleccionar NPC con clic izquierdo (reemplaza selección)
         else if (Input.GetMouseButtonDown(0))
         {
-            SeleccionarNPC(false); // false = no añadir, reemplazar selección
+            SeleccionarNPC(false);
         }
 
         // Deseleccionar todos con ESC
@@ -43,29 +45,23 @@ public class SeleccionarObjetivos : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, npcLayer))
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity))
         {
             GameObject npcClickeado = hit.collider.gameObject;
 
-            // Verificar que tiene componente AgentNPC
             if (npcClickeado.GetComponent<AgentNPC>() != null)
             {
-                // Si no es añadir, limpiar selección previa
                 if (!añadir)
-                {
                     DeseleccionarTodos();
-                }
 
-                // Si ya está seleccionado, deseleccionarlo
                 if (listNPCs.Contains(npcClickeado))
                 {
                     DeseleccionarNPC(npcClickeado);
                 }
                 else
                 {
-                    // Añadir a la selección
                     listNPCs.Add(npcClickeado);
-                    ResaltarNPC(npcClickeado, true);
+                    MostrarPiramide(npcClickeado, true);
                     Debug.Log($"NPC seleccionado: {npcClickeado.name}. Total: {listNPCs.Count}");
                 }
             }
@@ -77,7 +73,7 @@ public class SeleccionarObjetivos : MonoBehaviour
         if (listNPCs.Contains(npc))
         {
             listNPCs.Remove(npc);
-            ResaltarNPC(npc, false);
+            MostrarPiramide(npc, false);
             Debug.Log($"NPC deseleccionado: {npc.name}. Total: {listNPCs.Count}");
         }
     }
@@ -85,36 +81,89 @@ public class SeleccionarObjetivos : MonoBehaviour
     public void DeseleccionarTodos()
     {
         foreach (GameObject npc in listNPCs)
-        {
-            ResaltarNPC(npc, false);
-        }
+            MostrarPiramide(npc, false);
         listNPCs.Clear();
         Debug.Log("Todos los NPCs deseleccionados");
     }
 
-    private void ResaltarNPC(GameObject npc, bool seleccionar)
+    private void MostrarPiramide(GameObject npc, bool mostrar)
     {
-        Renderer renderer = npc.GetComponent<Renderer>();
-        if (renderer != null)
+        if (mostrar)
         {
-            if (seleccionar && materialSeleccionado != null)
+            if (piramides.ContainsKey(npc)) return;
+
+            GameObject piramide = CrearPiramideInvertida();
+            piramide.transform.SetParent(npc.transform, false);
+            piramide.transform.localPosition = new Vector3(0, alturaSobreNPC, 0);
+            piramides[npc] = piramide;
+        }
+        else
+        {
+            if (piramides.TryGetValue(npc, out GameObject piramide))
             {
-                renderer.material = materialSeleccionado;
-            }
-            else if (materialOriginal != null)
-            {
-                renderer.material = materialOriginal;
+                Destroy(piramide);
+                piramides.Remove(npc);
             }
         }
     }
 
-    public List<GameObject> getListNPCs()
+    private GameObject CrearPiramideInvertida()
     {
-        return listNPCs;
+        GameObject obj = new GameObject("PiramideSeleccion");
+        MeshFilter mf = obj.AddComponent<MeshFilter>();
+        MeshRenderer mr = obj.AddComponent<MeshRenderer>();
+
+        mf.mesh = GenerarMeshPiramideInvertida(tamañoBase);
+
+        Material mat = new Material(Shader.Find("Standard"));
+        mat.color = colorPiramide;
+        mr.material = mat;
+
+        return obj;
     }
 
-    public int GetNumSeleccionados()
+    /// <summary>
+    /// Genera un mesh de pirámide invertida: base cuadrada arriba, ápice apuntando hacia abajo.
+    /// </summary>
+    private Mesh GenerarMeshPiramideInvertida(float size)
     {
-        return listNPCs.Count;
+        Mesh mesh = new Mesh();
+
+        float h = size * 1.5f; // altura de la pirámide
+        float s = size * 0.5f; // mitad del lado de la base
+
+        // Base en y=0 (local), ápice en y=-h
+        Vector3[] vertices = new Vector3[]
+        {
+            new Vector3(-s, 0,  s),  // 0: frente-izq
+            new Vector3( s, 0,  s),  // 1: frente-der
+            new Vector3( s, 0, -s),  // 2: atrás-der
+            new Vector3(-s, 0, -s),  // 3: atrás-izq
+            new Vector3( 0, -h,  0), // 4: ápice (abajo)
+        };
+
+        int[] triangles = new int[]
+        {
+            // Base (cara superior)
+            0, 2, 1,
+            0, 3, 2,
+            // Cara frontal
+            0, 1, 4,
+            // Cara derecha
+            1, 2, 4,
+            // Cara trasera
+            2, 3, 4,
+            // Cara izquierda
+            3, 0, 4,
+        };
+
+        mesh.vertices = vertices;
+        mesh.triangles = triangles;
+        mesh.RecalculateNormals();
+
+        return mesh;
     }
+
+    public List<GameObject> getListNPCs() => listNPCs;
+    public int GetNumSeleccionados() => listNPCs.Count;
 }

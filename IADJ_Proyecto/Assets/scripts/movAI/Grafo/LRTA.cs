@@ -26,13 +26,12 @@ public class LRTA : MonoBehaviour
     private int activePathIndex;
     private Agent virtualTarget;
     private AgentNPC ownerAgent;
-    private Seek seekSteering;
+    private Arrive arriveSteering;
     private List<Vector2Int> lastLss = new List<Vector2Int>();
     private const float CellCenterEpsilon = 0.05f;
     
     [Header("Guia de Steering")]
     [SerializeField] private Transform goal;
-    [SerializeField] private bool stopAtGoal = true;
 
     [Header("LRTA* (Preparacion)")]
     [SerializeField] private bool initializeCostsOnPathRequest = true;
@@ -56,7 +55,7 @@ public class LRTA : MonoBehaviour
         BuildHeuristic();
 
         ownerAgent = GetComponent<AgentNPC>();
-        seekSteering = GetComponent<Seek>();
+        arriveSteering = GetComponent<Arrive>();
 
         EnsureVirtualTarget();
         BindTargetToSteerings();
@@ -109,15 +108,7 @@ public class LRTA : MonoBehaviour
 
             if (activePathIndex >= activePath.Count)
             {
-                if (!stopAtGoal)
-                {
-                    RecalculateActivePath(ownerAgent.Position, goal.position);
-                }
-                else
-                {
-                    DisableSteeringBehaviors();
-                }
-                return;
+                return; // Arrive frena naturalmente al llegar al objetivo
             }
 
             if (recalculateEachCell)
@@ -425,22 +416,15 @@ private List<Vector2Int> LRTAStar(Vector2Int start, Vector2Int goal)
             return;
         }
 
-        if (seekSteering != null)
+        if (arriveSteering != null)
         {
-            seekSteering.NewTarget(virtualTarget);
-            seekSteering.enabled = true;
+            arriveSteering.NewTarget(virtualTarget);
+            arriveSteering.enabled = true;
         }
 
     }
 
-    private void DisableSteeringBehaviors()
-    {
-        if (seekSteering != null)
-        {
-            seekSteering.enabled = false;
-        }
 
-    }
 
     private void RecalculateActivePath(Vector3 startWorld, Vector3 goalWorld)
     {
