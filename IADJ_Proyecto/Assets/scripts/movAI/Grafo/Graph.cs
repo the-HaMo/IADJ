@@ -22,13 +22,14 @@ public class Graph : MonoBehaviour
         fila = Mathf.FloorToInt((worldPosition.z - origen.z) / tamCelda);
     }
 
-    void Update()
+    private void OnDrawGizmos()
     {
-        // En cada frame, si está activada la depuración, dibujamos el grid
-        if (mostrarGrid)
+        if (!mostrarGrid)
         {
-            DibujarGrid();
+            return;
         }
+
+        DibujarGrid();
     }
 
     private bool isOcupada(int fila, int columna)
@@ -48,18 +49,19 @@ public class Graph : MonoBehaviour
     private void DibujarGrid()
     {
         // Dibujamos las líneas del grid
+        Gizmos.color = Color.white;
         for (int i = 0; i <= nFilas; i++)
         {
             Vector3 inicio = GetWorldPosition(i, 0);
             Vector3 fin = GetWorldPosition(i, nColumnas);
-            Debug.DrawLine(inicio, fin, Color.white);
+            Gizmos.DrawLine(inicio, fin);
         }
 
         for (int j = 0; j <= nColumnas; j++)
         {
             Vector3 inicio = GetWorldPosition(0, j);
             Vector3 fin = GetWorldPosition(nFilas, j);
-            Debug.DrawLine(inicio, fin, Color.white);
+            Gizmos.DrawLine(inicio, fin);
         }
 
         // Comprobamos cada celda y la dibujamos en rojo si está ocupada
@@ -83,14 +85,15 @@ public class Graph : MonoBehaviour
         Vector3 p3 = GetWorldPosition(i + 1, j);
 
         // Dibujar el contorno en rojo
-        Debug.DrawLine(p0, p1, Color.red);
-        Debug.DrawLine(p1, p2, Color.red);
-        Debug.DrawLine(p2, p3, Color.red);
-        Debug.DrawLine(p3, p0, Color.red);
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(p0, p1);
+        Gizmos.DrawLine(p1, p2);
+        Gizmos.DrawLine(p2, p3);
+        Gizmos.DrawLine(p3, p0);
 
         // Añadir una cruz para identificarla mejor visualmente
-        Debug.DrawLine(p0, p2, Color.red);
-        Debug.DrawLine(p1, p3, Color.red);
+        Gizmos.DrawLine(p0, p2);
+        Gizmos.DrawLine(p1, p3);
     }
 }
 

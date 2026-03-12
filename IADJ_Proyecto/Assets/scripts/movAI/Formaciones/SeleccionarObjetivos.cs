@@ -68,7 +68,7 @@ public class SeleccionarObjetivos : MonoBehaviour
         }
     }
 
-    private void DeseleccionarNPC(GameObject npc)
+    public void DeseleccionarNPC(GameObject npc)
     {
         if (listNPCs.Contains(npc))
         {

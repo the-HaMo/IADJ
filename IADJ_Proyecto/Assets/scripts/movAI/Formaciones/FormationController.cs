@@ -112,6 +112,17 @@ public class FormationController : MonoBehaviour
             return;
         }
 
+        if (allAgents.Length > 6)
+        {
+            for (int idx = 6; idx < allAgents.Length; idx++)
+            {
+                selectorObjetivos.DeseleccionarNPC(allAgents[idx].gameObject);
+            }
+
+            allAgents = ObtenerAgentesSeleccionados();
+            Debug.Log("Se han deseleccionado los NPCs extra. La formación usa solo 6 unidades.");
+        }
+
         // Siempre reiniciar el grid al pulsar F para evitar slots sucios
         // y resetear los estados del bucle de wander.
         wanderLoopStoppedByUser = false;
