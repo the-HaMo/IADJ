@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,16 +9,16 @@ public class Agent : Bodi // Asegúrate de que la clase Bodi esté definida en t
     public float avoidDistance = 3.5f;    
     
     [Tooltip("Radio interior de la IA")]
-    [SerializeField] protected float _interiorRadius = 1f;
+    [SerializeField] protected float interiorRadius = 1f;
 
     [Tooltip("Radio de llegada de la IA")]
-    [SerializeField] protected float _arrivalRadius = 3f;
+    [SerializeField] protected float arrivalRadius = 3f;
 
     [Tooltip("Ángulo interior de la IA")]
-    [SerializeField] protected float _interiorAngle = 3.0f; // ángulo sexagesimal.
+    [SerializeField] protected float interiorAngle = 3.0f; // ángulo sexagesimal.
 
     [Tooltip("Ángulo exterior de la IA")]
-    [SerializeField] protected float _exteriorAngle = 8.0f; // ángulo sexagesimal.
+    [SerializeField] protected float exteriorAngle = 8.0f; // ángulo sexagesimal.
 
     // Control de depuración visual
     public bool gizmos = true;
@@ -26,26 +26,26 @@ public class Agent : Bodi // Asegúrate de que la clase Bodi esté definida en t
     #region Propiedades
     public float InteriorRadius 
     { 
-        get { return _interiorRadius; } 
-        set { _interiorRadius = Mathf.Clamp(value, 0, _arrivalRadius); } 
+        get { return interiorRadius; } 
+        set { interiorRadius = Mathf.Clamp(value, 0, arrivalRadius); } 
     }    
 
     public float ArrivalRadius 
     { 
-        get { return _arrivalRadius; } 
-        set { _arrivalRadius = Mathf.Max(_interiorRadius, value); } 
+        get { return arrivalRadius; } 
+        set { arrivalRadius = Mathf.Max(interiorRadius, value); } 
     }
 
     public float InteriorAngle 
     { 
-        get { return _interiorAngle; } 
-        set { _interiorAngle = Mathf.Clamp(value, 0, _exteriorAngle); } 
+        get { return interiorAngle; } 
+        set { interiorAngle = Mathf.Clamp(value, 0, exteriorAngle); } 
     }
 
     public float ExteriorAngle 
     { 
-        get { return _exteriorAngle; } 
-        set { _exteriorAngle = Mathf.Clamp(value, _interiorAngle, 180.0f); } 
+        get { return exteriorAngle; } 
+        set { exteriorAngle = Mathf.Clamp(value, interiorAngle, 180.0f); } 
     }
     #endregion
 
@@ -130,10 +130,10 @@ public class Agent : Bodi // Asegúrate de que la clase Bodi esté definida en t
         if (gizmos) 
         {        
             Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(transform.position, _interiorRadius);
+            Gizmos.DrawWireSphere(transform.position, interiorRadius);
             
             Gizmos.color = Color.blue;
-            Gizmos.DrawWireSphere(transform.position, _arrivalRadius);
+            Gizmos.DrawWireSphere(transform.position, arrivalRadius);
             
             Gizmos.color = Color.red;
             // Vector3.forward es (0,0,1), esto dibuja una línea hacia adelante del mundo

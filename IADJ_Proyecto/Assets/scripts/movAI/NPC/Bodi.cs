@@ -6,19 +6,19 @@ public enum Range { Degrees, Radians }
 
 public class Bodi : MonoBehaviour
 {
-    [SerializeField] protected float _mass = 1;
-    [SerializeField] protected float _maxSpeed = 1;
-    [SerializeField] protected float _maxRotation = 1;
-    [SerializeField] protected float _maxAcceleration = 1;
-    [SerializeField] protected float _maxAngularAcc = 1;
-    [SerializeField] protected float _maxForce = 1;
+    [SerializeField] protected float mass = 1;
+    [SerializeField] protected float maxSpeed = 1;
+    [SerializeField] protected float maxRotation = 1;
+    [SerializeField] protected float maxAcceleration = 1;
+    [SerializeField] protected float maxAngularAcc = 1;
+    [SerializeField] protected float maxForce = 1;
 
-    protected Vector3 _acceleration;
-    protected float _angularAcc;
-    protected Vector3 _velocity;
-    protected float _rotation;
-    protected float _speed;
-    protected float _orientation;
+    protected Vector3 acceleration;
+    protected float angularAcc;
+    protected Vector3 velocity;
+    protected float rotation;
+    protected float speed;
+    protected float orientation;
 
     // NUEVO: Flag para permitir movimiento vertical
     [HideInInspector]
@@ -26,44 +26,44 @@ public class Bodi : MonoBehaviour
 
     public float Mass
     {
-        get { return _mass; }
-        set { _mass = Mathf.Max(0, value); }
+        get { return mass; }
+        set { mass = Mathf.Max(0, value); }
     }
 
     public float MaxForce
     {
-        get { return _maxForce; }
-        set { _maxForce = Mathf.Max(0, value); }
+        get { return maxForce; }
+        set { maxForce = Mathf.Max(0, value); }
     }
 
     public float MaxSpeed
     {
-        get { return _maxSpeed; }
-        set { _maxSpeed = Mathf.Max(0, value); }
+        get { return maxSpeed; }
+        set { maxSpeed = Mathf.Max(0, value); }
     }
 
     public Vector3 Velocity
     {
-        get { return new Vector3(_velocity.x, _velocity.y, _velocity.z); } 
+        get { return new Vector3(velocity.x, velocity.y, velocity.z); } 
         set { 
             // MODIFICADO: Solo limitar la velocidad horizontal si no permitimos movimiento vertical
             if (!allowVerticalMovement)
             {
                 Vector3 horizontalVel = new Vector3(value.x, 0, value.z);
-                horizontalVel = Vector3.ClampMagnitude(horizontalVel, _maxSpeed);
+                horizontalVel = Vector3.ClampMagnitude(horizontalVel, maxSpeed);
                 
                 if (horizontalVel.magnitude < 0.03f) 
-                    _velocity = Vector3.zero;
+                    velocity = Vector3.zero;
                 else 
-                    _velocity = horizontalVel;
+                    velocity = horizontalVel;
             }
             else
             {
                 // Durante salto: permitir velocidad vertical sin límite
                 Vector3 horizontalVel = new Vector3(value.x, 0, value.z);
-                horizontalVel = Vector3.ClampMagnitude(horizontalVel, _maxSpeed);
+                horizontalVel = Vector3.ClampMagnitude(horizontalVel, maxSpeed);
                 
-                _velocity = new Vector3(
+                velocity = new Vector3(
                     horizontalVel.magnitude < 0.03f ? 0 : horizontalVel.x,
                     value.y, // Mantener Y sin modificar
                     horizontalVel.magnitude < 0.03f ? 0 : horizontalVel.z
@@ -74,43 +74,43 @@ public class Bodi : MonoBehaviour
     
     public float MaxRotation
     {
-        get { return _maxRotation; }
-        set { _maxRotation = Mathf.Max(0, value); }
+        get { return maxRotation; }
+        set { maxRotation = Mathf.Max(0, value); }
     }
 
     public float Rotation
     {
-        get { return _rotation; }
+        get { return rotation; }
         set { 
-            float rotation = Mathf.Clamp(value, -_maxRotation, _maxRotation);
-            if (rotation < 0.03 && rotation > -0.03) _rotation = 0f;
-            else _rotation = rotation; 
+            float r = Mathf.Clamp(value, -maxRotation, maxRotation);
+            if (r < 0.03 && r > -0.03) rotation = 0f;
+            else rotation = r; 
         }
     }
 
     public float MaxAcceleration
     {
-        get { return _maxAcceleration; }
-        set { _maxAcceleration = Mathf.Max(0, value); }
+        get { return maxAcceleration; }
+        set { maxAcceleration = Mathf.Max(0, value); }
     }
 
     public Vector3 Acceleration
     {
-        get { return new Vector3(_acceleration.x, _acceleration.y, _acceleration.z); }
+        get { return new Vector3(acceleration.x, acceleration.y, acceleration.z); }
         set { 
-            Vector3 acceleration = Vector3.ClampMagnitude(value, _maxAcceleration);
-            if (acceleration.magnitude < 0.03f) _acceleration = Vector3.zero;
-            else _acceleration = acceleration;
+            Vector3 a = Vector3.ClampMagnitude(value, maxAcceleration);
+            if (a.magnitude < 0.03f) acceleration = Vector3.zero;
+            else acceleration = a;
         }
     }
 
     public float AngularAcc
     {
-        get { return _angularAcc; }
+        get { return angularAcc; }
         set { 
-            float angularAcc = Mathf.Clamp(value, -_maxAngularAcc, _maxAngularAcc);
-            if (angularAcc < 0.03 && angularAcc > -0.03) _angularAcc = 0f;
-            else _angularAcc = angularAcc; 
+            float aA = Mathf.Clamp(value, -maxAngularAcc, maxAngularAcc);
+            if (aA < 0.03 && aA > -0.03) angularAcc = 0f;
+            else angularAcc = aA; 
         }
     }
 
@@ -130,28 +130,28 @@ public class Bodi : MonoBehaviour
 
     public float Orientation
     {
-        get { return _orientation; }
+        get { return orientation; }
         set { 
-            _orientation = MapToRange(value, Range.Degrees); 
+            orientation = MapToRange(value, Range.Degrees); 
             transform.rotation = new Quaternion(); 
-            transform.Rotate(Vector3.up, _orientation);               
+            transform.Rotate(Vector3.up, orientation);               
         }
     }
 
     public float Speed
     {
-        get { return _speed; }
+        get { return speed; }
         set { 
-            float speed = Mathf.Max(0, _maxSpeed);
-            if (speed < 0.03f) _speed = 0f;
-            else _speed = speed; 
+            float s = Mathf.Max(0, maxSpeed);
+            if (s < 0.03f) speed = 0f;
+            else speed = s; 
         }
     }
 
     public float MaxAngularAcc
     {
-        get { return _maxAngularAcc; }
-        set { _maxAngularAcc = Mathf.Max(0, value); }
+        get { return maxAngularAcc; }
+        set { maxAngularAcc = Mathf.Max(0, value); }
     }
 
     public static float MapToRange(float rotation, Range r)
