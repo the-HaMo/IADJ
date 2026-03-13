@@ -142,6 +142,7 @@ MonoBehaviour:
   _maxAcceleration: 5
   _maxAngularAcc: 300
   _maxForce: 30
+  allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 3.5
   _interiorRadius: 1
@@ -152,6 +153,9 @@ MonoBehaviour:
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
+  useGravity: 1
+  customGravity: 0
+  groundLevel: 0
 --- !u!114 &3845228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -495,6 +499,7 @@ MonoBehaviour:
   _maxAcceleration: 16
   _maxAngularAcc: 300
   _maxForce: 30
+  allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 2
   _interiorRadius: 1
@@ -505,6 +510,9 @@ MonoBehaviour:
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
+  useGravity: 1
+  customGravity: 0
+  groundLevel: 0
 --- !u!114 &681777926
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -857,11 +865,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mass: 1
-  _maxSpeed: 1
+  _maxSpeed: 5
   _maxRotation: 20
-  _maxAcceleration: 1
+  _maxAcceleration: 5
   _maxAngularAcc: 20
   _maxForce: 30
+  allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 2
   _interiorRadius: 1

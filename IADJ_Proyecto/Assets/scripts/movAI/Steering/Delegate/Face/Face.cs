@@ -6,7 +6,7 @@ public class Face : SteeringBehaviour
 {
     // Overrides the Align.target member
     public Agent target;
-    public float timeToTarget;
+    public float timeToTarget=0.1f;
     
     void Awake()
     {
@@ -48,26 +48,31 @@ public class Face : SteeringBehaviour
 
         float rotationSize = Mathf.Abs(rotation);
 
+        // Determinamos la velocidad de rotación deseada (targetRotation)
         if (rotationSize < target.InteriorAngle) {
-            steer.linear = Vector3.zero;
-            steer.angular = 0f;
-            return steer;
+            // Si estamos dentro del ángulo interior, queremos detenernos (velocidad 0)
+            targetRotation = 0f;
         }
-
-        if (rotationSize > target.ExteriorAngle){
+        else if (rotationSize > target.ExteriorAngle){
+            // Si estamos fuera del ángulo exterior, rotamos a máxima velocidad
             targetRotation = agent.MaxRotation;
         }
         else {
+            // Si estamos entre ambos, escalamos la velocidad proporcionalmente
             targetRotation = agent.MaxRotation * rotationSize / target.ExteriorAngle;
         }
 
-        targetRotation *= rotation / rotationSize;
+        // Aplicamos la dirección (signo) a la velocidad deseada
+        if (rotationSize > 0.001f) {
+            targetRotation *= rotation / rotationSize;
+        }
 
+        // Calculamos la aceleración necesaria para alcanzar targetRotation en timeToTarget
+        // Al ser targetRotation = 0 cuando estamos cerca, esto genera el frenado contra la inercia
         steer.angular = (targetRotation - agent.Rotation) / timeToTarget;
 
         if (Mathf.Abs(steer.angular) > agent.MaxAngularAcc) {
-            steer.angular /= Mathf.Abs(steer.angular);
-            steer.angular *= agent.MaxAngularAcc;
+            steer.angular = Mathf.Sign(steer.angular) * agent.MaxAngularAcc;
         }
 
         steer.linear = Vector3.zero;

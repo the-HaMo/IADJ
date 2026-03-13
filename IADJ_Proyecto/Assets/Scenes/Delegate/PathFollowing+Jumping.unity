@@ -936,7 +936,7 @@ MonoBehaviour:
   landingTolerance: 1
   airborneHeight: 1
   autoResetOnComplete: 1
-  showDebugGizmos: 1
+  showDebugGizmos: 0
   showDebugLogs: 0
   jumpPointColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   landingPointColor: {r: 0, g: 1, b: 0, a: 1}
