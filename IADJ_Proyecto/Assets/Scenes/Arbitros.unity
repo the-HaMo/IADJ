@@ -1082,9 +1082,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mass: 1
-  _maxSpeed: 10
+  _maxSpeed: 5
   _maxRotation: 120
-  _maxAcceleration: 20
+  _maxAcceleration: 10
   _maxAngularAcc: 200
   _maxForce: 30
   allowVerticalMovement: 0
@@ -1098,7 +1098,7 @@ MonoBehaviour:
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
-  useGravity: 1
+  useGravity: 0
   customGravity: 0
   groundLevel: 0
 --- !u!114 &946475302
@@ -1695,7 +1695,7 @@ MonoBehaviour:
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
-  useGravity: 1
+  useGravity: 0
   customGravity: 0
   groundLevel: 0
 --- !u!114 &1453645675
@@ -1745,7 +1745,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weight: 2
-  target: {fileID: 0}
+  target: {fileID: 1431405708}
   escapeRadius: 7
 --- !u!1001 &1514986585
 PrefabInstance:

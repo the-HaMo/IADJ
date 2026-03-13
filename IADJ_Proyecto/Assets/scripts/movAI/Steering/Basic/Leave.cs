@@ -30,8 +30,10 @@ public class Leave : SteeringBehaviour
 
         if (distance >= escapeRadius)
         {
-            // Devuelve un Steering vacío para no interferir con otros comportamientos como Wander
-            return new Steering();
+            // Frenado completo si el agente ya está fuera del radio de escape
+            steer.linear = -agent.Velocity;
+            steer.angular = 0f;
+            return steer;
         }
 
         // Si todavía está dentro del radio de escape, huye del objetivo (igual que Flee)
