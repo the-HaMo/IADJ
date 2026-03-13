@@ -1017,6 +1017,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 62dcba975a0bdfe47bef48ea43049412, type: 3}
       insertIndex: -1
       addedObject: {fileID: 946475302}
+    - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 62dcba975a0bdfe47bef48ea43049412, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 946475305}
   m_SourcePrefab: {fileID: 100100000, guid: 62dcba975a0bdfe47bef48ea43049412, type: 3}
 --- !u!1 &932836604 stripped
 GameObject:
@@ -1082,7 +1085,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mass: 1
-  _maxSpeed: 5
+  _maxSpeed: 4
   _maxRotation: 120
   _maxAcceleration: 10
   _maxAngularAcc: 200
@@ -1115,6 +1118,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weight: 1
   target: {fileID: 1453645674}
+--- !u!114 &946475305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946475296}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b2113864723995498f08aacaf5ab915, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 3
+  lookahead: 5
+  avoidDistance: 5
+  numWhiskers: 3
+  whiskerAngle: 40
 --- !u!1001 &1001744811
 PrefabInstance:
   m_ObjectHideFlags: 0
