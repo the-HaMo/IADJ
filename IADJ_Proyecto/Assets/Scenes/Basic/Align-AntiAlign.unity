@@ -136,19 +136,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77d203e69b7ce4a82b2f0a212520fdf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mass: 1
-  _maxSpeed: 5
-  _maxRotation: 180
-  _maxAcceleration: 5
-  _maxAngularAcc: 300
-  _maxForce: 30
+  mass: 5
+  maxSpeed: 5
+  maxRotation: 50
+  maxAcceleration: 100
+  maxAngularAcc: 50
+  maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 3.5
-  _interiorRadius: 1
-  _arrivalRadius: 3
-  _interiorAngle: 3
-  _exteriorAngle: 8
+  interiorRadius: 1
+  arrivalRadius: 3
+  interiorAngle: 3
+  exteriorAngle: 8
   gizmos: 1
   steer:
     angular: 0
@@ -493,19 +493,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77d203e69b7ce4a82b2f0a212520fdf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mass: 1
-  _maxSpeed: 5
-  _maxRotation: 180
-  _maxAcceleration: 16
-  _maxAngularAcc: 300
-  _maxForce: 30
+  mass: 5
+  maxSpeed: 5
+  maxRotation: 50
+  maxAcceleration: 100
+  maxAngularAcc: 50
+  maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
-  avoidDistance: 2
-  _interiorRadius: 1
-  _arrivalRadius: 3
-  _interiorAngle: 8
-  _exteriorAngle: 50
+  avoidDistance: 3.5
+  interiorRadius: 1
+  arrivalRadius: 3
+  interiorAngle: 3
+  exteriorAngle: 8
   gizmos: 1
   steer:
     angular: 0
@@ -789,27 +789,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400070, guid: 3353e4f866c39d043a315b41717c9bb7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0.16
       objectReference: {fileID: 0}
     - target: {fileID: 400070, guid: 3353e4f866c39d043a315b41717c9bb7, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.91348547
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 400070, guid: 3353e4f866c39d043a315b41717c9bb7, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400070, guid: 3353e4f866c39d043a315b41717c9bb7, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.4068713
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400070, guid: 3353e4f866c39d043a315b41717c9bb7, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400070, guid: 3353e4f866c39d043a315b41717c9bb7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 48.017
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 3353e4f866c39d043a315b41717c9bb7, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -864,19 +864,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fee2a1671229844bda66e9353f90b469, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mass: 1
-  _maxSpeed: 5
-  _maxRotation: 20
-  _maxAcceleration: 5
-  _maxAngularAcc: 20
-  _maxForce: 30
+  mass: 5
+  maxSpeed: 5
+  maxRotation: 200
+  maxAcceleration: 100
+  maxAngularAcc: 200
+  maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 2
-  _interiorRadius: 1
-  _arrivalRadius: 6
-  _interiorAngle: 5
-  _exteriorAngle: 50
+  interiorRadius: 1
+  arrivalRadius: 3
+  interiorAngle: 3
+  exteriorAngle: 8
   gizmos: 1
 --- !u!1001 &1629215807
 PrefabInstance:

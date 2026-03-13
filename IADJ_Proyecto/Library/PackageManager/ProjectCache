@@ -5,7 +5,7 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 639089544303611184
+      ticks: 639090390330053311
     m_Hash: 2218047253
   m_LockFileStatus:
     m_FilePath: C:/Users/MSI/OneDrive - UNIVERSIDAD DE MURCIA/Escritorio/4_Carrera/IADJ/GitHub/IADJ/IADJ_Proyecto/Packages/packages-lock.json
@@ -13,7 +13,7 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 639089544303611184
+      ticks: 639090390330070757
     m_Hash: 2242936270
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}

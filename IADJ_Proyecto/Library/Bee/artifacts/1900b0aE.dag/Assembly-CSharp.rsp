@@ -414,6 +414,7 @@
 "Assets/scripts/movAI/Steering/Basic/Separation.cs"
 "Assets/scripts/movAI/Steering/Basic/VelocityMatching.cs"
 "Assets/scripts/movAI/Steering/Delegate/Face/Face.cs"
+"Assets/scripts/movAI/Steering/Delegate/Interpose/Interpose.cs"
 "Assets/scripts/movAI/Steering/Delegate/Jumper/Jumper.cs"
 "Assets/scripts/movAI/Steering/Delegate/PathFollowing/PathFollowing.cs"
 "Assets/scripts/movAI/Steering/Delegate/WallAvoidance/WallAvoidance.cs"
