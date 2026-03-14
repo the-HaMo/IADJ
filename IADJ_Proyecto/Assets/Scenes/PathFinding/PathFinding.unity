@@ -1810,11 +1810,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mass: 1
-  maxSpeed: 1
-  maxRotation: 1
-  maxAcceleration: 1
-  maxAngularAcc: 1
-  maxForce: 1
+  maxSpeed: 2.5
+  maxRotation: 5
+  maxAcceleration: 5
+  maxAngularAcc: 5
+  maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 3.5

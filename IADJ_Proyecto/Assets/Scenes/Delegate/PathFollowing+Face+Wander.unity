@@ -1373,19 +1373,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77d203e69b7ce4a82b2f0a212520fdf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mass: 1
-  _maxSpeed: 2.5
-  _maxRotation: 200
-  _maxAcceleration: 5
-  _maxAngularAcc: 500
-  _maxForce: 50
+  mass: 1
+  maxSpeed: 3
+  maxRotation: 100
+  maxAcceleration: 100
+  maxAngularAcc: 100
+  maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 2
-  _interiorRadius: 1
-  _arrivalRadius: 3
-  _interiorAngle: 4
-  _exteriorAngle: 5
+  interiorRadius: 1
+  arrivalRadius: 3
+  interiorAngle: 3
+  exteriorAngle: 8
   gizmos: 1
   steer:
     angular: 0
@@ -1438,19 +1438,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77d203e69b7ce4a82b2f0a212520fdf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mass: 1
-  _maxSpeed: 10
-  _maxRotation: 120
-  _maxAcceleration: 20
-  _maxAngularAcc: 200
-  _maxForce: 30
+  mass: 1
+  maxSpeed: 5
+  maxRotation: 100
+  maxAcceleration: 100
+  maxAngularAcc: 100
+  maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 2
-  _interiorRadius: 1
-  _arrivalRadius: 3
-  _interiorAngle: 4
-  _exteriorAngle: 5
+  interiorRadius: 1
+  arrivalRadius: 3
+  interiorAngle: 3
+  exteriorAngle: 8
   gizmos: 0
   steer:
     angular: 0
@@ -1488,8 +1488,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weight: 1
-  wanderOffset: 5
-  wanderRadius: 4.5
+  wanderOffset: 2
+  wanderRadius: 3
   wanderRate: 5
   showGizmos: 1
 --- !u!1001 &1514986585

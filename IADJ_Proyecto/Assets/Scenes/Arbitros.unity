@@ -329,7 +329,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4000014091459346, guid: 1de93a9fdb990db4ca7f2fe5c2cc7b59, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 16
+      value: 9.1
       objectReference: {fileID: 0}
     - target: {fileID: 4000014091459346, guid: 1de93a9fdb990db4ca7f2fe5c2cc7b59, type: 3}
       propertyPath: m_LocalRotation.w
@@ -511,10 +511,10 @@ PrefabInstance:
       addedObject: {fileID: 1453645676}
     - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1453645675}
+      addedObject: {fileID: 1453645680}
     - targetCorrespondingSourceObject: {fileID: 3136820629370392942, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1453645680}
+      addedObject: {fileID: 1453645675}
   m_SourcePrefab: {fileID: 100100000, guid: 32d2eabfca65643c39dce9e42ac98f59, type: 3}
 --- !u!1001 &366400692
 PrefabInstance:
@@ -1084,24 +1084,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77d203e69b7ce4a82b2f0a212520fdf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mass: 1
-  _maxSpeed: 4
-  _maxRotation: 120
-  _maxAcceleration: 10
-  _maxAngularAcc: 200
-  _maxForce: 30
+  mass: 1
+  maxSpeed: 4
+  maxRotation: 200
+  maxAcceleration: 300
+  maxAngularAcc: 200
+  maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 2
-  _interiorRadius: 1
-  _arrivalRadius: 3
-  _interiorAngle: 4
-  _exteriorAngle: 5
+  interiorRadius: 1
+  arrivalRadius: 3
+  interiorAngle: 3
+  exteriorAngle: 8
   gizmos: 1
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
-  useGravity: 0
+  useGravity: 1
   customGravity: 0
   groundLevel: 0
 --- !u!114 &946475302
@@ -1130,9 +1130,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b2113864723995498f08aacaf5ab915, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weight: 3
-  lookahead: 5
-  avoidDistance: 5
+  weight: 100
+  lookahead: 3
+  avoidDistance: 2.5
   numWhiskers: 3
   whiskerAngle: 40
 --- !u!1001 &1001744811
@@ -1603,19 +1603,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77d203e69b7ce4a82b2f0a212520fdf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mass: 1
-  _maxSpeed: 5
-  _maxRotation: 200
-  _maxAcceleration: 10
-  _maxAngularAcc: 500
-  _maxForce: 50
+  mass: 1
+  maxSpeed: 5
+  maxRotation: 200
+  maxAcceleration: 300
+  maxAngularAcc: 200
+  maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 2
-  _interiorRadius: 1
-  _arrivalRadius: 3
-  _interiorAngle: 4
-  _exteriorAngle: 5
+  interiorRadius: 1
+  arrivalRadius: 3
+  interiorAngle: 3
+  exteriorAngle: 8
   gizmos: 1
   steer:
     angular: 0
@@ -1698,24 +1698,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77d203e69b7ce4a82b2f0a212520fdf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mass: 1
-  _maxSpeed: 10
-  _maxRotation: 120
-  _maxAcceleration: 20
-  _maxAngularAcc: 200
-  _maxForce: 30
+  mass: 1
+  maxSpeed: 5
+  maxRotation: 200
+  maxAcceleration: 300
+  maxAngularAcc: 200
+  maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 2
-  _interiorRadius: 1
-  _arrivalRadius: 3
-  _interiorAngle: 4
-  _exteriorAngle: 5
+  interiorRadius: 1
+  arrivalRadius: 3
+  interiorAngle: 3
+  exteriorAngle: 8
   gizmos: 1
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
-  useGravity: 0
+  useGravity: 1
   customGravity: 0
   groundLevel: 0
 --- !u!114 &1453645675
@@ -1730,9 +1730,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b2113864723995498f08aacaf5ab915, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weight: 3
-  lookahead: 5
-  avoidDistance: 5
+  weight: 100
+  lookahead: 3
+  avoidDistance: 2.5
   numWhiskers: 3
   whiskerAngle: 40
 --- !u!114 &1453645676
@@ -1765,7 +1765,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weight: 2
-  target: {fileID: 1431405708}
+  target: {fileID: 946475299}
   escapeRadius: 7
 --- !u!1001 &1514986585
 PrefabInstance:
