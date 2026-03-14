@@ -1,36 +1,21 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
+using System.Linq;
 
-public enum TipoFormacion
-{
-    Ataque,
-    Defensa
-}
+public enum TipoFormacion { Ataque, Defensa }
 
-public enum Criterio
+public enum WanderLoopState
 {
-    LeaderFollowing
+    Inactive, WaitingToWander, Wandering, Paused
 }
 
 public class FormationController : MonoBehaviour
 {
-    private enum WanderLoopState
-    {
-        Inactive,
-        WaitingToWander,
-        Wandering,
-        Paused
-    }
-
-    // Parámetros de configuración
+    [Header("Configuración General")]
     public float cellSize = 2.0f;
     public TipoFormacion tipoFormacion = TipoFormacion.Ataque;
-    public Criterio criterio = Criterio.LeaderFollowing;
 
     [Header("Bucle Wander del líder")]
-    [Tooltip("Si está activo, al llegar al destino el líder entra en Wander por ciclos")]
     [SerializeField] private bool autoWanderLoop = true;
     [SerializeField] private float waitBeforeWander = 10f;
     [SerializeField] private float wanderDuration = 6f;
@@ -48,291 +33,170 @@ public class FormationController : MonoBehaviour
     private bool wanderLoopStoppedByUser = false;
     private bool waitingLeaderArrival = false;
 
-    void Start()
-    {
-        // Buscar el selector de objetivos en la escena
-        selectorObjetivos = FindFirstObjectByType<SeleccionarObjetivos>();
-        if (selectorObjetivos == null)
-        {
-            Debug.LogError("No se encontró SeleccionarObjetivos en la escena. Añade el componente a un GameObject.");
-        }
+    private const int REQUIRED_AGENTS_COUNT = 6;
 
-        Debug.Log("Bucle Wander: pulsa W para detenerlo.");
+    private void Start()
+    {
+        selectorObjetivos = FindFirstObjectByType<SeleccionarObjetivos>();
+        if (selectorObjetivos == null) Debug.LogError("No se encontró SeleccionarObjetivos en la escena.");
     }
 
-    void Update()
+    private void Update()
     {
-        // Tecla F para formar
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            Formar();
-        }
-
-        // Tecla G para deshacer formación
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            AcabarFormacion();
-        }
-
-        // Clic derecho para mover formación
-        if (Input.GetMouseButtonDown(1))
-        {
-            MoverAPunto();
-        }
-
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            StopWanderLoop();
-        }
-
+        HandleInputs();
         CheckLeaderArrival();
         UpdateWanderLoop();
     }
 
+    private void HandleInputs()
+    {
+        if (Input.GetKeyDown(KeyCode.F)) Formar();
+        if (Input.GetKeyDown(KeyCode.G)) AcabarFormacion();
+        if (Input.GetMouseButtonDown(1)) MoverAPunto();
+        if (Input.GetKeyDown(KeyCode.W)) StopWanderLoop();
+    }
+
+    // --- LÓGICA CORE DE FORMACIÓN ---
+
     public void Formar()
     {
-        if (selectorObjetivos == null)
-        {
-            Debug.LogError("SeleccionarObjetivos no está asignado!");
-            return;
-        }
+        if (selectorObjetivos == null) return;
 
         AgentNPC[] allAgents = ObtenerAgentesSeleccionados();
-        Debug.Log($"Intentando formar con {allAgents.Length} agentes seleccionados");
-
-        if (allAgents.Length == 0)
+        
+        if (allAgents.Length < REQUIRED_AGENTS_COUNT)
         {
-            Debug.LogWarning("No hay agentes seleccionados. Selecciona NPCs primero.");
+            Debug.LogWarning($"Se necesitan al menos {REQUIRED_AGENTS_COUNT} NPCs. Hay {allAgents.Length}.");
             return;
         }
 
-        if (allAgents.Length < 6)
+        // Si hay más de los necesarios, deseleccionamos el exceso
+        if (allAgents.Length > REQUIRED_AGENTS_COUNT)
         {
-            Debug.LogWarning("Se necesitan al menos 6 NPCs seleccionados para crear una formacion.");
-            return;
-        }
-
-        if (allAgents.Length > 6)
-        {
-            for (int idx = 6; idx < allAgents.Length; idx++)
+            for (int idx = REQUIRED_AGENTS_COUNT; idx < allAgents.Length; idx++)
             {
                 selectorObjetivos.DeseleccionarNPC(allAgents[idx].gameObject);
             }
-
             allAgents = ObtenerAgentesSeleccionados();
-            Debug.Log("Se han deseleccionado los NPCs extra. La formación usa solo 6 unidades.");
         }
 
-        // Siempre reiniciar el grid al pulsar F para evitar slots sucios
-        // y resetear los estados del bucle de wander.
         wanderLoopStoppedByUser = false;
         NoWait();
 
+        // Limpiar grid anterior si existe
         if (grid != null)
         {
             grid.LiberarAgents();
             Destroy(grid);
-            grid = null;
         }
 
         leader = allAgents[0];
-        CreatePattern();
+        pattern = tipoFormacion == TipoFormacion.Ataque ? new Ataque() : new Defensa();
 
-        (int, int) leaderSlot = pattern.GetLeaderSlot();
+        var (leaderI, leaderJ) = pattern.GetLeaderSlot();
         float leaderRelativeAngle = pattern.GetAngle(0);
 
-        // El angulo base del grid debe mantenerse neutro para no rotar
-        // toda la formacion al cambiar solo la orientacion del lider.
-        float leaderAngle = 0f;
-
         grid = gameObject.AddComponent<GridFormation>();
-        grid.CreateGridManager(cellSize, leader, leaderSlot.Item1, leaderSlot.Item2, leaderAngle, 4, 4);
-        grid.activated = true;
+        grid.CreateGridManager(cellSize, leader, leaderI, leaderJ, 0f, 4, 4);
 
-        // Aplicar la orientacion deseada del lider solo a su propia celda,
-        // sin afectar a la geometria global del grid.
-        grid.slots[leaderSlot.Item1, leaderSlot.Item2].relativeOrientation = leaderRelativeAngle;
-        grid.slots[leaderSlot.Item1, leaderSlot.Item2].virtualAgent.UpdateVirtual(
-            grid.slots[leaderSlot.Item1, leaderSlot.Item2].virtualAgent.Position,
-            ori: leaderAngle + leaderRelativeAngle
+        // Configurar celda del líder
+        grid.slots[leaderI, leaderJ].relativeOrientation = leaderRelativeAngle;
+        grid.slots[leaderI, leaderJ].virtualAgent.UpdateVirtual(
+            grid.slots[leaderI, leaderJ].virtualAgent.Position,
+            ori: leaderRelativeAngle
         );
 
-        // Colocar el grid en la posición del líder (sin reasignar aún, los slots están vacíos)
-        grid.gridPosition = leader.Position;
-        for (int ci = 0; ci < grid.numColumns; ci++)
-            for (int cj = 0; cj < grid.numRows; cj++)
-                grid.slots[ci, cj].virtualAgent.Position = grid.GridToPlane(ci, cj);
+        // Configurar posiciones iniciales de los virtuales
+        for (int c = 0; c < grid.numColumns; c++)
+            for (int r = 0; r < grid.numRows; r++)
+                grid.slots[c, r].virtualAgent.Position = grid.GridToPlane(c, r);
 
-        // Ahora vincular los agentes a sus celdas
-        int i = 1;
+        // Vincular seguidores
+        int slotIndex = 1;
         foreach (var agent in allAgents)
         {
-            if (agent != leader && pattern.SupportAgent(i))
+            if (agent != leader && pattern.SupportAgent(slotIndex))
             {
-                (int, int) cell = pattern.GetSlot(i);
-                float angle = pattern.GetAngle(i);
-                grid.LinkToSlot(cell.Item1, cell.Item2, angle, agent);
-                Debug.Log($"Agente {agent.name} vinculado a celda ({cell.Item1}, {cell.Item2})");
-                i++;
+                var (col, row) = pattern.GetSlot(slotIndex);
+                grid.LinkToSlot(col, row, pattern.GetAngle(slotIndex), agent);
+                slotIndex++;
             }
         }
 
-        // Ahora sí: los slots tienen NPCs → comprobar celdas bloqueadas
         grid.ReasignarCeldasOcupadas();
-
         VerificarComponentesNPCs(allAgents);
+        
         grid.LeaderFollowing();
         waitingLeaderArrival = true;
-        CheckLeaderArrival();
-
-        Debug.Log($"Formación activada con {i} agentes.");
-    }
-
-    public void CreatePattern()
-    {
-        if (tipoFormacion == TipoFormacion.Ataque)
-            pattern = new Ataque();
-        else
-            pattern = new Defensa();
     }
 
     public void AcabarFormacion()
     {
-        if (grid != null)
-        {
-            NoWait();
-            waitingLeaderArrival = false;
-            grid.LiberarAgents();
-            Debug.Log("Formación disuelta.");
-        }
-    }
-    // Añade esto a FormationController.cs
-    public FormationPattern GetPattern()
-    {
-        return pattern;
-    }
-
-    public void NotifyLeaderArrival()
-    {
-        if (grid != null)
-        {
-            grid.AgentsToCell();
-            StartTimer();
-        }
+        if (grid == null) return;
+        
+        NoWait();
+        waitingLeaderArrival = false;
+        grid.LiberarAgents();
+        Debug.Log("Formación disuelta.");
     }
 
     public void MoverAPunto()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
+        if (!Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity)) return;
 
-        if (!Physics.Raycast(ray, out hit, Mathf.Infinity))
-        {
-            return;
-        }
-
-        Vector3 point = hit.point;
         AgentNPC[] selectedAgents = ObtenerAgentesSeleccionados();
+        if (selectedAgents.Length == 0) return;
 
-        if (selectedAgents.Length == 0)
+        // Si todos los seleccionados pertenecen a la formación actual, movemos la formación
+        if (grid != null && grid.activated && selectedAgents.All(IsAgentInCurrentFormation))
         {
+            NoWait();
+            grid.MoveGrid(hit.point);
+            grid.LeaderFollowing();
+            waitingLeaderArrival = true;
             return;
         }
 
+        // Si es un mix, o no hay formación activa, los movemos individualmente
         if (grid != null && grid.activated)
         {
-            bool allSelectedInFormation = true;
-
-            foreach (AgentNPC agent in selectedAgents)
-            {
-                if (!IsAgentInCurrentFormation(agent))
-                {
-                    allSelectedInFormation = false;
-                    break;
-                }
-            }
-
-            if (allSelectedInFormation)
-            {
-                NoWait();
-                grid.MoveGrid(point);
-                grid.LeaderFollowing();
-                waitingLeaderArrival = true;
-                Debug.Log($"Formación moviéndose a: {point}");
-                return;
-            }
-
-            NoWait();
-            waitingLeaderArrival = false;
-            grid.LiberarAgents();
-            Debug.Log("Selección mixta detectada. Se rompe formación y se mueven todos los seleccionados.");
+            AcabarFormacion();
+            Debug.Log("Selección mixta. Se rompe formación y se mueven individualmente.");
         }
 
-        MoveSelectedAgentsToPoint(selectedAgents, point);
+        MoveSelectedAgentsToPoint(selectedAgents, hit.point);
     }
 
-    private bool IsAgentInCurrentFormation(AgentNPC agent)
-    {
-        if (grid == null || grid.slots == null || agent == null)
-        {
-            return false;
-        }
-
-        for (int i = 0; i < grid.numColumns; i++)
-        {
-            for (int j = 0; j < grid.numRows; j++)
-            {
-                if (grid.slots[i, j].npc == agent)
-                {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
+    // --- LÓGICA INDIVIDUAL ---
 
     private void MoveSelectedAgentsToPoint(AgentNPC[] selectedAgents, Vector3 point)
     {
-        int movedCount = 0;
-        float spacing = Mathf.Max(1.2f, cellSize * 1.0f);
+        float spacing = Mathf.Max(1.2f, cellSize);
 
-        for (int index = 0; index < selectedAgents.Length; index++)
+        for (int i = 0; i < selectedAgents.Length; i++)
         {
-            AgentNPC agent = selectedAgents[index];
-            Arrive arrive = agent.GetComponent<Arrive>();
-            Face face = agent.GetComponent<Face>();
-            Align align = agent.GetComponent<Align>();
-            Wander wander = agent.GetComponent<Wander>();
+            AgentNPC agent = selectedAgents[i];
+            
+            if (!agent.TryGetComponent(out Arrive arrive) || !agent.TryGetComponent(out Face face)) continue;
 
-            if (arrive == null || face == null)
-            {
-                Debug.LogWarning($"NPC {agent.name} no tiene Arrive o Face para moverse a punto.");
-                continue;
-            }
+            // Desactivar otros Steerings conflictivos
+            if (agent.TryGetComponent(out Align align)) align.enabled = false;
+            if (agent.TryGetComponent(out Wander wander)) wander.enabled = false;
 
-            Vector3 offset = GetOrderedOffset(index, spacing);
-            Vector3 targetPoint = point + offset;
-            Agent individualTarget = Agent.CreateStaticVirtual(
-                targetPoint,
-                intRadius: 0.5f,
-                arrRadius: 1.5f,
-                ori: 0f,
-                paint: false
+            Agent target = Agent.CreateStaticVirtual(
+                point + GetOrderedOffset(i, spacing),
+                intRadius: 0.5f, arrRadius: 1.5f, ori: 0f, paint: false
             );
 
-            if (align != null) align.enabled = false;
-            if (wander != null) wander.enabled = false;
             arrive.enabled = true;
             face.enabled = true;
-            arrive.NewTarget(individualTarget);
-            face.NewTarget(individualTarget);
-            movedCount++;
+            arrive.NewTarget(target);
+            face.NewTarget(target);
         }
-
-        Debug.Log($"{movedCount} NPC(s) distribuidos alrededor de: {point}");
     }
 
+    // Distribuye los objetivos seleccionados en círculos concéntricos ordenados alrededor del punto destino, para evitar que se amontonen
     private Vector3 GetOrderedOffset(int index, float spacing)
     {
         int remaining = index;
@@ -343,99 +207,15 @@ public class FormationController : MonoBehaviour
             int slotsInRing = ring * 6;
             if (remaining < slotsInRing)
             {
-                float angleStep = 360f / slotsInRing;
-                float angle = remaining * angleStep;
-                float radians = angle * Mathf.Deg2Rad;
-                float radius = ring * spacing;
-                return new Vector3(Mathf.Cos(radians) * radius, 0f, Mathf.Sin(radians) * radius);
+                float radians = (remaining * (360f / slotsInRing)) * Mathf.Deg2Rad;
+                return new Vector3(Mathf.Cos(radians) * (ring * spacing), 0f, Mathf.Sin(radians) * (ring * spacing));
             }
-
             remaining -= slotsInRing;
             ring++;
         }
     }
 
-    private void CheckLeaderArrival()
-    {
-        if (!waitingLeaderArrival || grid == null || !grid.activated || leader == null)
-        {
-            return;
-        }
-
-        Agent leaderVirtual = grid.GetLeaderSlot().virtualAgent;
-        if (leaderVirtual == null)
-        {
-            return;
-        }
-
-        float distance = Vector3.Distance(leader.Position, leaderVirtual.Position);
-        if (distance <= leaderVirtual.ArrivalRadius)
-        {
-            waitingLeaderArrival = false;
-            NotifyLeaderArrival();
-        }
-    }
-
-    private void VerificarComponentesNPCs(AgentNPC[] agentes)
-    {
-        foreach (AgentNPC agent in agentes)
-        {
-            Arrive arrive = agent.GetComponent<Arrive>();
-            Face face = agent.GetComponent<Face>();
-            Align align = agent.GetComponent<Align>();
-
-            string status = $"NPC: {agent.name} - ";
-            if (arrive == null) status += "❌ Falta Arrive. ";
-            else status += "✓ Arrive. ";
-            
-            if (face == null) status += "❌ Falta Face. ";
-            else status += "✓ Face. ";
-            
-            if (align == null) status += "❌ Falta Align. ";
-            else status += "✓ Align. ";
-
-            if (arrive == null || face == null || align == null)
-            {
-                Debug.LogWarning(status);
-                Debug.LogWarning($"El NPC {agent.name} necesita los componentes Arrive, Face y Align para formar!");
-            }
-            else
-            {
-                Debug.Log(status);
-            }
-        }
-    }
-
-    private AgentNPC[] ObtenerAgentesSeleccionados()
-    {
-        if (selectorObjetivos == null)
-        {
-            Debug.LogError("selectorObjetivos es null!");
-            return new AgentNPC[0];
-        }
-
-        List<GameObject> npcsSeleccionados = selectorObjetivos.getListNPCs();
-        Debug.Log($"NPCs en lista de selección: {npcsSeleccionados.Count}");
-        
-        List<AgentNPC> agentes = new List<AgentNPC>();
-
-        foreach (GameObject obj in npcsSeleccionados)
-        {
-            AgentNPC agent = obj.GetComponent<AgentNPC>();
-            if (agent != null)
-            {
-                agentes.Add(agent);
-                Debug.Log($"Agente válido encontrado: {obj.name}");
-            }
-            else
-            {
-                Debug.LogWarning($"GameObject {obj.name} no tiene componente AgentNPC!");
-            }
-        }
-
-        Debug.Log($"Total de agentes válidos: {agentes.Count}");
-        return agentes.ToArray();
-    }
+    // --- MÁQUINA DE ESTADOS WANDER ---
 
     public void StartTimer()
     {
@@ -446,8 +226,7 @@ public class FormationController : MonoBehaviour
         }
 
         wanderLoopState = WanderLoopState.WaitingToWander;
-    // Añade una pausa inicial entre ciclos antes de contar waitBeforeWander.
-    wanderLoopTimer = -Mathf.Max(0f, pauseBetweenWanders);
+        wanderLoopTimer = -Mathf.Max(0f, pauseBetweenWanders);
     }
 
     public void NoWait()
@@ -456,115 +235,112 @@ public class FormationController : MonoBehaviour
         wanderLoopTimer = 0f;
     }
 
-    public void Wait()
-    {
-        StartTimer();
-    }
-
-    public void FinishTimer()
-    {
-        UpdateWanderLoop();
-    }
-
     private void UpdateWanderLoop()
     {
-        if (grid == null || !grid.activated || leader == null || waitingLeaderArrival)
-        {
+        if (grid == null || !grid.activated || leader == null || waitingLeaderArrival || !autoWanderLoop || wanderLoopStoppedByUser || wanderLoopState == WanderLoopState.Inactive)
             return;
-        }
-
-        if (!autoWanderLoop)
-        {
-            return;
-        }
-
-        if (wanderLoopStoppedByUser)
-        {
-            return;
-        }
-
-        if (wanderLoopState == WanderLoopState.Inactive)
-        {
-            return;
-        }
 
         wanderLoopTimer += Time.deltaTime;
 
-        if (wanderLoopState == WanderLoopState.WaitingToWander && wanderLoopTimer >= waitBeforeWander)
+        switch (wanderLoopState)
         {
-            grid.LeaderWander();
-            wanderLoopState = WanderLoopState.Wandering;
-            wanderLoopTimer = 0f;
-            return;
-        }
+            case WanderLoopState.WaitingToWander:
+                if (wanderLoopTimer >= waitBeforeWander)
+                {
+                    grid.LeaderWander();
+                    wanderLoopState = WanderLoopState.Wandering;
+                    wanderLoopTimer = 0f;
+                }
+                break;
 
-        if (wanderLoopState == WanderLoopState.Wandering && wanderLoopTimer >= wanderDuration)
-        {
-            grid.StopLeaderWander();
-            // Al terminar wander, reconstruir la formación en la zona actual del líder.
-            grid.MoveGrid(leader.Position);
-            grid.LeaderFollowing();
-            waitingLeaderArrival = true;
+            case WanderLoopState.Wandering:
+                if (wanderLoopTimer >= wanderDuration)
+                {
+                    grid.StopLeaderWander();
+                    grid.MoveGrid(leader.Position);
+                    grid.LeaderFollowing();
+                    waitingLeaderArrival = true;
+                    
+                    wanderLoopState = WanderLoopState.Paused;
+                    wanderLoopTimer = 0f;
+                }
+                break;
 
-            // Estado transitorio hasta que CheckLeaderArrival/NotifyLeaderArrival completen AgentsToCell.
-            wanderLoopState = WanderLoopState.Paused;
-            wanderLoopTimer = 0f;
-            return;
-        }
-
-        if (wanderLoopState == WanderLoopState.Paused && wanderLoopTimer >= pauseBetweenWanders)
-        {
-            wanderLoopState = WanderLoopState.WaitingToWander;
-            wanderLoopTimer = 0f;
+            case WanderLoopState.Paused:
+                if (wanderLoopTimer >= pauseBetweenWanders)
+                {
+                    wanderLoopState = WanderLoopState.WaitingToWander;
+                    wanderLoopTimer = 0f;
+                }
+                break;
         }
     }
 
     private void StopWanderLoop()
     {
-        if (grid == null || !grid.activated)
-        {
-            return;
-        }
+        if (grid == null || !grid.activated) return;
 
         wanderLoopStoppedByUser = true;
         NoWait();
         grid.StopLeaderWander();
 
-        // Reancla la formación al líder actual para dejarla estable donde esté.
         if (leader != null)
         {
             grid.MoveGrid(leader.Position);
             grid.LeaderFollowing();
             waitingLeaderArrival = true;
         }
-
-        Debug.Log("Bucle Wander detenido por usuario (W).");
     }
 
-    public void DisactivateGrid()
+    private void CheckLeaderArrival()
     {
-        if (grid != null)
+        if (!waitingLeaderArrival || grid == null || !grid.activated || leader == null) return;
+
+        Agent leaderVirtual = grid.GetLeaderSlot().virtualAgent;
+        if (leaderVirtual != null && Vector3.Distance(leader.Position, leaderVirtual.Position) <= leaderVirtual.ArrivalRadius)
         {
-            grid.activated = false;
+            waitingLeaderArrival = false;
+            grid.AgentsToCell();
+            StartTimer();
         }
     }
 
-    public void BreakFormationFollowLeader()
+    // --- UTILS ---
+
+    public FormationPattern GetPattern() => pattern;
+
+    private bool IsAgentInCurrentFormation(AgentNPC agent)
     {
-        if (grid != null)
-        {
-            NoWait();
-            grid.LeaderWander();
-            Debug.Log("Formación rota. Los agentes siguen al líder.");
-        }
+        if (grid == null || grid.slots == null || agent == null) return false;
+
+        foreach (var slot in grid.slots)
+            if (slot.npc == agent) return true;
+
+        return false;
     }
 
-    public void ReformFormation()
+    private AgentNPC[] ObtenerAgentesSeleccionados()
     {
-        if (grid != null)
+        if (selectorObjetivos == null) return new AgentNPC[0];
+
+        return selectorObjetivos.getListNPCs()
+            .Select(obj => obj.GetComponent<AgentNPC>())
+            .Where(agent => agent != null)
+            .ToArray();
+    }
+
+    private void VerificarComponentesNPCs(AgentNPC[] agentes)
+    {
+        foreach (AgentNPC agent in agentes)
         {
-            grid.LeaderFollowing();
-            Debug.Log("Reformando la formación.");
+            bool hasArrive = agent.GetComponent<Arrive>() != null;
+            bool hasFace = agent.GetComponent<Face>() != null;
+            bool hasAlign = agent.GetComponent<Align>() != null;
+
+            if (!hasArrive || !hasFace || !hasAlign)
+            {
+                Debug.LogWarning($"El NPC {agent.name} necesita Arrive, Face y Align. (Arrive:{hasArrive}, Face:{hasFace}, Align:{hasAlign})");
+            }
         }
     }
 }

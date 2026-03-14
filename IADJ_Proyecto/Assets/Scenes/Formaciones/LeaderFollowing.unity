@@ -395,9 +395,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mass: 1
   maxSpeed: 5
-  maxRotation: 5
-  maxAcceleration: 5
-  maxAngularAcc: 5
+  maxRotation: 100
+  maxAcceleration: 10
+  maxAngularAcc: 150
   maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
@@ -751,9 +751,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mass: 1
   maxSpeed: 5
-  maxRotation: 5
-  maxAcceleration: 5
-  maxAngularAcc: 5
+  maxRotation: 100
+  maxAcceleration: 10
+  maxAngularAcc: 150
   maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
@@ -1004,9 +1004,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mass: 1
   maxSpeed: 5
-  maxRotation: 5
-  maxAcceleration: 5
-  maxAngularAcc: 5
+  maxRotation: 100
+  maxAcceleration: 10
+  maxAngularAcc: 150
   maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
@@ -1300,7 +1300,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cellSize: 2
   tipoFormacion: 0
-  criterio: 0
   autoWanderLoop: 1
   waitBeforeWander: 5
   wanderDuration: 6
@@ -1847,9 +1846,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mass: 1
   maxSpeed: 5
-  maxRotation: 5
-  maxAcceleration: 5
-  maxAngularAcc: 5
+  maxRotation: 100
+  maxAcceleration: 10
+  maxAngularAcc: 150
   maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
@@ -2100,9 +2099,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mass: 1
   maxSpeed: 5
-  maxRotation: 5
-  maxAcceleration: 5
-  maxAngularAcc: 5
+  maxRotation: 100
+  maxAcceleration: 10
+  maxAngularAcc: 150
   maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
@@ -2384,9 +2383,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mass: 1
   maxSpeed: 5
-  maxRotation: 5
-  maxAcceleration: 5
-  maxAngularAcc: 5
+  maxRotation: 100
+  maxAcceleration: 10
+  maxAngularAcc: 150
   maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
@@ -2843,9 +2842,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mass: 1
   maxSpeed: 5
-  maxRotation: 5
-  maxAcceleration: 5
-  maxAngularAcc: 5
+  maxRotation: 100
+  maxAcceleration: 10
+  maxAngularAcc: 150
   maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
@@ -3525,9 +3524,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mass: 1
   maxSpeed: 5
-  maxRotation: 5
-  maxAcceleration: 5
-  maxAngularAcc: 5
+  maxRotation: 100
+  maxAcceleration: 10
+  maxAngularAcc: 150
   maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
@@ -4014,9 +4013,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mass: 1
   maxSpeed: 5
-  maxRotation: 5
-  maxAcceleration: 5
-  maxAngularAcc: 5
+  maxRotation: 100
+  maxAcceleration: 10
+  maxAngularAcc: 150
   maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
