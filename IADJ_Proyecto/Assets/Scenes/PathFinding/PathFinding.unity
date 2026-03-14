@@ -1809,19 +1809,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77d203e69b7ce4a82b2f0a212520fdf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mass: 1
-  _maxSpeed: 1
-  _maxRotation: 1
-  _maxAcceleration: 1
-  _maxAngularAcc: 1
-  _maxForce: 1
+  mass: 1
+  maxSpeed: 1
+  maxRotation: 1
+  maxAcceleration: 1
+  maxAngularAcc: 1
+  maxForce: 1
   allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 3.5
-  _interiorRadius: 0.3
-  _arrivalRadius: 0.5
-  _interiorAngle: 3
-  _exteriorAngle: 8
+  interiorRadius: 1
+  arrivalRadius: 3
+  interiorAngle: 3
+  exteriorAngle: 8
   gizmos: 1
   steer:
     angular: 0
@@ -1842,15 +1842,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   graph: {fileID: 2109764837}
+  goal: {fileID: 354082757}
   heuristic: 1
+  maxLSSNodes: 100
+  recalculateEachCell: 0
   drawPath: 1
   pathColor: {r: 0, g: 1, b: 1, a: 1}
   drawLearnedCosts: 1
   learnedCostColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  goal: {fileID: 354082757}
-  initializeCostsOnPathRequest: 1
-  recalculateEachCell: 1
-  maxLSSNodes: 100
 --- !u!114 &1431405718
 MonoBehaviour:
   m_ObjectHideFlags: 0

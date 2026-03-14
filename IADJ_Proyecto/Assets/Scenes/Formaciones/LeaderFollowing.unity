@@ -393,19 +393,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77d203e69b7ce4a82b2f0a212520fdf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mass: 1
-  _maxSpeed: 5
-  _maxRotation: 100
-  _maxAcceleration: 10
-  _maxAngularAcc: 150
-  _maxForce: 5
+  mass: 1
+  maxSpeed: 5
+  maxRotation: 5
+  maxAcceleration: 5
+  maxAngularAcc: 5
+  maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 3.5
-  _interiorRadius: 1
-  _arrivalRadius: 3
-  _interiorAngle: 3
-  _exteriorAngle: 8
+  interiorRadius: 1
+  arrivalRadius: 3
+  interiorAngle: 3
+  exteriorAngle: 8
   gizmos: 0
   steer:
     angular: 0
@@ -749,19 +749,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77d203e69b7ce4a82b2f0a212520fdf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mass: 1
-  _maxSpeed: 5
-  _maxRotation: 100
-  _maxAcceleration: 10
-  _maxAngularAcc: 150
-  _maxForce: 5
+  mass: 1
+  maxSpeed: 5
+  maxRotation: 5
+  maxAcceleration: 5
+  maxAngularAcc: 5
+  maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 3.5
-  _interiorRadius: 1
-  _arrivalRadius: 3
-  _interiorAngle: 3
-  _exteriorAngle: 8
+  interiorRadius: 1
+  arrivalRadius: 3
+  interiorAngle: 3
+  exteriorAngle: 8
   gizmos: 0
   steer:
     angular: 0
@@ -1002,19 +1002,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77d203e69b7ce4a82b2f0a212520fdf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mass: 1
-  _maxSpeed: 5
-  _maxRotation: 100
-  _maxAcceleration: 10
-  _maxAngularAcc: 150
-  _maxForce: 5
+  mass: 1
+  maxSpeed: 5
+  maxRotation: 5
+  maxAcceleration: 5
+  maxAngularAcc: 5
+  maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 3.5
-  _interiorRadius: 1
-  _arrivalRadius: 3
-  _interiorAngle: 3
-  _exteriorAngle: 8
+  interiorRadius: 1
+  arrivalRadius: 3
+  interiorAngle: 3
+  exteriorAngle: 8
   gizmos: 0
   steer:
     angular: 0
@@ -1283,11 +1283,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c09f59168927074b97e089cbd6f077b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  materialSeleccionado: {fileID: 2100000, guid: 5b83cc4ca03f34089b3f7af0310af69c, type: 2}
-  materialOriginal: {fileID: 2100000, guid: 135cd516c311d4c039fc5f3f2f03539c, type: 2}
-  npcLayer:
-    serializedVersion: 2
-    m_Bits: 4294967295
+  alturaSobreNPC: 2
+  "tama\xF1oBase": 0.4
+  colorPiramide: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
 --- !u!114 &558010653
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1847,19 +1845,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77d203e69b7ce4a82b2f0a212520fdf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mass: 1
-  _maxSpeed: 5
-  _maxRotation: 100
-  _maxAcceleration: 10
-  _maxAngularAcc: 150
-  _maxForce: 5
+  mass: 1
+  maxSpeed: 5
+  maxRotation: 5
+  maxAcceleration: 5
+  maxAngularAcc: 5
+  maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 3.5
-  _interiorRadius: 1
-  _arrivalRadius: 3
-  _interiorAngle: 3
-  _exteriorAngle: 8
+  interiorRadius: 1
+  arrivalRadius: 3
+  interiorAngle: 3
+  exteriorAngle: 8
   gizmos: 0
   steer:
     angular: 0
@@ -2100,19 +2098,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77d203e69b7ce4a82b2f0a212520fdf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mass: 1
-  _maxSpeed: 5
-  _maxRotation: 100
-  _maxAcceleration: 10
-  _maxAngularAcc: 150
-  _maxForce: 5
+  mass: 1
+  maxSpeed: 5
+  maxRotation: 5
+  maxAcceleration: 5
+  maxAngularAcc: 5
+  maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 3.5
-  _interiorRadius: 1
-  _arrivalRadius: 3
-  _interiorAngle: 3
-  _exteriorAngle: 8
+  interiorRadius: 1
+  arrivalRadius: 3
+  interiorAngle: 3
+  exteriorAngle: 8
   gizmos: 0
   steer:
     angular: 0
@@ -2384,19 +2382,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77d203e69b7ce4a82b2f0a212520fdf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mass: 1
-  _maxSpeed: 5
-  _maxRotation: 100
-  _maxAcceleration: 10
-  _maxAngularAcc: 150
-  _maxForce: 5
+  mass: 1
+  maxSpeed: 5
+  maxRotation: 5
+  maxAcceleration: 5
+  maxAngularAcc: 5
+  maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 3.5
-  _interiorRadius: 1
-  _arrivalRadius: 3
-  _interiorAngle: 3
-  _exteriorAngle: 8
+  interiorRadius: 1
+  arrivalRadius: 3
+  interiorAngle: 3
+  exteriorAngle: 8
   gizmos: 0
   steer:
     angular: 0
@@ -2843,19 +2841,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77d203e69b7ce4a82b2f0a212520fdf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mass: 1
-  _maxSpeed: 5
-  _maxRotation: 100
-  _maxAcceleration: 10
-  _maxAngularAcc: 150
-  _maxForce: 5
+  mass: 1
+  maxSpeed: 5
+  maxRotation: 5
+  maxAcceleration: 5
+  maxAngularAcc: 5
+  maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 3.5
-  _interiorRadius: 1
-  _arrivalRadius: 3
-  _interiorAngle: 3
-  _exteriorAngle: 8
+  interiorRadius: 1
+  arrivalRadius: 3
+  interiorAngle: 3
+  exteriorAngle: 8
   gizmos: 0
   steer:
     angular: 0
@@ -3525,19 +3523,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77d203e69b7ce4a82b2f0a212520fdf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mass: 1
-  _maxSpeed: 5
-  _maxRotation: 100
-  _maxAcceleration: 10
-  _maxAngularAcc: 150
-  _maxForce: 5
+  mass: 1
+  maxSpeed: 5
+  maxRotation: 5
+  maxAcceleration: 5
+  maxAngularAcc: 5
+  maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 3.5
-  _interiorRadius: 1
-  _arrivalRadius: 3
-  _interiorAngle: 3
-  _exteriorAngle: 8
+  interiorRadius: 1
+  arrivalRadius: 3
+  interiorAngle: 3
+  exteriorAngle: 8
   gizmos: 0
   steer:
     angular: 0
@@ -4014,19 +4012,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77d203e69b7ce4a82b2f0a212520fdf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mass: 1
-  _maxSpeed: 5
-  _maxRotation: 100
-  _maxAcceleration: 10
-  _maxAngularAcc: 150
-  _maxForce: 5
+  mass: 1
+  maxSpeed: 5
+  maxRotation: 5
+  maxAcceleration: 5
+  maxAngularAcc: 5
+  maxForce: 5
   allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 3.5
-  _interiorRadius: 1
-  _arrivalRadius: 3
-  _interiorAngle: 3
-  _exteriorAngle: 8
+  interiorRadius: 1
+  arrivalRadius: 3
+  interiorAngle: 3
+  exteriorAngle: 8
   gizmos: 0
   steer:
     angular: 0
@@ -4046,7 +4044,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd151d39e7cdeea48b22ea8438df5bad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weight: 1
+  weight: 6
   target: {fileID: 0}
   timeToTarget: 0.3
 --- !u!114 &1833212952
@@ -4076,7 +4074,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a347587583884524895c0d01d09a0f7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weight: 1
+  weight: 4
   target: {fileID: 0}
   timeToTarget: 0.3
 --- !u!114 &1833212976

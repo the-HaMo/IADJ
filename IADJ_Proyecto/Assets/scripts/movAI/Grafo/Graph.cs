@@ -32,7 +32,7 @@ public class Graph : MonoBehaviour
         DibujarGrid();
     }
 
-    private bool isOcupada(int fila, int columna)
+    public bool isOcupada(int fila, int columna)
     {
         Vector3 centroCelda = GetWorldPosition(fila, columna) + new Vector3(tamCelda / 2f, 1f, tamCelda / 2f);
         Collider[] colisiones = Physics.OverlapBox(centroCelda, new Vector3(tamCelda / 2f, 2f, tamCelda / 2f));
