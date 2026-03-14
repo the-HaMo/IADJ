@@ -167,7 +167,9 @@ Scenes/
 \subsection{Componente Agent}
 \subsection{Componente AgentNPC}
 \subsection{Roles de los NPCs}
-Deben existir 3 NPCs con distintos parametros del body
+En el proyecto se han definido distintos NPCs con características diferenciadas para representar roles adaptados a entornos específicos. Cada uno ajusta sus parámetros de movimiento para explotar mejor sus cualidades según el terreno en el que se encuentra.
+
+Este enfoque permite que los agentes no se comporten de forma uniforme: algunos priorizan velocidad punta, otros estabilidad o capacidad de giro, y su rendimiento varía en función del contexto. Así, ante terrenos diferentes, cada NPC muestra ventajas y limitaciones acordes a su especialización.
 
 \section{Steering básicos acelerados}
 
@@ -951,6 +953,21 @@ Tras llegar al destino, el líder entra en un bucle de \textit{Wander}: deambula
 \begin{itemize}
     \item \textbf{W}: detiene el bucle Wander del líder en cualquier momento, dejando la formación estática en su posición actual.
 \end{itemize}
+
+\subsection{Roles.unity (Manual)}
+
+Esta escena compara directamente el rendimiento de varios NPCs desplazándose hacia sus objetivos, todos colocados a la misma distancia inicial. Al mantener la distancia de partida constante, la diferencia en tiempos de llegada depende del tipo de NPC y de su adaptación al terreno.
+
+En esta prueba se han configurado tres perfiles principales, cada uno con un rol distinto:
+
+\begin{itemize}
+    \item \textbf{zombi}: perfil intermedio y equilibrado. Presenta valores medios (\texttt{Mass = 2}, \texttt{MaxSpeed = 6}, \texttt{MaxRotation = 20}, \texttt{MaxAcceleration = 10}, \texttt{MaxAngularAcc = 40}), por lo que su comportamiento es estable y consistente, sin ser el más rápido ni el más lento.
+    \item \textbf{esqueleto\_marino}: perfil más lento y pesado en este contexto de terreno. Tiene menor capacidad de avance y giro (\texttt{MaxSpeed = 3}, \texttt{MaxRotation = 10}, \texttt{MaxAcceleration = 8}, \texttt{MaxAngularAcc = 20}), por lo que tarda más en alcanzar el objetivo y muestra una respuesta más suave.
+    \item \textbf{esqueleto\_terrestre}: perfil más rápido y reactivo para esta escena. Sus parámetros favorecen desplazamientos ágiles (\texttt{MaxSpeed = 8}, \texttt{MaxRotation = 30}, \texttt{MaxAcceleration = 10}, \texttt{MaxAngularAcc = 60}), lo que le permite corregir trayectoria antes y llegar primero al destino.
+\end{itemize}
+
+Como resultado, con la misma distancia inicial para todos, se aprecia claramente la diferencia de rendimiento: \textbf{esqueleto\_terrestre} es el más rápido, \textbf{zombi} queda en un término medio y \textbf{esqueleto\_marino} es el más lento debido a su peor adaptación al terreno de la prueba.
+
 
 \section{Conclusión}
 

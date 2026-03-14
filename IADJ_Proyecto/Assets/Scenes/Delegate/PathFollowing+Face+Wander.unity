@@ -1374,18 +1374,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mass: 1
-  maxSpeed: 3
-  maxRotation: 100
-  maxAcceleration: 100
-  maxAngularAcc: 100
-  maxForce: 5
+  maxSpeed: 2.5
+  maxRotation: 200
+  maxAcceleration: 5
+  maxAngularAcc: 500
+  maxForce: 50
   allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 2
   interiorRadius: 1
   arrivalRadius: 3
-  interiorAngle: 3
-  exteriorAngle: 8
+  interiorAngle: 4
+  exteriorAngle: 5
   gizmos: 1
   steer:
     angular: 0
@@ -1526,7 +1526,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4000014091459346, guid: 1de93a9fdb990db4ca7f2fe5c2cc7b59, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 11
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 4000014091459346, guid: 1de93a9fdb990db4ca7f2fe5c2cc7b59, type: 3}
       propertyPath: m_LocalRotation.w

@@ -136,12 +136,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77d203e69b7ce4a82b2f0a212520fdf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mass: 5
+  mass: 1
   maxSpeed: 5
-  maxRotation: 50
-  maxAcceleration: 100
-  maxAngularAcc: 50
-  maxForce: 5
+  maxRotation: 180
+  maxAcceleration: 5
+  maxAngularAcc: 300
+  maxForce: 30
   allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 3.5
@@ -153,7 +153,7 @@ MonoBehaviour:
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
-  useGravity: 1
+  useGravity: 0
   customGravity: 0
   groundLevel: 0
 --- !u!114 &3845228
@@ -170,7 +170,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weight: 1
   target: {fileID: 1593198793}
-  timeToTarget: 0.3
+  timeToTarget: 0.1
 --- !u!1001 &18618168
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -493,12 +493,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77d203e69b7ce4a82b2f0a212520fdf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mass: 5
+  mass: 1
   maxSpeed: 5
-  maxRotation: 50
-  maxAcceleration: 100
-  maxAngularAcc: 50
-  maxForce: 5
+  maxRotation: 180
+  maxAcceleration: 5
+  maxAngularAcc: 300
+  maxForce: 30
   allowVerticalMovement: 0
   lookahead: 5
   avoidDistance: 3.5
@@ -510,7 +510,7 @@ MonoBehaviour:
   steer:
     angular: 0
     linear: {x: 0, y: 0, z: 0}
-  useGravity: 1
+  useGravity: 0
   customGravity: 0
   groundLevel: 0
 --- !u!114 &681777926
@@ -527,7 +527,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weight: 1
   target: {fileID: 1593198793}
-  timeToTarget: 0.3
+  timeToTarget: 0.1
 --- !u!1001 &732194249
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -864,19 +864,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fee2a1671229844bda66e9353f90b469, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mass: 5
+  mass: 1
   maxSpeed: 5
-  maxRotation: 200
-  maxAcceleration: 100
-  maxAngularAcc: 200
-  maxForce: 5
+  maxRotation: 180
+  maxAcceleration: 5
+  maxAngularAcc: 300
+  maxForce: 30
   allowVerticalMovement: 0
   lookahead: 5
-  avoidDistance: 2
+  avoidDistance: 3.5
   interiorRadius: 1
   arrivalRadius: 3
   interiorAngle: 3
-  exteriorAngle: 8
+  exteriorAngle: 50
   gizmos: 1
 --- !u!1001 &1629215807
 PrefabInstance:
