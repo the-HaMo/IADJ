@@ -23,6 +23,9 @@ public class Agent : Bodi // Asegúrate de que la clase Bodi esté definida en t
     // Control de depuración visual
     public bool gizmos = true;
 
+    // Control de terreno
+    protected float terrainMultiplier = 1f;
+
     #region Propiedades
     public float InteriorRadius 
     { 
@@ -46,6 +49,18 @@ public class Agent : Bodi // Asegúrate de que la clase Bodi esté definida en t
     { 
         get { return exteriorAngle; } 
         set { exteriorAngle = Mathf.Clamp(value, interiorAngle, 180.0f); } 
+    }
+
+    public new float MaxSpeed
+    {
+        get { return base.MaxSpeed * terrainMultiplier; }
+        set { base.MaxSpeed = value; }
+    }
+
+    public new Vector3 Velocity
+    {
+        get { return base.Velocity; }
+        set { base.Velocity = Vector3.ClampMagnitude(value, MaxSpeed); }
     }
     #endregion
 
@@ -123,6 +138,27 @@ public class Agent : Bodi // Asegúrate de que la clase Bodi esté definida en t
         Position = pos;
         if (ori != -190f) Orientation = ori;
     }
+
+    protected virtual void FixedUpdate()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position + Vector3.up * 0.1f, Vector3.down, out hit, 0.5f))
+        {
+            switch (hit.collider.tag)
+            {
+                case "RIO":
+                    terrainMultiplier = 0.2f; // Velocidad a Reducir
+                    break;
+                default:
+                    terrainMultiplier = 1f;
+                    break;
+            }
+        }
+        else
+        {
+            terrainMultiplier = 1f;
+        }
+    }
     #endregion
 
     protected virtual void OnDrawGizmos()
@@ -159,6 +195,9 @@ public class Agent : Bodi // Asegúrate de que la clase Bodi esté definida en t
             Gizmos.color = Color.magenta;
             if (Velocity.magnitude > 0.1f)
                 Gizmos.DrawLine(Position, Position + Velocity.normalized * lookahead);
+
+            Gizmos.color = terrainMultiplier < 1f ? Color.red : Color.cyan;
+            Gizmos.DrawRay(transform.position + Vector3.up * 0.1f, Vector3.down * 0.5f);
         }
     }
 }
