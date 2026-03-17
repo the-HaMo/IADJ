@@ -4,73 +4,78 @@ using UnityEngine;
 
 public class Wander : SteeringBehaviour
 {
-    // Radio y distancia del círculo de wander.
-    public float wanderOffset;
-    public float wanderRadius;
-    
-    // Máximo cambio de orientación del wander por frame.
-    public float wanderRate;
+    [Header("Parámetros del Círculo")]
+    public float wanderOffset = 3f;
+    public float wanderRadius = 2f;
+    public float wanderRate = 5f; // Máximo cambio de orientación por frame
 
+    [Header("Debug")]
     public bool showGizmos = true;
     
-    // Orientación actual del objetivo de wander.
+    // Comportamientos delegados
+    private Face faceBehavior;
+    private Agent virtualTarget;
+
+    // Orientación actual del objetivo dentro del círculo de wander.
     private float wanderOrientation;
 
-    void Awake(){
+    void Awake()
+    {
         this.nameSteering = "Wander";
+        
+        // 1. Añadimos el componente de Face (que ya delega en Align)
+        faceBehavior = gameObject.AddComponent<Face>();
+        faceBehavior.enabled = false;
+        
+        // 2. Creamos el objetivo virtual
+        virtualTarget = Agent.CreateStaticVirtual(Vector3.zero, 1f, 1f, 0f, false);
     }
 
-    private float RandomBinomial(){
+    void OnDestroy()
+    {
+        if (virtualTarget != null && virtualTarget.gameObject != null)
+        {
+            Destroy(virtualTarget.gameObject);
+        }
+    }
+
+    private float RandomBinomial()
+    {
         return Random.Range(-1f, 1f);
     }
 
-    public override Steering GetSteering(AgentNPC agent){
-        Steering steering = new Steering();
-
-        // 1. Calcular el objetivo para delegar a face
+    public override Steering GetSteering(AgentNPC agent)
+    {
+        // 1. ACTUALIZAR EL CÍRCULO: Calcular el punto aleatorio
         
-        // Actualizar la orientación del wander
+        // Actualizar la orientación del wander aleatoriamente
         wanderOrientation += RandomBinomial() * wanderRate;
         
-        // Calcular la orientación objetivo combinada
+        // Calcular la orientación objetivo relativa al agente
         float targetOrientation = wanderOrientation + agent.Orientation;
         
-        // Calcular el centro del círculo de wander
-        Vector3 target = agent.Position + wanderOffset * agent.OrientationToVector(agent.Orientation);
+        // Calcular el centro del círculo de wander frente al agente
+        Vector3 circleCenter = agent.Position + wanderOffset * agent.OrientationToVector(agent.Orientation);
         
-        // Calcular la posición del objetivo
-        target += wanderRadius * agent.OrientationToVector(targetOrientation);
-        
-        // 2. Delegar a face
-        Vector3 direction = target - agent.Position;
-        float orientacionObj = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
-        
-        float rotation = orientacionObj - agent.Orientation;
-        rotation = Bodi.MapToRange(rotation, Range.Degrees);
-        float rotationSize = Mathf.Abs(rotation);
-        
-        float targetRotationSpeed = 0f;
-        if (rotationSize > 1f){
-            targetRotationSpeed = agent.MaxRotation;
-            targetRotationSpeed *= rotation / rotationSize;
-        }
-        
-        float angularAccel = (targetRotationSpeed - agent.Rotation) / 0.1f;
-        if (Mathf.Abs(angularAccel) > agent.MaxAngularAcc){
-            angularAccel = Mathf.Sign(angularAccel) * agent.MaxAngularAcc;
-        }
-        
-        steering.angular = angularAccel;
-        
-        // 3. Aceleración lineal a tope en la dirección de la orientación
-        steering.linear = agent.MaxAcceleration * agent.OrientationToVector(agent.Orientation);
+        // Calcular la posición exacta del punto sobre el borde del círculo
+        Vector3 targetPosition = circleCenter + wanderRadius * agent.OrientationToVector(targetOrientation);
 
-        // Safety: si el resultado tiene NaN (atasco + orientación corrupta), no propagar
-        if (float.IsNaN(steering.linear.x) || float.IsNaN(steering.linear.z))
+        // 2. DELEGACIÓN REAL: Usar Face para encarar el punto
+        virtualTarget.Position = targetPosition;
+        faceBehavior.target = virtualTarget;
+        
+        // Obtenemos el steering angular de Face
+        Steering steer = faceBehavior.GetSteering(agent);
+        
+        // 3. MOVIMIENTO LINEAL: Aceleración máxima hacia adelante
+        // Siempre nos movemos en la dirección en la que estamos mirando actualmente
+        steer.linear = agent.MaxAcceleration * agent.OrientationToVector(agent.Orientation);
+
+        // Seguridad: Control de NaN
+        if (float.IsNaN(steer.linear.x) || float.IsNaN(steer.linear.z))
             return new Steering();
 
-        // Devolver el steering
-        return steering;
+        return steer;
     }
 
     private void OnDrawGizmosSelected()
@@ -80,29 +85,20 @@ public class Wander : SteeringBehaviour
         Agent agent = GetComponent<Agent>();
         if (agent == null) return;
 
-        // Mismo cálculo del centro que en GetSteering
         Vector3 center = agent.Position + wanderOffset * agent.OrientationToVector(agent.Orientation);
-
-        // Dibujar el círculo base
-        Gizmos.color = Color.blue;
-        
-        // Dibujar un círculo manual con líneas para que se vea plano en el suelo (opcional, pero DrawWireSphere también vale)
-        Gizmos.DrawWireSphere(center, wanderRadius);
-
-        // Calcular la posición exacta del punto objetivo
         float targetOrientation = wanderOrientation + agent.Orientation;
         Vector3 target = center + wanderRadius * agent.OrientationToVector(targetOrientation);
 
-        // Dibujar una bolita roja en el punto objetivo sobre el círculo
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(center, wanderRadius);
+
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(target, 0.3f);
 
-        // Dibujar una línea verde desde el personaje hacia su objetivo
         Gizmos.color = Color.green;
         Gizmos.DrawLine(agent.Position, target);
         
-        // Dibujar una línea de referencia gris hacia el centro del círculo
         Gizmos.color = Color.gray;
         Gizmos.DrawLine(agent.Position, center);
     }
-}
+}

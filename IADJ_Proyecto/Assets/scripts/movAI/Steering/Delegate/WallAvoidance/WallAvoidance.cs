@@ -7,52 +7,60 @@ public class WallAvoidance : SteeringBehaviour
     [Header("Wall Avoidance Parameters")]
     public float lookahead = 5f;
     public float avoidDistance = 2f;
-    public int numWhiskers; // El número de bigotes se da en el inspector
+    public int numWhiskers = 3; 
     public float whiskerAngle = 30f;
+
+    // Comportamientos delegados
+    private Seek seekBehavior;
+    private Agent virtualTarget;
 
     void Awake()
     {
         this.nameSteering = "WallAvoidance";
+        
+        // 1. Añadimos el componente de Seek automáticamente
+        seekBehavior = gameObject.AddComponent<Seek>();
+        seekBehavior.enabled = false;
+        
+        // 2. Creamos el objetivo virtual
+        virtualTarget = Agent.CreateStaticVirtual(Vector3.zero, 0.5f, 1f, 0f, false);
+    }
+
+    void OnDestroy()
+    {
+        if (virtualTarget != null && virtualTarget.gameObject != null)
+        {
+            Destroy(virtualTarget.gameObject);
+        }
     }
 
     public override Steering GetSteering(AgentNPC agent)
     {
-        Steering steer = new Steering();
-
-        // 1. Calcular el objetivo para delegar a seek
-
-        // rayVector = character.velocity
+        // 1. DETECCIÓN DE COLISIÓN (Raycasting)
         Vector3 rayVector = agent.Velocity;
-        
-        // rayVector.normalized
-        // (Si la velocidad es 0, usamos la orientación para poder detectar paredes al arrancar)
         if (rayVector.magnitude < 0.01f)
             rayVector = agent.OrientationToVector(agent.Orientation);
+        
         rayVector.Normalize();
-
-        // rayVector *= lookAhead
         rayVector *= lookahead;
 
-        // Procesamos los n bigotes (collision detection)
         RaycastHit closestHit = new RaycastHit();
         bool foundCollision = false;
         float minDistance = float.MaxValue;
 
+        // Procesamos los bigotes
         for (int i = 0; i < numWhiskers; i++)
         {
             float angle = 0;
             if (numWhiskers > 1)
-            {
                 angle = (i - (numWhiskers - 1) / 2.0f) * whiskerAngle;
-            }
             
             Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.up);
             Vector3 whiskerDir = rotation * rayVector;
 
-            // Encontrar la colisión
+            // Lanzamos el rayo desde el centro del agente para evitar el suelo
             if (Physics.Raycast(agent.Position + Vector3.up * 0.5f, whiskerDir.normalized, out RaycastHit hit, rayVector.magnitude))
             {
-                // Si la distancia es casi 0, es el propio personaje o el suelo, lo ignoramos
                 if (hit.collider.gameObject == agent.gameObject || hit.distance < 0.2f)
                     continue;
 
@@ -65,15 +73,24 @@ public class WallAvoidance : SteeringBehaviour
             }
         }
 
-        // if not collision: return steer (como en el pseudocódigo)
-        if (!foundCollision) return steer;
+        if (!foundCollision) return new Steering();
 
-        // CORREGIDO: Aplicar fuerza en dirección de la normal para alejarse de la pared.
-        // Usar un "Seek" a un punto calculado puede hacer que el personaje acelere hacia la pared.
-        // Aplicando la normal directamente, el personaje siempre intentará separarse de la pared.
-        steer.linear = closestHit.normal * agent.MaxAcceleration;
-        steer.angular = 0f;
-
+        // 2. DELEGACIÓN REAL OPTIMIZADA
+        
+        // TRUCO: El punto objetivo NO es el punto de impacto, sino "Mi posición + la Normal".
+        // Esto hace que Seek genere un vector que apunta exactamente hacia donde nos empuja la pared.
+        Vector3 targetPosition = agent.Position + closestHit.normal * avoidDistance;
+        
+        virtualTarget.Position = targetPosition;
+        seekBehavior.Target = virtualTarget;
+        
+        // Obtenemos la dirección delegando en Seek
+        Steering steer = seekBehavior.GetSteering(agent);
+        
+        // IMPORTANTE: Para paredes, usamos Aceleración Máxima para que sea una maniobra de urgencia
+        // Si usamos solo MaxSpeed (como hace el Seek básico), a veces no gira a tiempo.
+        steer.linear = steer.linear.normalized * agent.MaxAcceleration;
+        
         return steer;
     }
 
@@ -95,7 +112,7 @@ public class WallAvoidance : SteeringBehaviour
             
             Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.up);
             Vector3 whiskerDir = rotation * direction;
-            Gizmos.DrawLine(agent.Position, agent.Position + whiskerDir * lookahead);
+            Gizmos.DrawLine(agent.Position + Vector3.up * 0.5f, agent.Position + Vector3.up * 0.5f + whiskerDir * lookahead);
         }
     }
-}
+}
