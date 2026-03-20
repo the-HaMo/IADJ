@@ -60,7 +60,19 @@ public class Agent : Bodi // Asegúrate de que la clase Bodi esté definida en t
     public new Vector3 Velocity
     {
         get { return base.Velocity; }
-        set { base.Velocity = Vector3.ClampMagnitude(value, MaxSpeed); }
+        set { 
+            if (allowVerticalMovement)
+            {
+                Vector3 horizontalVel = new Vector3(value.x, 0, value.z);
+                horizontalVel = Vector3.ClampMagnitude(horizontalVel, MaxSpeed);
+                base.Velocity = new Vector3(horizontalVel.x, value.y, horizontalVel.z);
+            }
+            else
+            {
+                // Modo normal: limitamos toda la magnitud
+                base.Velocity = Vector3.ClampMagnitude(value, MaxSpeed); 
+            }
+        }
     }
     #endregion
 

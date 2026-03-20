@@ -121,9 +121,8 @@ public class Bodi : MonoBehaviour
         set { 
             if (!allowVerticalMovement)
             {
-                value.y = 0; // Mantener en el suelo en modo normal
+                value.y = transform.position.y; 
             }
-            // Si allowVerticalMovement = true, mantener Y del value
             transform.position = value; 
         }
     }

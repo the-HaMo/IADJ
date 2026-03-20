@@ -918,7 +918,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97b472bd214db05498f0711ca703dcf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weight: 2
+  weight: 5
   jumpTriggers:
   - jumpPoint: {fileID: 1001744812}
     landingPoint: {fileID: 1991626063}
