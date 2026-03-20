@@ -101,4 +101,4 @@ public class Wander : SteeringBehaviour
         Gizmos.color = Color.gray;
         Gizmos.DrawLine(agent.Position, center);
     }
-}
+}

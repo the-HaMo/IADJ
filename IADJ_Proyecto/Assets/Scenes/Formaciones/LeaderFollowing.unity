@@ -1301,6 +1301,7 @@ MonoBehaviour:
   cellSize: 2
   tipoFormacion: 0
   autoWanderLoop: 1
+  leaderWallAvoidance: 0
   waitBeforeWander: 5
   wanderDuration: 6
   pauseBetweenWanders: 1

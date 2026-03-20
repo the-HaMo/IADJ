@@ -17,6 +17,7 @@ public class FormationController : MonoBehaviour
 
     [Header("Bucle Wander del líder")]
     [SerializeField] private bool autoWanderLoop = true;
+    [SerializeField] private bool leaderWallAvoidance = true;
     [SerializeField] private float waitBeforeWander = 10f;
     [SerializeField] private float wanderDuration = 6f;
     [SerializeField] private float pauseBetweenWanders = 2f;
@@ -97,6 +98,7 @@ public class FormationController : MonoBehaviour
         float leaderRelativeAngle = pattern.GetAngle(0);
 
         grid = gameObject.AddComponent<GridFormation>();
+        grid.SetLeaderWallAvoidance(leaderWallAvoidance);
         grid.CreateGridManager(cellSize, leader, leaderI, leaderJ, 0f, 4, 4);
 
         // Configurar celda del líder

@@ -295,7 +295,7 @@ public class LRTA : MonoBehaviour
 
 #if UNITY_EDITOR
                     GUIStyle style = new GUIStyle(UnityEditor.EditorStyles.boldLabel) { normal = { textColor = learnedCostColor } };
-                    UnityEditor.Handles.Label(center + Vector3.up * 0.05f, cost.ToString("0.0"), style);
+                    UnityEditor.Handles.Label(center + Vector3.up * 0.05f, cost.ToString("0"), style);
 #endif
                 }
             }

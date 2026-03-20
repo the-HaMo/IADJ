@@ -115,4 +115,4 @@ public class WallAvoidance : SteeringBehaviour
             Gizmos.DrawLine(agent.Position + Vector3.up * 0.5f, agent.Position + Vector3.up * 0.5f + whiskerDir * lookahead);
         }
     }
-}
+}

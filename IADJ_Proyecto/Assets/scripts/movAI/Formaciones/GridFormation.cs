@@ -21,6 +21,8 @@ public class GridFormation : MonoBehaviour
 {
     private const float FOLLOWER_FLEE_DISTANCE = 1.2f;
     [SerializeField] private bool debugReubicaciones = true;
+    private bool leaderWallAvoidance = false;
+    private bool virtualAgentsCleaned = false;
 
     public int numColumns;
     public int numRows;
@@ -36,8 +38,14 @@ public class GridFormation : MonoBehaviour
     // Referencia directa al slot del líder para evitar bucles
     private Slot leaderSlotRef;
 
+    public void SetLeaderWallAvoidance(bool enabled)
+    {
+        leaderWallAvoidance = enabled;
+    }
+
     public void CreateGridManager(float cellSize, AgentNPC leader, int leaderI, int leaderJ, float angle, int numColumns, int numRows)
     {
+        virtualAgentsCleaned = false;
         this.activated = true;
         this.numColumns = numColumns;
         this.numRows = numRows;
@@ -274,6 +282,32 @@ public class GridFormation : MonoBehaviour
                 }
             }
         }
+
+        DestroySlotVirtualAgents();
+    }
+
+    private void DestroySlotVirtualAgents()
+    {
+        if (virtualAgentsCleaned || slots == null) return;
+
+        for (int i = 0; i < numColumns; i++)
+        {
+            for (int j = 0; j < numRows; j++)
+            {
+                Agent virtualAgent = slots[i, j].virtualAgent;
+                if (virtualAgent == null || virtualAgent.gameObject == null) continue;
+
+                Destroy(virtualAgent.gameObject);
+                slots[i, j].virtualAgent = null;
+            }
+        }
+
+        virtualAgentsCleaned = true;
+    }
+
+    private void OnDestroy()
+    {
+        DestroySlotVirtualAgents();
     }
 
     public void LeaderWander()
@@ -290,19 +324,11 @@ public class GridFormation : MonoBehaviour
                 if (currentNPC == leader)
                 {
                     if (currentNPC.TryGetComponent(out Wander wander)) wander.enabled = true;
-                    if (currentNPC.TryGetComponent(out WallAvoidance wall)) wall.enabled = true;
+                    if (leaderWallAvoidance && currentNPC.TryGetComponent(out WallAvoidance wall)) wall.enabled = true;
                 }
                 else
                 {
-                    if (currentNPC.TryGetComponent(out Seek seek))
-                    {
-                        seek.enabled = true;
-                        seek.NewTarget(leader);
-                    }
-                    else
-                    {
-                        ConfigureFollowerLeaderFollowing(currentNPC);
-                    }
+                    ConfigureFollowerLeaderFollowing(currentNPC);
                 }
             }
         }
