@@ -403,6 +403,8 @@
 "Assets/scripts/movAI/NPC/AgentPlayer.cs"
 "Assets/scripts/movAI/NPC/AgentPlayerWithAnimation.cs"
 "Assets/scripts/movAI/NPC/Bodi.cs"
+"Assets/scripts/movAI/NPC/EstadisticasNPC/NPCStats.cs"
+"Assets/scripts/movAI/NPC/Hospital.cs"
 "Assets/scripts/movAI/Steering/Basic/Align.cs"
 "Assets/scripts/movAI/Steering/Basic/AntiAlign.cs"
 "Assets/scripts/movAI/Steering/Basic/Arrive.cs"

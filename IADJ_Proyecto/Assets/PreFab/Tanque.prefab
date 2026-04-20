@@ -12,9 +12,11 @@ GameObject:
   - component: {fileID: 3215495049154662023}
   - component: {fileID: 2553715191978595939}
   - component: {fileID: 789357719368891206}
+  - component: {fileID: 5197754927143992081}
+  - component: {fileID: 1090984687882915185}
   m_Layer: 0
   m_Name: Tanque
-  m_TagString: Untagged
+  m_TagString: Tanque
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -111,6 +113,56 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5197754927143992081
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 961614647817374387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77d203e69b7ce4a82b2f0a212520fdf0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mass: 1
+  maxSpeed: 1
+  maxRotation: 1
+  maxAcceleration: 1
+  maxAngularAcc: 1
+  maxForce: 1
+  allowVerticalMovement: 0
+  lookahead: 3
+  avoidDistance: 2.5
+  interiorRadius: 1
+  arrivalRadius: 3
+  interiorAngle: 3
+  exteriorAngle: 8
+  gizmos: 0
+  steer:
+    angular: 0
+    linear: {x: 0, y: 0, z: 0}
+  useGravity: 1
+  customGravity: 0
+  groundLevel: 0
+--- !u!114 &1090984687882915185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 961614647817374387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31f5f4c846157dd4ea280ca8b482ab55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  miTipoDeUnidad: 2
+  miBando: 0
+  vidaMax: 1100
+  fuerzaAtaque: 100
+  rangoAtaque: 1.5
+  velAtaque: 3.5
 --- !u!1001 &2913109158371027959
 PrefabInstance:
   m_ObjectHideFlags: 0
