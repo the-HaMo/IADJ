@@ -7,6 +7,9 @@ public class GridManager : MonoBehaviour
     public LayerMask unwalkableMask; // Capa(s) Unity que define los obstáculos intransitables (ej. "Muros", "Agua_Profunda")
     public Vector2 gridWorldSize; // Tamaño del Grid en coordenadas del mundo
     public float nodeRadius; // Radio de cada nodo/casilla
+    
+    [Header("Depuración")]
+    public bool mostrarGrid = true; // Activa o desactiva las celdas rojas/blancas en la escena
 
     Node[,] grid;
     float nodeDiameter;
@@ -88,6 +91,8 @@ public class GridManager : MonoBehaviour
     // Dibujamos el Grid en el Editor (Modo Depuración visual) para ver si todo encaja
     void OnDrawGizmos()
     {
+        if (!mostrarGrid) return; // <-- La cajita de tick que apaga y enciende la magia visual
+
         Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
 
         if (grid != null)

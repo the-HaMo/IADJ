@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum TipoUnidad { Arquero, Caballero, Tanque }
+public enum TipoUnidad { Arquero, Caballero, Tanque, JineteExplorador,Lancero }
 public enum Bando { Rojo, Azul }
 
 public class NPCStats : MonoBehaviour
@@ -17,9 +17,31 @@ public class NPCStats : MonoBehaviour
     public float rangoAtaque = 1.5f;
     public float velAtaque = 1.5f;
 
+    public Material materialRojo;
+    public Material materialAzul;
+
     private void Awake()
     {
         vidaActual = vidaMax;
+    }
+
+    private void Start()
+    {
+        AplicarMaterialBando();
+    }
+
+    public void AplicarMaterialBando()
+    {
+        Material materialSeleccionado = (miBando == Bando.Rojo) ? materialRojo : materialAzul;
+        
+        if (materialSeleccionado != null)
+        {
+            Renderer rend = GetComponent<Renderer>();
+            if (rend != null)
+            {
+                rend.material = materialSeleccionado;
+            }
+        }
     }
 
     public bool NecesitaCuracion()

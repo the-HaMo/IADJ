@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3743893870719273914}
   - component: {fileID: 2627967870010474064}
   - component: {fileID: 2023652313256171065}
+  - component: {fileID: 4501174873324590810}
   m_Layer: 0
   m_Name: Arquero
   m_TagString: Tanque
@@ -163,6 +164,28 @@ MonoBehaviour:
   fuerzaAtaque: 40
   rangoAtaque: 10
   velAtaque: 2
+  materialRojo: {fileID: 2100000, guid: 6f23b8422e87717448d03aecc1b44d91, type: 2}
+  materialAzul: {fileID: 2100000, guid: 815931dfaebdcb941a703d6f2e7abced, type: 2}
+--- !u!114 &4501174873324590810
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3664783347460375435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31f5f4c846157dd4ea280ca8b482ab55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  miTipoDeUnidad: 0
+  miBando: 0
+  vidaMax: 100
+  fuerzaAtaque: 10
+  rangoAtaque: 1.5
+  velAtaque: 1.5
+  materialRojo: {fileID: 0}
+  materialAzul: {fileID: 0}
 --- !u!1001 &1036343615579423122
 PrefabInstance:
   m_ObjectHideFlags: 0
