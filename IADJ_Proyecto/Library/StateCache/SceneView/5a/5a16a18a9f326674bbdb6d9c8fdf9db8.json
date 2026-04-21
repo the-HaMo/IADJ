@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 ﻿{"cameraMode":{"drawMode":0,"name":"Shaded","section":"Shading Mode"},"sceneLighting":true,"audioPlay":false,"sceneViewState":{"m_AlwaysRefresh":false,"showFog":true,"showSkybox":true,"showFlares":true,"showImageEffects":true,"showParticleSystems":true,"showVisualEffectGraphs":true,"m_FxEnabled":true},"in2DMode":false,"pivot":{"x":-88.26543426513672,"y":5.718717098236084,"z":96.61211395263672},"rotation":{"x":-0.4123634099960327,"y":0.12694238126277924,"z":-0.054154857993125918,"w":-0.9010518193244934},"size":1.3807419538497925,"orthographic":false}
+=======
+﻿{"cameraMode":{"drawMode":0,"name":"Shaded","section":"Shading Mode"},"sceneLighting":true,"audioPlay":false,"sceneViewState":{"m_AlwaysRefresh":false,"showFog":true,"showSkybox":true,"showFlares":true,"showImageEffects":true,"showParticleSystems":true,"showVisualEffectGraphs":true,"m_FxEnabled":true},"in2DMode":false,"pivot":{"x":-104.76654815673828,"y":2.7905220985412599,"z":100.67018127441406},"rotation":{"x":0.24445126950740815,"y":-0.21508215367794038,"z":0.053891733288764957,"w":0.9444005489349365},"size":1.8328155279159547,"orthographic":false}
+>>>>>>> 57e3e80f (señales NPC)
