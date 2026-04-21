@@ -32880,8 +32880,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1556587727}
   m_LocalEulerAnglesHint: {x: 0, y: -41.095, z: 0}
-<<<<<<< HEAD
-=======
 --- !u!1001 &1434572062
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -32962,7 +32960,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1293833033}
   m_SourcePrefab: {fileID: 100100000, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
->>>>>>> 57e3e80f (señales NPC)
 --- !u!1 &1436204100
 GameObject:
   m_ObjectHideFlags: 0
