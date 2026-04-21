@@ -17,6 +17,11 @@ public class NPCStats : MonoBehaviour
     public float rangoAtaque = 1.5f;
     public float velAtaque = 1.5f;
 
+    [Header("Costes de Terreno (Biomas)")]
+    public int costeUrbano = 1;
+    public int costeBosque = 1;
+    public int costePradera = 1;
+
     public Material materialRojo;
     public Material materialAzul;
 

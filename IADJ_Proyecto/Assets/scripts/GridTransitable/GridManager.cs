@@ -8,6 +8,9 @@ public class GridManager : MonoBehaviour
     public Vector2 gridWorldSize; // Tamaño del Grid en coordenadas del mundo
     public float nodeRadius; // Radio de cada nodo/casilla
     
+    [Tooltip("La altura vertical de detección de muros. Ayuda a detectar muros aunque el grid no esté a su altura exacta.")]
+    public float obstacleDetectionHeight = 4f; 
+    
     [Header("Depuración")]
     public bool mostrarGrid = true; // Activa o desactiva las celdas rojas/blancas en la escena
 
@@ -33,6 +36,10 @@ public class GridManager : MonoBehaviour
         // Calculamos la esquina inferior izquierda del grid
         Vector3 worldBottomLeft = transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.forward * gridWorldSize.y / 2;
 
+        // Definimos las dimensiones de la "caja" de colisión para cada nodo. 
+        // X y Z son el radio del nodo, Y es la altura configurable para pillar muros altos o bajos.
+        Vector3 boxExtents = new Vector3(nodeRadius, obstacleDetectionHeight / 2f, nodeRadius);
+
         for (int x = 0; x < gridSizeX; x++)
         {
             for (int y = 0; y < gridSizeY; y++)
@@ -40,9 +47,8 @@ public class GridManager : MonoBehaviour
                 // Hallamos la posición en el mundo de este nodo actual
                 Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRadius) + Vector3.forward * (y * nodeDiameter + nodeRadius);
                 
-                // Determinamos si es transitable (¿Choca nuestra esfera imaginaria con la máscara de obstáculos?)
-                // Si Physics.CheckSphere choca contra la 'unwalkableMask', significa que NO es transitable
-                bool walkable = !Physics.CheckSphere(worldPoint, nodeRadius, unwalkableMask);
+                // En lugar de una esfera, usamos una caja vertical. Así no hace falta que el grid esté clavado a la altura del muro.
+                bool walkable = !Physics.CheckBox(worldPoint, boxExtents, Quaternion.identity, unwalkableMask);
                 
                 grid[x, y] = new Node(walkable, worldPoint, x, y);
             }
@@ -51,9 +57,9 @@ public class GridManager : MonoBehaviour
 
     public Node NodeFromWorldPoint(Vector3 worldPosition)
     {
-        // Convertimos la posición del mundo en porcentajes relativos a nuestro Grid (0 a 1)
-        float percentX = (worldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x;
-        float percentY = (worldPosition.z + gridWorldSize.y / 2) / gridWorldSize.y;
+        // Convertimos la posición del mundo en porcentajes relativos a nuestro Grid (0 a 1), teniendo en cuenta la posición del GridManager
+        float percentX = (worldPosition.x - transform.position.x + gridWorldSize.x / 2) / gridWorldSize.x;
+        float percentY = (worldPosition.z - transform.position.z + gridWorldSize.y / 2) / gridWorldSize.y;
         
         // Clampeamos para no salirnos de los límites si el punto está muy lejos
         percentX = Mathf.Clamp01(percentX);
@@ -93,7 +99,9 @@ public class GridManager : MonoBehaviour
     {
         if (!mostrarGrid) return; // <-- La cajita de tick que apaga y enciende la magia visual
 
-        Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
+        // Dibujamos una caja amarilla que representa el VOLUMEN TOTAL donde se buscan los muros (Ancho x Alto x Profundidad)
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, obstacleDetectionHeight, gridWorldSize.y));
 
         if (grid != null)
         {
