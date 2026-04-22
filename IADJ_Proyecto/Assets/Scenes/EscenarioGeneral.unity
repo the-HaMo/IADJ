@@ -5632,6 +5632,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tanque
       objectReference: {fileID: 0}
+    - target: {fileID: 1090984687882915185, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
+      propertyPath: vidaMax
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 1090984687882915185, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
+      propertyPath: velAtaque
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1090984687882915185, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
+      propertyPath: fuerzaAtaque
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1090984687882915185, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
+      propertyPath: miTipoDeUnidad
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4801554191257664401, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
       propertyPath: m_LocalPosition.x
       value: -101.64146
@@ -12430,6 +12446,7 @@ Transform:
   - {fileID: 355308636}
   - {fileID: 575982581}
   - {fileID: 886783215}
+  - {fileID: 1434572063}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &591393597
@@ -32888,6 +32905,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 589430636}
     m_Modifications:
+    - target: {fileID: -2904737461079259805, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
+      propertyPath: vidaMax
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: -2904737461079259805, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
+      propertyPath: velAtaque
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -2904737461079259805, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
+      propertyPath: rangoAtaque
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -2904737461079259805, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
+      propertyPath: fuerzaAtaque
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: -2904737461079259805, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
+      propertyPath: miTipoDeUnidad
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2073061667386998701, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.5
@@ -32960,6 +32997,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1293833033}
   m_SourcePrefab: {fileID: 100100000, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
+--- !u!4 &1434572063 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2073061667386998701, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
+  m_PrefabInstance: {fileID: 1434572062}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1436204100
 GameObject:
   m_ObjectHideFlags: 0
@@ -43595,12 +43637,72 @@ PrefabInstance:
       propertyPath: m_Name
       value: Lancero
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 2160717074149720456, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6986243360470267362, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1973277684}
+    - targetCorrespondingSourceObject: {fileID: 6986243360470267362, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1973277683}
   m_SourcePrefab: {fileID: 100100000, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
+--- !u!1 &1973277682 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6986243360470267362, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
+  m_PrefabInstance: {fileID: 1973277681}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1973277683
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1973277682}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77d203e69b7ce4a82b2f0a212520fdf0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mass: 1
+  maxSpeed: 1
+  maxRotation: 1
+  maxAcceleration: 1
+  maxAngularAcc: 1
+  maxForce: 1
+  allowVerticalMovement: 0
+  lookahead: 5
+  avoidDistance: 3.5
+  interiorRadius: 1
+  arrivalRadius: 3
+  interiorAngle: 3
+  exteriorAngle: 8
+  gizmos: 1
+  steer:
+    angular: 0
+    linear: {x: 0, y: 0, z: 0}
+  useGravity: 1
+  customGravity: 0
+  groundLevel: 0
+--- !u!114 &1973277684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1973277682}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31f5f4c846157dd4ea280ca8b482ab55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  miTipoDeUnidad: 3
+  miBando: 0
+  vidaMax: 90
+  fuerzaAtaque: 12
+  rangoAtaque: 2.5
+  velAtaque: 1.3
 --- !u!1001 &1976191477
 PrefabInstance:
   m_ObjectHideFlags: 0
