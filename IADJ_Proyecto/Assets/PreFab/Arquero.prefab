@@ -163,6 +163,8 @@ MonoBehaviour:
   fuerzaAtaque: 40
   rangoAtaque: 10
   velAtaque: 2
+  materialRojo: {fileID: 2100000, guid: 6f23b8422e87717448d03aecc1b44d91, type: 2}
+  materialAzul: {fileID: 2100000, guid: 815931dfaebdcb941a703d6f2e7abced, type: 2}
 --- !u!1001 &1036343615579423122
 PrefabInstance:
   m_ObjectHideFlags: 0
