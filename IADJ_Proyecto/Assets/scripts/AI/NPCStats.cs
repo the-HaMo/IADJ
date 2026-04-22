@@ -21,6 +21,7 @@ public class NPCStats : MonoBehaviour
     public int costeUrbano = 1;
     public int costeBosque = 1;
     public int costePradera = 1;
+    public int costeCamino = 1;
 
     public Material materialRojo;
     public Material materialAzul;
