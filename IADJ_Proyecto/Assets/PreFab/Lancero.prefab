@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -51.45, y: 3.605382, z: 57.79}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4619759349852022254}
@@ -158,6 +158,9 @@ MonoBehaviour:
   fuerzaAtaque: 10
   rangoAtaque: 1.5
   velAtaque: 1.5
+  costeUrbano: 1
+  costeBosque: 1
+  costePradera: 1
   materialRojo: {fileID: 2100000, guid: 6f23b8422e87717448d03aecc1b44d91, type: 2}
   materialAzul: {fileID: 2100000, guid: 815931dfaebdcb941a703d6f2e7abced, type: 2}
 --- !u!1001 &4219420205362282706
