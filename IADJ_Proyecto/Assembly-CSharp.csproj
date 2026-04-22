@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="Assets\scripts\movAI\Formaciones\Ataque.cs" />
     <Compile Include="Assets\scripts\movAI\Formaciones\FormationPattern.cs" />
+    <Compile Include="Assets\scripts\GridTransitable\Aestrella.cs" />
     <Compile Include="Assets\scripts\movAI\Grafo\LssBuilder.cs" />
     <Compile Include="Assets\scripts\movAI\Grafo\Graph.cs" />
     <Compile Include="Assets\scripts\movAI\Grafo\HeuristicaType.cs" />
@@ -76,15 +77,17 @@
     <Compile Include="Assets\scripts\movAI\NPC\Agent.cs" />
     <Compile Include="Assets\scripts\movAI\NPC\Bodi.cs" />
     <Compile Include="Assets\scripts\movAI\NPC\AgentPlayer.cs" />
-    <Compile Include="Assets\scripts\movAI\NPC\EstadisticasNPC\NPCStats.cs" />
-    <Compile Include="Assets\scripts\movAI\NPC\Hospital.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Generic\SteeringBehaviour.cs" />
     <Compile Include="Assets\Store_Unity\Characters\Mini Simple Characters Skeleton Demo\Readme\Scripts\Readme.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\Flee.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\Arrive.cs" />
+    <Compile Include="Assets\scripts\AI\Hospital.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Delegate\Wander\Wander.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Delegate\Jumper\Jumper.cs" />
     <Compile Include="Assets\scripts\movAI\NPC\AgentPlayerWithAnimation.cs" />
+    <Compile Include="Assets\scripts\GridTransitable\Node.cs" />
+    <Compile Include="Assets\scripts\GridTransitable\GridManager.cs" />
+    <Compile Include="Assets\scripts\AI\NPCStats.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Delegate\Face\Face.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\Seek.cs" />
     <Compile Include="Assets\scripts\movAI\Formaciones\SeleccionarObjetivos.cs" />
