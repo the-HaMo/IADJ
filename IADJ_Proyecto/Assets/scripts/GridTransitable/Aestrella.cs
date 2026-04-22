@@ -14,15 +14,19 @@ public class Pathfinding : MonoBehaviour
 
     /// <summary>
     /// Encuentra el camino más corto entre dos posiciones del mundo.
+    /// Pasamos el NPCStats para calcular el coste de terreno personalizado.
     /// Devuelve una lista de Nodos, o null si no hay camino posible.
     /// </summary>
-    public List<Node> FindPath(Vector3 startPos, Vector3 targetPos)
+    public List<Node> FindPath(Vector3 startPos, Vector3 targetPos, NPCStats statsUnidad)
     {
+        // IMPORTANTE: Reseteamos los nodos antes de empezar cualquier búsqueda
+        gridManager.ResetGridNodes();
+
         Node startNode = gridManager.NodeFromWorldPoint(startPos);
         Node targetNode = gridManager.NodeFromWorldPoint(targetPos);
 
-        // Si alguno de los nodos no es caminable (está dentro de un muro), abortamos
-        if (!startNode.isWalkable || !targetNode.isWalkable)
+        // Seguridad: Si los nodos son nulos o no transitables, no buscamos camino
+        if (startNode == null || targetNode == null || !startNode.isWalkable || !targetNode.isWalkable)
         {
             return null;
         }
@@ -61,8 +65,11 @@ public class Pathfinding : MonoBehaviour
                 }
 
                 // Calculamos el coste para llegar a este vecino.
-                // ¡AQUÍ ESTÁ LA MAGIA TÁCTICA! Sumamos terrainCost e influenceValue para que evite pantanos o enemigos.
-                int newMovementCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor) + neighbor.terrainCost + neighbor.influenceValue;
+                // AQUÍ CALCULAMOS EL COSTE DEL TERRENO SEGÚN QUIÉN ESTÉ CAMINANDO
+                int penalizacionTerreno = (statsUnidad != null) ? statsUnidad.ObtenerCosteTerreno(neighbor.biomaID) : 1;
+
+                // F = G + Heurística(H) + PenalizaciónTerreno + Influencia(Peligro)
+                int newMovementCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor) + penalizacionTerreno + neighbor.influenceValue;
                 
                 if (newMovementCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
                 {

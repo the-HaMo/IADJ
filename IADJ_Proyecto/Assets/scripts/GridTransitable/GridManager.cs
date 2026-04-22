@@ -1,6 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public class TerrainType
+{
+    public LayerMask terrainMask;
+    public int biomaID; // ID numérico (Ej: 1=Camino, 2=Bosque)
+}
+
 public class GridManager : MonoBehaviour
 {
     [Header("Configuración del Grid")]
@@ -11,6 +18,10 @@ public class GridManager : MonoBehaviour
     [Tooltip("La altura vertical de detección de muros. Ayuda a detectar muros aunque el grid no esté a su altura exacta.")]
     public float obstacleDetectionHeight = 4f; 
     
+    [Header("Configuración de Terrenos Transitables")]
+    [Tooltip("Orden de prioridad: el grid evaluará de arriba a abajo. Pon primero (arriba) los biomas más importantes (ej. Caminos).")]
+    public TerrainType[] biomas;
+
     [Header("Depuración")]
     public bool mostrarGrid = true; // Activa o desactiva las celdas rojas/blancas en la escena
 
@@ -50,7 +61,25 @@ public class GridManager : MonoBehaviour
                 // En lugar de una esfera, usamos una caja vertical. Así no hace falta que el grid esté clavado a la altura del muro.
                 bool walkable = !Physics.CheckBox(worldPoint, boxExtents, Quaternion.identity, unwalkableMask);
                 
+                int detectedBiomaID = 0; // Coste base o Llanura (0)
+
+                // Si es transitable, miramos qué bioma tiene
+                if (walkable && biomas != null && biomas.Length > 0)
+                {
+                    // Recorremos la lista de biomas en el orden del Inspector (Prioridad)
+                    foreach (TerrainType bioma in biomas)
+                    {
+                        // Si la caja choca con el Collider de este bioma
+                        if (Physics.CheckBox(worldPoint, boxExtents, Quaternion.identity, bioma.terrainMask))
+                        {
+                            detectedBiomaID = bioma.biomaID;
+                            break; // Importante: Salimos al primer match para respetar la prioridad
+                        }
+                    }
+                }
+                
                 grid[x, y] = new Node(walkable, worldPoint, x, y);
+                grid[x, y].biomaID = detectedBiomaID; // Guardamos el ID del bioma en el nodo
             }
         }
     }
@@ -68,6 +97,18 @@ public class GridManager : MonoBehaviour
         int x = Mathf.RoundToInt((gridSizeX - 1) * percentX);
         int y = Mathf.RoundToInt((gridSizeY - 1) * percentY);
         return grid[x, y];
+    }
+
+    // Limpia los costes de los nodos para que el A* pueda empezar de cero en cada búsqueda
+    public void ResetGridNodes()
+    {
+        if (grid == null) return;
+        foreach (Node n in grid)
+        {
+            n.gCost = 0;
+            n.hCost = 0;
+            n.parent = null;
+        }
     }
     
     // Lista de vecinos de un nodo para el A*
@@ -107,8 +148,22 @@ public class GridManager : MonoBehaviour
         {
             foreach (Node n in grid)
             {
-                // Si es transitable será blanco translúcido, si es obstáculo será rojo.
-                Gizmos.color = n.isWalkable ? new Color(1, 1, 1, 0.3f) : new Color(1, 0, 0, 0.5f);
+                if (!n.isWalkable)
+                {
+                    Gizmos.color = new Color(1, 0, 0, 0.5f); // Rojo para obstáculos (Muros)
+                }
+                else
+                {
+                    // Pintar de diferentes colores según el bioma detectado
+                    switch (n.biomaID)
+                    {
+                        case 1: Gizmos.color = new Color(0.6f, 0.3f, 0.1f, 0.5f); break; // Marrón (Camino)
+                        case 2: Gizmos.color = new Color(0.1f, 0.4f, 0.1f, 0.5f); break; // Verde Oscuro (Bosque)
+                        case 3: Gizmos.color = new Color(1.0f, 0.5f, 0.0f, 0.5f); break; // Naranja (Urbano)
+                        default: Gizmos.color = new Color(0.5f, 1.0f, 0.5f, 0.3f); break;// Verde Claro (Pradera / Por defecto)
+                    }
+                }
+                
                 Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - .1f));
             }
         }

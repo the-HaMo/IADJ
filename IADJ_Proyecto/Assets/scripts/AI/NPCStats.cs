@@ -17,7 +17,7 @@ public class NPCStats : MonoBehaviour
     public float rangoAtaque = 1.5f;
     public float velAtaque = 1.5f;
 
-    [Header("Costes de Terreno (Biomas)")]
+    [Header("Costes de Terreno")]
     public int costeUrbano = 1;
     public int costeBosque = 1;
     public int costePradera = 1;
@@ -28,13 +28,7 @@ public class NPCStats : MonoBehaviour
 
     private void Awake()
     {
-        AplicarStatsPorTipo();
         vidaActual = vidaMax;
-    }
-
-    private void OnValidate()
-    {
-        AplicarStatsPorTipo();
     }
 
     private void Start()
@@ -56,48 +50,24 @@ public class NPCStats : MonoBehaviour
         }
     }
 
-    private void AplicarStatsPorTipo()
-    {
-        if (miTipoDeUnidad == TipoUnidad.Arquero)
-        {
-            vidaMax = 80f;
-            fuerzaAtaque = 15f;
-            rangoAtaque = 5f;
-            velAtaque = 1.2f;
-        }
-        else if (miTipoDeUnidad == TipoUnidad.Caballero)
-        {
-            vidaMax = 120f;
-            fuerzaAtaque = 20f;
-            rangoAtaque = 1.5f;
-            velAtaque = 1f;
-        }
-        else if (miTipoDeUnidad == TipoUnidad.Tanque)
-        {
-            vidaMax = 150f;
-            fuerzaAtaque = 10f;
-            rangoAtaque = 1.5f;
-            velAtaque = 0.8f;
-        }
-        else if (miTipoDeUnidad == TipoUnidad.Lancero)
-        {
-            vidaMax = 90f;
-            fuerzaAtaque = 12f;
-            rangoAtaque = 2.5f;
-            velAtaque = 1.3f;
-        }
-        else if (miTipoDeUnidad == TipoUnidad.JineteExplorador)
-        {
-            vidaMax = 70f;
-            fuerzaAtaque = 8f;
-            rangoAtaque = 3f;
-            velAtaque = 1.5f;
-        }
-    }
+    // Las estadísticas ahora se configuran exclusivamente desde el Inspector de Unity.
+    // Para crear distintos tipos de unidades, crea distintos Prefabs y ajusta sus valores allí.
 
     public bool NecesitaCuracion()
     {
         return vidaActual < vidaMax;
+    }
+
+    public int ObtenerCosteTerreno(int biomaID)
+    {
+        // Usamos los IDs que configures en el Inspector del GridManager
+        switch (biomaID)
+        {
+            case 1: return costeCamino;
+            case 2: return costeBosque;
+            case 3: return costeUrbano;
+            default: return costePradera; // 0 o cualquier ID no registrado
+        }
     }
 
     public void RecibirCuracion(float cantidad)

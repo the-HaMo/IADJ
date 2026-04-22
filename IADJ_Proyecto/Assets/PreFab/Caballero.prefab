@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 559866233930643991}
   - component: {fileID: 3488830431064028594}
   - component: {fileID: 1697337554085609848}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: espada
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 4855979193071136292}
   - component: {fileID: 8416168651891040641}
   - component: {fileID: 5992263079456314699}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: casco
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -184,7 +184,7 @@ GameObject:
   - component: {fileID: 3280203927719131248}
   - component: {fileID: 9181909348905035567}
   - component: {fileID: -2904737461079259805}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Caballero
   m_TagString: Tanque
   m_Icon: {fileID: 0}
@@ -296,9 +296,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mass: 1
-  maxSpeed: 1
-  maxRotation: 1
-  maxAcceleration: 1
+  maxSpeed: 10
+  maxRotation: 100
+  maxAcceleration: 100
   maxAngularAcc: 1
   maxForce: 1
   allowVerticalMovement: 0
@@ -329,9 +329,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   miTipoDeUnidad: 1
   miBando: 0
-  vidaMax: 850
-  fuerzaAtaque: 60
-  rangoAtaque: 1
+  vidaMax: 120
+  fuerzaAtaque: 20
+  rangoAtaque: 1.5
   velAtaque: 1
+  costeUrbano: 1
+  costeBosque: 1
+  costePradera: 1
+  costeCamino: 1
   materialRojo: {fileID: 2100000, guid: 6f23b8422e87717448d03aecc1b44d91, type: 2}
   materialAzul: {fileID: 2100000, guid: 815931dfaebdcb941a703d6f2e7abced, type: 2}

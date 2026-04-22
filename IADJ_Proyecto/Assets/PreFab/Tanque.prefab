@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 789357719368891206}
   - component: {fileID: 5197754927143992081}
   - component: {fileID: 1090984687882915185}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tanque
   m_TagString: Tanque
   m_Icon: {fileID: 0}
@@ -126,9 +126,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mass: 1
-  maxSpeed: 1
-  maxRotation: 1
-  maxAcceleration: 1
+  maxSpeed: 7.5
+  maxRotation: 70
+  maxAcceleration: 50
   maxAngularAcc: 1
   maxForce: 1
   allowVerticalMovement: 0
@@ -159,10 +159,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   miTipoDeUnidad: 2
   miBando: 0
-  vidaMax: 1100
-  fuerzaAtaque: 100
+  vidaMax: 150
+  fuerzaAtaque: 10
   rangoAtaque: 1.5
-  velAtaque: 3.5
+  velAtaque: 0.8
+  costeUrbano: 1
+  costeBosque: 1
+  costePradera: 1
+  costeCamino: 1
   materialRojo: {fileID: 2100000, guid: 6f23b8422e87717448d03aecc1b44d91, type: 2}
   materialAzul: {fileID: 2100000, guid: 815931dfaebdcb941a703d6f2e7abced, type: 2}
 --- !u!1001 &2913109158371027959
@@ -176,6 +180,10 @@ PrefabInstance:
     - target: {fileID: 2480893547219342911, guid: 9a02c5c3b98234f4a9951a131209ff99, type: 3}
       propertyPath: m_Name
       value: escudo
+      objectReference: {fileID: 0}
+    - target: {fileID: 2480893547219342911, guid: 9a02c5c3b98234f4a9951a131209ff99, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2965118040835951749, guid: 9a02c5c3b98234f4a9951a131209ff99, type: 3}
       propertyPath: m_LocalPosition.x
@@ -238,6 +246,10 @@ PrefabInstance:
     - target: {fileID: 6158092634170719381, guid: c268d4d8f150081438bddde3bfb18873, type: 3}
       propertyPath: m_Name
       value: hacha
+      objectReference: {fileID: 0}
+    - target: {fileID: 6158092634170719381, guid: c268d4d8f150081438bddde3bfb18873, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6790900692258235951, guid: c268d4d8f150081438bddde3bfb18873, type: 3}
       propertyPath: m_LocalPosition.x

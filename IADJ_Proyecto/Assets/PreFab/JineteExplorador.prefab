@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4262886077754724307}
   - component: {fileID: 902703272795062390}
   - component: {fileID: 3126620269827372220}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: caballo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -99,7 +99,7 @@ GameObject:
   - component: {fileID: 978086417757378711}
   - component: {fileID: 430930521372464785}
   - component: {fileID: 3651713821515123773}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: JineteExplorador
   m_TagString: Tanque
   m_Icon: {fileID: 0}
@@ -211,9 +211,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mass: 1
-  maxSpeed: 1
-  maxRotation: 1
-  maxAcceleration: 1
+  maxSpeed: 13
+  maxRotation: 100
+  maxAcceleration: 100
   maxAngularAcc: 1
   maxForce: 1
   allowVerticalMovement: 0
@@ -242,7 +242,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31f5f4c846157dd4ea280ca8b482ab55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  miTipoDeUnidad: 4
+  miTipoDeUnidad: 3
   miBando: 0
   vidaMax: 70
   fuerzaAtaque: 8
@@ -265,7 +265,7 @@ GameObject:
   - component: {fileID: 8368414548309958977}
   - component: {fileID: 4867633792106819300}
   - component: {fileID: 7235517054791850542}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: espada2
   m_TagString: Untagged
   m_Icon: {fileID: 0}

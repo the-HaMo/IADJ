@@ -13,13 +13,14 @@ public class Node
     public Node parent; // Nodo 'padre' para reconstruir el camino
     
     // Variables para el PATHFINDING TÁCTICO
-    public int terrainCost; // El coste de caminar por este tipo de terreno (ej. llano = 1, bosque = 2)
+    public int biomaID; // Identificador del bioma (0=Llanura, 1=Camino, 2=Bosque, etc.)
     public int influenceValue; // El valor de influencia/peligro de este nodo
 
-    // Coste total (F = G + H + Terreno + InfluenciaTáctica)
+    // Coste total (F = G + H + InfluenciaTáctica). 
+    // NOTA: El coste del terreno se sumará en el Pathfinding al calcular el gCost, dependiendo del NPC.
     public int fCost
     {
-        get { return gCost + hCost + terrainCost + influenceValue; }
+        get { return gCost + hCost + influenceValue; }
     }
 
     public Node(bool _isWalkable, Vector3 _worldPos, int _gridX, int _gridY)
@@ -29,7 +30,7 @@ public class Node
         gridX = _gridX;
         gridY = _gridY;
         
-        terrainCost = 1; // Por defecto
+        biomaID = 0; // Por defecto (Llanura)
         influenceValue = 0; // Por defecto sin peligro
     }
 }
