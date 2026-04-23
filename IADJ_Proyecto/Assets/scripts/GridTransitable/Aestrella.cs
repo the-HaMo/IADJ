@@ -66,8 +66,8 @@ public class Pathfinding : MonoBehaviour
             foreach (Node neighbor in gridManager.GetNeighbors(currentNode))
             {
                 if (!neighbor.isWalkable || closedSet.Contains(neighbor)) continue;
-
                 int penalizacionTerreno = (statsUnidad != null) ? statsUnidad.ObtenerCosteTerreno(neighbor.bioma) : 1;
+
                 int costToNeighbor = GetStepCost(currentNode, neighbor);
                 int newMovementCostToNeighbor = currentNode.gCost + costToNeighbor + penalizacionTerreno + neighbor.influenceValue;
                 

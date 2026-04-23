@@ -50339,10 +50339,6 @@ PrefabInstance:
       propertyPath: nColumnas
       value: 110
       objectReference: {fileID: 0}
-    - target: {fileID: 987761780851132559, guid: 28221d1c8cba8ad479bb8482d0ec8b81, type: 3}
-      propertyPath: nodeRadius
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5143725211294651663, guid: 28221d1c8cba8ad479bb8482d0ec8b81, type: 3}
       propertyPath: m_Name
       value: ControladorAreas
