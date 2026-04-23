@@ -5772,6 +5772,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tanque
       objectReference: {fileID: 0}
+    - target: {fileID: 961614647817374387, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1090984687882915185, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
       propertyPath: vidaMax
       value: 150
@@ -10759,87 +10763,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4411623015b32704da0f15323c1f3c82, type: 3}
   m_PrefabInstance: {fileID: 509951708}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &513585566
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 513585568}
-  - component: {fileID: 513585567}
-  - component: {fileID: 513585570}
-  m_Layer: 0
-  m_Name: ControladorAreas
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &513585567
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 513585566}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b0ce8809840b5e4c9635189613460ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  unwalkableMask:
-    serializedVersion: 2
-    m_Bits: 64
-  gridWorldSize: {x: 315, y: 315}
-  nodeRadius: 1.5
-  obstacleDetectionHeight: 4
-  biomas:
-  - terrainMask:
-      serializedVersion: 2
-      m_Bits: 16384
-    biomaID: 1
-  - terrainMask:
-      serializedVersion: 2
-      m_Bits: 128
-    biomaID: 3
-  - terrainMask:
-      serializedVersion: 2
-      m_Bits: 512
-    biomaID: 2
-  - terrainMask:
-      serializedVersion: 2
-      m_Bits: 256
-    biomaID: 0
-  mostrarGrid: 1
---- !u!4 &513585568
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 513585566}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.1, y: 0.4307, z: -13.1}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &513585570
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 513585566}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4834b33cb56b6424c884f2d4a8152384, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &514268736
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15414,6 +15337,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Arquero
       objectReference: {fileID: 0}
+    - target: {fileID: 3664783347460375435, guid: 3327ede9bca67ae4b892a25815046519, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -15999,7 +15926,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 707403524}
-  - component: {fileID: 707403525}
   m_Layer: 9
   m_Name: Bosque1
   m_TagString: Untagged
@@ -16218,27 +16144,6 @@ Transform:
   - {fileID: 1107241813}
   m_Father: {fileID: 589430636}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &707403525
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 707403523}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 124.70264, y: 1, z: 104.116455}
-  m_Center: {x: -220.27191, y: 0, z: -216.67068}
 --- !u!1001 &713124263
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24668,6 +24573,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Caballero
       objectReference: {fileID: 0}
+    - target: {fileID: 7439606074143703248, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 9181909348905035567, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
       propertyPath: maxSpeed
       value: 10
@@ -25229,7 +25138,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1074868767}
-  - component: {fileID: 1074868768}
   m_Layer: 9
   m_Name: Bosque
   m_TagString: Untagged
@@ -25429,27 +25337,6 @@ Transform:
   - {fileID: 9733417}
   m_Father: {fileID: 589430636}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &1074868768
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1074868766}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 121.77416, y: 3.7581847, z: 103.51611}
-  m_Center: {x: -41.132496, y: -1.3790928, z: 2.1467304}
 --- !u!1 &1076403442
 GameObject:
   m_ObjectHideFlags: 0
@@ -40684,7 +40571,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1770749236}
-  - component: {fileID: 1770749237}
   m_Layer: 7
   m_Name: Pueblo (1)
   m_TagString: Untagged
@@ -40726,27 +40612,6 @@ Transform:
   - {fileID: 1919951858}
   m_Father: {fileID: 589430636}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
---- !u!65 &1770749237
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1770749235}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 105.47347, y: 9.161519, z: 76.67502}
-  m_Center: {x: -43.539097, y: -4.452748, z: -8.332596}
 --- !u!1001 &1770749818
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -43712,7 +43577,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1876536077}
-  - component: {fileID: 1876536078}
   m_Layer: 7
   m_Name: Pueblo
   m_TagString: Untagged
@@ -43754,27 +43618,6 @@ Transform:
   - {fileID: 1635281455}
   m_Father: {fileID: 589430636}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &1876536078
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1876536076}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 105.64647, y: 6.7434998, z: 77.679726}
-  m_Center: {x: -43.890907, y: -2.8717499, z: -9.577802}
 --- !u!1 &1879098903
 GameObject:
   m_ObjectHideFlags: 0
@@ -45960,6 +45803,10 @@ PrefabInstance:
     - target: {fileID: 6986243360470267362, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
       propertyPath: m_Name
       value: Lancero
+      objectReference: {fileID: 0}
+    - target: {fileID: 6986243360470267362, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -50438,6 +50285,63 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4411623015b32704da0f15323c1f3c82, type: 3}
   m_PrefabInstance: {fileID: 2137543443}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &5626314357223145438
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5143725211294651663, guid: 28221d1c8cba8ad479bb8482d0ec8b81, type: 3}
+      propertyPath: m_Name
+      value: ControladorAreas
+      objectReference: {fileID: 0}
+    - target: {fileID: 5978327706410386704, guid: 28221d1c8cba8ad479bb8482d0ec8b81, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -5.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5978327706410386704, guid: 28221d1c8cba8ad479bb8482d0ec8b81, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.4307
+      objectReference: {fileID: 0}
+    - target: {fileID: 5978327706410386704, guid: 28221d1c8cba8ad479bb8482d0ec8b81, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -13.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5978327706410386704, guid: 28221d1c8cba8ad479bb8482d0ec8b81, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5978327706410386704, guid: 28221d1c8cba8ad479bb8482d0ec8b81, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5978327706410386704, guid: 28221d1c8cba8ad479bb8482d0ec8b81, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5978327706410386704, guid: 28221d1c8cba8ad479bb8482d0ec8b81, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5978327706410386704, guid: 28221d1c8cba8ad479bb8482d0ec8b81, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5978327706410386704, guid: 28221d1c8cba8ad479bb8482d0ec8b81, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5978327706410386704, guid: 28221d1c8cba8ad479bb8482d0ec8b81, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 28221d1c8cba8ad479bb8482d0ec8b81, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -50449,5 +50353,5 @@ SceneRoots:
   - {fileID: 1973277681}
   - {fileID: 1057889849}
   - {fileID: 684895643}
-  - {fileID: 513585568}
+  - {fileID: 5626314357223145438}
   - {fileID: 583665150}

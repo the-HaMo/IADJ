@@ -8,6 +8,14 @@ public class TerrainType
     public int biomaID; // ID numérico (Ej: 1=Camino, 2=Bosque)
 }
 
+[System.Serializable]
+public class BiomaArea
+{
+    public int biomaID;
+    public Vector2 centro;
+    public Vector2 tamano;
+}
+
 public class GridManager : MonoBehaviour
 {
     [Header("Configuración del Grid")]
@@ -18,9 +26,13 @@ public class GridManager : MonoBehaviour
     [Tooltip("La altura vertical de detección de muros. Ayuda a detectar muros aunque el grid no esté a su altura exacta.")]
     public float obstacleDetectionHeight = 4f; 
     
-    [Header("Configuración de Terrenos Transitables")]
-    [Tooltip("Orden de prioridad: el grid evaluará de arriba a abajo. Pon primero (arriba) los biomas más importantes (ej. Caminos).")]
-    public TerrainType[] biomas;
+    [Header("Configuración de Terrenos (Colliders)")]
+    [Tooltip("Usa esto para caminos u obstáculos con formas complejas.")]
+    public TerrainType[] biomasColliders;
+
+    [Header("Configuración de Terrenos (Coordenadas)")]
+    [Tooltip("Usa esto para biomas rectangulares sin necesidad de usar colliders (más eficiente).")]
+    public BiomaArea[] biomasAreas;
 
     [Header("Depuración")]
     public bool mostrarGrid = true; // Activa o desactiva las celdas rojas/blancas en la escena
@@ -63,17 +75,32 @@ public class GridManager : MonoBehaviour
                 
                 int detectedBiomaID = 0; // Coste base o Llanura (0)
 
-                // Si es transitable, miramos qué bioma tiene
-                if (walkable && biomas != null && biomas.Length > 0)
+                // 1. PRIORIDAD ALTA: Biomas por Colliders (Caminos y formas complejas)
+                if (walkable && biomasColliders != null && biomasColliders.Length > 0)
                 {
-                    // Recorremos la lista de biomas en el orden del Inspector (Prioridad)
-                    foreach (TerrainType bioma in biomas)
+                    foreach (TerrainType bioma in biomasColliders)
                     {
-                        // Si la caja choca con el Collider de este bioma
                         if (Physics.CheckBox(worldPoint, boxExtents, Quaternion.identity, bioma.terrainMask))
                         {
                             detectedBiomaID = bioma.biomaID;
-                            break; // Importante: Salimos al primer match para respetar la prioridad
+                            break; // Si encontramos un camino, ese manda
+                        }
+                    }
+                }
+
+                // 2. PRIORIDAD BAJA: Biomas por Coordenadas (Bosques grandes, Praderas, etc.)
+                // Solo si no se ha detectado un camino/bioma complejo antes
+                if (walkable && detectedBiomaID == 0 && biomasAreas != null)
+                {
+                    foreach (var area in biomasAreas)
+                    {
+                        if (worldPoint.x >= area.centro.x - area.tamano.x / 2 &&
+                            worldPoint.x <= area.centro.x + area.tamano.x / 2 &&
+                            worldPoint.z >= area.centro.y - area.tamano.y / 2 &&
+                            worldPoint.z <= area.centro.y + area.tamano.y / 2)
+                        {
+                            detectedBiomaID = area.biomaID;
+                            break;
                         }
                     }
                 }
@@ -140,9 +167,21 @@ public class GridManager : MonoBehaviour
     {
         if (!mostrarGrid) return; // <-- La cajita de tick que apaga y enciende la magia visual
 
-        // Dibujamos una caja amarilla que representa el VOLUMEN TOTAL donde se buscan los muros (Ancho x Alto x Profundidad)
+        // Dibujamos una caja amarilla que representa el VOLUMEN TOTAL donde se buscan los muros
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, obstacleDetectionHeight, gridWorldSize.y));
+
+        // Dibujamos las áreas de biomas por coordenadas
+        if (biomasAreas != null)
+        {
+            foreach (var area in biomasAreas)
+            {
+                Gizmos.color = new Color(0, 1, 1, 0.2f); // Cian transparente
+                Gizmos.DrawCube(new Vector3(area.centro.x, transform.position.y, area.centro.y), new Vector3(area.tamano.x, 0.1f, area.tamano.y));
+                Gizmos.color = Color.cyan;
+                Gizmos.DrawWireCube(new Vector3(area.centro.x, transform.position.y, area.centro.y), new Vector3(area.tamano.x, 0.1f, area.tamano.y));
+            }
+        }
 
         if (grid != null)
         {

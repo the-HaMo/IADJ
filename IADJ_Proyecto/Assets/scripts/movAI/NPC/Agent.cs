@@ -151,26 +151,6 @@ public class Agent : Bodi // Asegúrate de que la clase Bodi esté definida en t
         if (ori != -190f) Orientation = ori;
     }
 
-    protected virtual void FixedUpdate()
-    {
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position + Vector3.up * 0.1f, Vector3.down, out hit, 0.5f))
-        {
-            switch (hit.collider.tag)
-            {
-                case "RIO":
-                    terrainMultiplier = 0.2f; // Velocidad a Reducir
-                    break;
-                default:
-                    terrainMultiplier = 1f;
-                    break;
-            }
-        }
-        else
-        {
-            terrainMultiplier = 1f;
-        }
-    }
     #endregion
 
     protected virtual void OnDrawGizmos()
@@ -208,8 +188,6 @@ public class Agent : Bodi // Asegúrate de que la clase Bodi esté definida en t
             if (Velocity.magnitude > 0.1f)
                 Gizmos.DrawLine(Position, Position + Velocity.normalized * lookahead);
 
-            Gizmos.color = terrainMultiplier < 1f ? Color.red : Color.cyan;
-            Gizmos.DrawRay(transform.position + Vector3.up * 0.1f, Vector3.down * 0.5f);
         }
     }
 }
