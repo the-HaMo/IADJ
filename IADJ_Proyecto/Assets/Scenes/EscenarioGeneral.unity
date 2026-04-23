@@ -2801,6 +2801,68 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 10.000003, y: 2.220446e-16, z: 10}
   m_Center: {x: 0, y: 0, z: 0.0000076293945}
+--- !u!1 &150097331
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 150097333}
+  - component: {fileID: 150097332}
+  m_Layer: 0
+  m_Name: WayPointManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &150097332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 150097331}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fe832b521d226d4b95c48b5b2bcb74f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  waypointReaparicionRojo:
+  - {x: 92.4, y: 0, z: -48.7}
+  - {x: -11.17, y: 0, z: -95.8}
+  - {x: -103.8, y: 0, z: -116.1}
+  waypointReaparicionAzul:
+  - {x: 81.1, y: 0, z: 86.8}
+  - {x: -6.15, y: 0, z: 67.8}
+  - {x: -103.2, y: 0, z: 24.97}
+  waypointCuracionRojo:
+  - {x: 23.9, y: 0, z: -138.5}
+  waypointCuracionAzul:
+  - {x: -21.77, y: 0, z: 103.6}
+  waypointBaseRojo:
+  - {x: 99.8, y: 0, z: -135.3}
+  waypointBaseAzul:
+  - {x: -114.6, y: 0, z: 106.3}
+  debugWaypoints: 1
+  radioGizmo: 3
+--- !u!4 &150097333
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 150097331}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 64.68516, y: 1.770689, z: 29.97141}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &150159408
 GameObject:
   m_ObjectHideFlags: 0
@@ -50355,3 +50417,4 @@ SceneRoots:
   - {fileID: 684895643}
   - {fileID: 5626314357223145438}
   - {fileID: 583665150}
+  - {fileID: 150097333}

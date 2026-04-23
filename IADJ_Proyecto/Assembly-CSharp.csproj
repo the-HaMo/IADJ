@@ -59,7 +59,7 @@
     <UnityVersion>2023.2.20f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Analyzer Include="C:\Users\Usuario\.vscode\extensions\visualstudiotoolsforunity.vstuc-1.2.1\Analyzers\Microsoft.Unity.Analyzers.dll" />
+    <Analyzer Include="C:\Users\Usuario\.vscode\extensions\visualstudiotoolsforunity.vstuc-1.2.2\Analyzers\Microsoft.Unity.Analyzers.dll" />
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2023.2.20f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.SourceGenerators.dll" />
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2023.2.20f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2023.2.20f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
@@ -104,6 +104,7 @@
     <Compile Include="Assets\scripts\movAI\Steering\Delegate\PathFollowing\PathFollowing.cs" />
     <Compile Include="Assets\scripts\movAI\Formaciones\Defensa.cs" />
     <Compile Include="Assets\scripts\movAI\NPC\AgentNPC.cs" />
+    <Compile Include="Assets\scripts\GridTransitable\WayPoints.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\Align.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Generic\Steering.cs" />
     <Compile Include="Assets\scripts\movAI\Grafo\Manhattan.cs" />
