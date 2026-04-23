@@ -1,5 +1,13 @@
 using UnityEngine;
 
+public enum Bioma
+{
+    Pradera = 0,
+    Camino = 1,
+    Bosque = 2,
+    Urbano = 3
+}
+
 public class Node
 {
     public bool isWalkable; // Si se puede transitar o hay un obstáculo
@@ -13,7 +21,7 @@ public class Node
     public Node parent; // Nodo 'padre' para reconstruir el camino
     
     // Variables para el PATHFINDING TÁCTICO
-    public int biomaID; // Identificador del bioma (0=Llanura, 1=Camino, 2=Bosque, etc.)
+    public Bioma bioma;
     public int influenceValue; // El valor de influencia/peligro de este nodo
 
     // Coste total (F = G + H + InfluenciaTáctica). 
@@ -30,7 +38,7 @@ public class Node
         gridX = _gridX;
         gridY = _gridY;
         
-        biomaID = 0; // Por defecto (Llanura)
+        bioma = Bioma.Pradera;
         influenceValue = 0; // Por defecto sin peligro
     }
 }

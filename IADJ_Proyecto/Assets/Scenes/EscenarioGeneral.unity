@@ -2831,23 +2831,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   waypointReaparicionRojo:
-  - {x: 92.4, y: 0, z: -48.7}
-  - {x: -11.17, y: 0, z: -95.8}
-  - {x: -103.8, y: 0, z: -116.1}
+  - {x: 92.4, y: 0, z: -47.5}
+  - {x: -6.67, y: 0, z: -95.8}
+  - {x: -96.6, y: 0, z: -116.6}
   waypointReaparicionAzul:
-  - {x: 81.1, y: 0, z: 86.8}
-  - {x: -6.15, y: 0, z: 67.8}
-  - {x: -103.2, y: 0, z: 24.97}
+  - {x: 80.3, y: 0, z: 87.1}
+  - {x: -6.87, y: 0, z: 66.5}
+  - {x: -103, y: 0, z: 27.3}
   waypointCuracionRojo:
-  - {x: 23.9, y: 0, z: -138.5}
+  - {x: 20.2, y: 0, z: -138}
   waypointCuracionAzul:
-  - {x: -21.77, y: 0, z: 103.6}
+  - {x: -21.8, y: 0, z: 102.4}
   waypointBaseRojo:
-  - {x: 99.8, y: 0, z: -135.3}
+  - {x: 98.3, y: 0, z: -134.8}
   waypointBaseAzul:
-  - {x: -114.6, y: 0, z: 106.3}
+  - {x: -114.6, y: 0, z: 105.4}
   debugWaypoints: 1
-  radioGizmo: 3
+  radioGizmo: 1.5
 --- !u!4 &150097333
 Transform:
   m_ObjectHideFlags: 0
@@ -12569,38 +12569,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 430930521372464785, guid: 9731d6b00c403f44cab356d723046421, type: 3}
-      propertyPath: maxSpeed
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 430930521372464785, guid: 9731d6b00c403f44cab356d723046421, type: 3}
-      propertyPath: maxRotation
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 430930521372464785, guid: 9731d6b00c403f44cab356d723046421, type: 3}
-      propertyPath: maxAcceleration
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 3651713821515123773, guid: 9731d6b00c403f44cab356d723046421, type: 3}
-      propertyPath: vidaMax
-      value: 70
-      objectReference: {fileID: 0}
-    - target: {fileID: 3651713821515123773, guid: 9731d6b00c403f44cab356d723046421, type: 3}
-      propertyPath: velAtaque
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3651713821515123773, guid: 9731d6b00c403f44cab356d723046421, type: 3}
-      propertyPath: rangoAtaque
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 3651713821515123773, guid: 9731d6b00c403f44cab356d723046421, type: 3}
-      propertyPath: fuerzaAtaque
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 3651713821515123773, guid: 9731d6b00c403f44cab356d723046421, type: 3}
-      propertyPath: miTipoDeUnidad
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 5312587486554523641, guid: 9731d6b00c403f44cab356d723046421, type: 3}
       propertyPath: m_LocalPosition.x
       value: -93.46577
@@ -50355,6 +50323,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 987761780851132559, guid: 28221d1c8cba8ad479bb8482d0ec8b81, type: 3}
+      propertyPath: nFilas
+      value: 110
+      objectReference: {fileID: 0}
+    - target: {fileID: 987761780851132559, guid: 28221d1c8cba8ad479bb8482d0ec8b81, type: 3}
+      propertyPath: tamCelda
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 987761780851132559, guid: 28221d1c8cba8ad479bb8482d0ec8b81, type: 3}
+      propertyPath: debugGrid
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 987761780851132559, guid: 28221d1c8cba8ad479bb8482d0ec8b81, type: 3}
+      propertyPath: nColumnas
+      value: 110
+      objectReference: {fileID: 0}
+    - target: {fileID: 987761780851132559, guid: 28221d1c8cba8ad479bb8482d0ec8b81, type: 3}
+      propertyPath: nodeRadius
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5143725211294651663, guid: 28221d1c8cba8ad479bb8482d0ec8b81, type: 3}
       propertyPath: m_Name
       value: ControladorAreas

@@ -32,45 +32,30 @@ public class WayPoints : MonoBehaviour
 
     private void InitializeWaypoints()
     {
+        waypointReaparicionRojo.Clear();
+        waypointReaparicionAzul.Clear();
+        waypointCuracionRojo.Clear();
+        waypointCuracionAzul.Clear();
+        waypointBaseRojo.Clear();
+        waypointBaseAzul.Clear();
+
         // Reaparicion Rojo
-        if (waypointReaparicionRojo.Count == 0)
-        {
-            waypointReaparicionRojo.Add(new Vector3(70f, 0f, 20f));
-            waypointReaparicionRojo.Add(new Vector3(50f, 0f, 10f));
-            waypointReaparicionRojo.Add(new Vector3(80f, 0f, 35f));
-        }
+        waypointReaparicionRojo.Add(new Vector3(92.4f, 0f, -47.5f));
+        waypointReaparicionRojo.Add(new Vector3(-6.67f, 0f, -95.8f));
+        waypointReaparicionRojo.Add(new Vector3(-96.6f, 0f, -116.6f));
 
         // Reaparicion Azul
-        if (waypointReaparicionAzul.Count == 0)
-        {
-            waypointReaparicionAzul.Add(new Vector3(19f, 0f, 70f));
-            waypointReaparicionAzul.Add(new Vector3(43f, 0f, 74f));
-            waypointReaparicionAzul.Add(new Vector3(10f, 0f, 50f));
-        }
+        waypointReaparicionAzul.Add(new Vector3(80.3f, 0f, 87.1f));
+        waypointReaparicionAzul.Add(new Vector3(-6.87f, 0f, 66.5f));
+        waypointReaparicionAzul.Add(new Vector3(-103f, 0f, 27.3f));
 
-        // Curacion Rojo
-        if (waypointCuracionRojo.Count == 0)
-        {
-            waypointCuracionRojo.Add(new Vector3(19f, 0f, 13.5f));
-        }
+        // Curacion Rojo y Azul
+        waypointCuracionRojo.Add(new Vector3(20.2f, 0f, -138f));
+        waypointCuracionAzul.Add(new Vector3(-21.8f, 0f, 102.4f));
 
-        // Curacion Azul
-        if (waypointCuracionAzul.Count == 0)
-        {
-            waypointCuracionAzul.Add(new Vector3(73f, 0f, 77f));
-        }
-
-        // Base Rojo
-        if (waypointBaseRojo.Count == 0)
-        {
-            waypointBaseRojo.Add(new Vector3(70f, 0f, 20f));
-        }
-
-        // Base Azul
-        if (waypointBaseAzul.Count == 0)
-        {
-            waypointBaseAzul.Add(new Vector3(19f, 0f, 70f));
-        }
+        // Base Rojo y Azul
+        waypointBaseRojo.Add(new Vector3(98.3f, 0f, -134.8f));
+        waypointBaseAzul.Add(new Vector3(-114.6f, 0f, 105.4f));
     }
 
     public Vector3 GetWaypointReaparicion(Bando bando, int indice = 0)
