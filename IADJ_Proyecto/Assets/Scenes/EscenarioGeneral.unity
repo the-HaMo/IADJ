@@ -1912,8 +1912,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0.5, z: 0}
+  m_Size: {x: 0.9773519, y: 0.9999999, z: 1}
+  m_Center: {x: 0.0113240415, y: 0.49999994, z: 0}
 --- !u!23 &107256309
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -31584,8 +31584,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0.5, z: 0}
+  m_Size: {x: 0.9573618, y: 0.9999999, z: 1}
+  m_Center: {x: -0.021319095, y: 0.49999994, z: 0}
 --- !u!23 &1330219174
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -50325,7 +50325,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 987761780851132559, guid: 28221d1c8cba8ad479bb8482d0ec8b81, type: 3}
       propertyPath: nFilas
-      value: 110
+      value: 105
       objectReference: {fileID: 0}
     - target: {fileID: 987761780851132559, guid: 28221d1c8cba8ad479bb8482d0ec8b81, type: 3}
       propertyPath: tamCelda
@@ -50337,7 +50337,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 987761780851132559, guid: 28221d1c8cba8ad479bb8482d0ec8b81, type: 3}
       propertyPath: nColumnas
-      value: 110
+      value: 105
       objectReference: {fileID: 0}
     - target: {fileID: 5143725211294651663, guid: 28221d1c8cba8ad479bb8482d0ec8b81, type: 3}
       propertyPath: m_Name
