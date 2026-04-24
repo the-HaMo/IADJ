@@ -79,6 +79,7 @@
     <Compile Include="Assets\scripts\movAI\NPC\AgentPlayer.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Generic\SteeringBehaviour.cs" />
     <Compile Include="Assets\Store_Unity\Characters\Mini Simple Characters Skeleton Demo\Readme\Scripts\Readme.cs" />
+    <Compile Include="Assets\scripts\movAI\Steering\Delegate\LookWhereYouAreGoing\LookWhereYouAreGoing.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\Flee.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\Arrive.cs" />
     <Compile Include="Assets\scripts\AI\Hospital.cs" />
@@ -93,10 +94,12 @@
     <Compile Include="Assets\scripts\movAI\Formaciones\SeleccionarObjetivos.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\Seek_IanMillington.cs" />
     <Compile Include="Assets\scripts\movAI\Formaciones\GridFormation.cs" />
+    <Compile Include="Assets\scripts\AI\NPCHealthBar.cs" />
     <Compile Include="Assets\scripts\movAI\Conociendo_las_Rotaciones\Rotacion.cs" />
     <Compile Include="Assets\scripts\movAI\Grafo\Euclidean.cs" />
     <Compile Include="Assets\scripts\movAI\Grafo\Chebyshev.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\Leave.cs" />
+    <Compile Include="Assets\scripts\AI\SeleccionarUnidad.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\Separation.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Delegate\Interpose\Interpose.cs" />
     <Compile Include="Assets\scripts\movAI\Grafo\LRTA.cs" />

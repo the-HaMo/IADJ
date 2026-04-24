@@ -5840,15 +5840,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1090984687882915185, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
       propertyPath: vidaMax
-      value: 1500
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 1090984687882915185, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
       propertyPath: velAtaque
-      value: 8
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 1090984687882915185, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
       propertyPath: fuerzaAtaque
-      value: 100
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 1090984687882915185, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
       propertyPath: miTipoDeUnidad
@@ -22479,6 +22479,27 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4411623015b32704da0f15323c1f3c82, type: 3}
   m_PrefabInstance: {fileID: 974736978}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &980526350 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7519519514440988515, guid: 9731d6b00c403f44cab356d723046421, type: 3}
+  m_PrefabInstance: {fileID: 6234928053041443990}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &980526357
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 980526350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 116118930bc1dd343a1a55b2b8a6cbc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  estadoActual: 0
+  alturaIcono: 2.5
+  offsetIcono: {x: 0, y: 0, z: 0}
+  escalaIcono: 1
 --- !u!1001 &984255589
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24506,9 +24527,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -2904737461079259805, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
+      propertyPath: miBando
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -2904737461079259805, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
+      propertyPath: materialAzul
+      value: 
+      objectReference: {fileID: 2100000, guid: 6f23b8422e87717448d03aecc1b44d91, type: 2}
+    - target: {fileID: -2904737461079259805, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
+      propertyPath: materialRojo
+      value: 
+      objectReference: {fileID: 2100000, guid: 815931dfaebdcb941a703d6f2e7abced, type: 2}
     - target: {fileID: 2073061667386998701, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -111.66378
+      value: -37.7
       objectReference: {fileID: 0}
     - target: {fileID: 2073061667386998701, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
       propertyPath: m_LocalPosition.y
@@ -24516,7 +24549,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2073061667386998701, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 101.555626
+      value: 114.5
       objectReference: {fileID: 0}
     - target: {fileID: 2073061667386998701, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
       propertyPath: m_LocalRotation.w
@@ -33157,8 +33190,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cc0cca3f75536a49a9ff35780ff7d2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  curacionPorSegundo: 10
-  bandoHospital: 0
+  curacionPorSegundo: 5
+  bandoHospital: 1
+  radioDeteccion: 25.32
 --- !u!135 &1381299804
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -42706,6 +42740,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   curacionPorSegundo: 10
   bandoHospital: 0
+  radioDeteccion: 5
 --- !u!135 &1850945334
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -45695,11 +45730,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1555305787705937760, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
       propertyPath: vidaMax
-      value: 900
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 1555305787705937760, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
       propertyPath: velAtaque
-      value: 13
+      value: 1.3
       objectReference: {fileID: 0}
     - target: {fileID: 1555305787705937760, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
       propertyPath: rangoAtaque
@@ -45707,7 +45742,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1555305787705937760, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
       propertyPath: fuerzaAtaque
-      value: 120
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 1555305787705937760, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
       propertyPath: miTipoDeUnidad
@@ -50401,12 +50436,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7519519514440988515, guid: 9731d6b00c403f44cab356d723046421, type: 3}
       propertyPath: m_Name
-      value: JineteExplorador
+      value: Explorador
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7519519514440988515, guid: 9731d6b00c403f44cab356d723046421, type: 3}
+      insertIndex: 3
+      addedObject: {fileID: 980526357}
   m_SourcePrefab: {fileID: 100100000, guid: 9731d6b00c403f44cab356d723046421, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

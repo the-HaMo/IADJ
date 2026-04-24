@@ -185,7 +185,7 @@ GameObject:
   - component: {fileID: 6055369230642798924}
   - component: {fileID: 228310447139415508}
   m_Layer: 3
-  m_Name: JineteExplorador
+  m_Name: Explorador
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

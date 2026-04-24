@@ -9,6 +9,13 @@ public class SeleccionarUnidad : MonoBehaviour
     [Header("Feedback Visual")]
     public GameObject prefabCirculoSeleccion;
     public float alturaGlobalCirculo = 0.3f;
+
+    [Header("Debug Vida (Unidad Seleccionada)")]
+    public bool debugVidaSeleccion = true;
+    public KeyCode teclaDanioSeleccion = KeyCode.J;
+    public KeyCode teclaCuracionSeleccion = KeyCode.K;
+    public float debugDanioSeleccion = 10f;
+    public float debugCuracionSeleccion = 10f;
     
     private AgentNPC unidadSeleccionada;
     private GameObject instanciaCirculo;
@@ -34,6 +41,25 @@ public class SeleccionarUnidad : MonoBehaviour
             {
                 buscadorCaminos.mostrarCaminosEnEscena = !buscadorCaminos.mostrarCaminosEnEscena;
                 Debug.Log("Visualización de rutas: " + (buscadorCaminos.mostrarCaminosEnEscena ? "ACTIVADA" : "DESACTIVADA"));
+            }
+        }
+
+        if (debugVidaSeleccion && unidadSeleccionada != null)
+        {
+            NPCStats stats = unidadSeleccionada.GetComponent<NPCStats>();
+            if (stats != null)
+            {
+                if (Input.GetKeyDown(teclaDanioSeleccion))
+                {
+                    stats.RecibirDanio(debugDanioSeleccion);
+                    Debug.Log($"[Debug Vida] {unidadSeleccionada.name} recibe {debugDanioSeleccion}. Vida: {stats.VidaActual}/{stats.VidaMax}");
+                }
+
+                if (Input.GetKeyDown(teclaCuracionSeleccion))
+                {
+                    stats.RecibirCuracion(debugCuracionSeleccion);
+                    Debug.Log($"[Debug Vida] {unidadSeleccionada.name} se cura {debugCuracionSeleccion}. Vida: {stats.VidaActual}/{stats.VidaMax}");
+                }
             }
         }
 
