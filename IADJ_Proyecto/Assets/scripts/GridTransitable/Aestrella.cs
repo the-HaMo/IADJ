@@ -9,6 +9,9 @@ public class Pathfinding : MonoBehaviour
     [Header("Configuración A*")]
     public HeuristicType selectedHeuristic = HeuristicType.Manhattan;
 
+    [Header("Debug Visual")]
+    public bool mostrarCaminosEnEscena = false;
+
     private GridManager gridManager;
     private HeuristicaType heuristicaInstancia;
 
@@ -33,6 +36,8 @@ public class Pathfinding : MonoBehaviour
             case HeuristicType.Chebyshev: heuristicaInstancia = new Chebyshev(); break;
         }
     }
+
+
 
     public List<Node> FindPath(Vector3 startPos, Vector3 targetPos, NPCStats statsUnidad)
     {

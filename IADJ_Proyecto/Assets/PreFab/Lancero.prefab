@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 7557883415687138037}
   - component: {fileID: 1555305787705937760}
   - component: {fileID: 2504821669926425732}
+  - component: {fileID: 423763015922237601}
+  - component: {fileID: 3259935782205386885}
   m_Layer: 3
   m_Name: Lancero
   m_TagString: Untagged
@@ -128,14 +130,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   miTipoDeUnidad: 4
   miBando: 1
-  vidaMax: 90
-  fuerzaAtaque: 12
+  vidaMax: 900
+  fuerzaAtaque: 120
   rangoAtaque: 2.5
-  velAtaque: 1.3
-  costeUrbano: 1
-  costeBosque: 1
-  costePradera: 1
-  costeCamino: 1
+  velAtaque: 13
+  costeUrbano: 20
+  costeBosque: 40
+  costePradera: 20
+  costeCamino: 10
   materialRojo: {fileID: 2100000, guid: 6f23b8422e87717448d03aecc1b44d91, type: 2}
   materialAzul: {fileID: 2100000, guid: 815931dfaebdcb941a703d6f2e7abced, type: 2}
 --- !u!114 &2504821669926425732
@@ -152,9 +154,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mass: 1
   maxSpeed: 8.5
-  maxRotation: 100
+  maxRotation: 300
   maxAcceleration: 100
-  maxAngularAcc: 1
+  maxAngularAcc: 500
   maxForce: 1
   allowVerticalMovement: 0
   lookahead: 3
@@ -170,6 +172,37 @@ MonoBehaviour:
   useGravity: 1
   customGravity: 0
   groundLevel: 0
+--- !u!114 &423763015922237601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6986243360470267362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77b4a85e539c8484d9cd3cd4266e9ac2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 1
+  waypoints: []
+  arrivalRadius: 1.5
+  timeToTarget: 0.1
+  mostrarGizmos: 0
+--- !u!114 &3259935782205386885
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6986243360470267362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 373cc2f12494475469e5924fd3aa2041, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 100
+  timeToTarget: 0.1
 --- !u!1001 &4219420205362282706
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -10,12 +10,12 @@ public class NPCStats : MonoBehaviour
     public Bando miBando;
     
     [Header("Estadisticas")]
-    public float vidaMax = 100f;
+    public float vidaMax = 1000f;
     private float vidaActual;
 
-    public float fuerzaAtaque = 10f;
+    public float fuerzaAtaque = 100f;
     public float rangoAtaque = 1.5f;
-    public float velAtaque = 1.5f;
+    public float velAtaque = 15f;
 
     [Header("Costes de Terreno")]
     public int costeUrbano = 1;
@@ -60,38 +60,38 @@ public class NPCStats : MonoBehaviour
     {
         if (miTipoDeUnidad == TipoUnidad.Arquero)
         {
-            vidaMax = 80f;
-            fuerzaAtaque = 15f;
+            vidaMax = 800f;
+            fuerzaAtaque = 150f;
             rangoAtaque = 5f;
-            velAtaque = 1.2f;
+            velAtaque = 12f;
         }
         else if (miTipoDeUnidad == TipoUnidad.Caballero)
         {
-            vidaMax = 120f;
-            fuerzaAtaque = 20f;
+            vidaMax = 1200f;
+            fuerzaAtaque = 200f;
             rangoAtaque = 1.5f;
-            velAtaque = 1f;
+            velAtaque = 10f;
         }
         else if (miTipoDeUnidad == TipoUnidad.Tanque)
         {
-            vidaMax = 150f;
-            fuerzaAtaque = 10f;
+            vidaMax = 1500f;
+            fuerzaAtaque = 100f;
             rangoAtaque = 1.5f;
-            velAtaque = 0.8f;
+            velAtaque = 8f;
         }
         else if (miTipoDeUnidad == TipoUnidad.Lancero)
         {
-            vidaMax = 90f;
-            fuerzaAtaque = 12f;
+            vidaMax = 900f;
+            fuerzaAtaque = 120f;
             rangoAtaque = 2.5f;
-            velAtaque = 1.3f;
+            velAtaque = 13f;
         }
         else if (miTipoDeUnidad == TipoUnidad.JineteExplorador)
         {
-            vidaMax = 70f;
-            fuerzaAtaque = 8f;
+            vidaMax = 700f;
+            fuerzaAtaque = 80f;
             rangoAtaque = 3f;
-            velAtaque = 1.5f;
+            velAtaque = 15f;
         }
     }
 

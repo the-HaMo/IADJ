@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 5978327706410386704}
   - component: {fileID: 987761780851132559}
   - component: {fileID: 6774472307298239358}
+  - component: {fileID: 5665956954002585398}
   m_Layer: 0
-  m_Name: ControladorAreas
+  m_Name: Controlador
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 5143725211294651663}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.1, y: 0.4307, z: -13.1}
+  m_LocalPosition: {x: -5.1, y: 1.6, z: -13.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -45,37 +46,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b0ce8809840b5e4c9635189613460ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nFilas: 105
+  nColumnas: 105
+  tamCelda: 3
   unwalkableMask:
     serializedVersion: 2
     m_Bits: 64
-  gridWorldSize: {x: 315, y: 315}
-  nodeRadius: 1
   obstacleDetectionHeight: 4
   biomasColliders:
   - terrainMask:
       serializedVersion: 2
       m_Bits: 16384
-    biomaID: 1
+    bioma: 1
   biomasAreas:
-  - biomaID: 2
+  - bioma: 2
     centro: {x: -92.6309, y: -118.7601}
     tamano: {x: 127.6836, y: 112.8545}
-  - biomaID: 2
+  - bioma: 2
     centro: {x: 82.2, y: 85.1}
     tamano: {x: 127.6836, y: 112.8545}
-  - biomaID: 3
+  - bioma: 3
     centro: {x: -77.9, y: 37.9}
     tamano: {x: 105.6465, y: 77.67973}
-  - biomaID: 3
+  - bioma: 3
     centro: {x: -77.9, y: 37.9}
     tamano: {x: 105.6465, y: 77.67973}
-  - biomaID: 3
+  - bioma: 3
     centro: {x: -77.9, y: 37.9}
     tamano: {x: 105.6465, y: 77.67973}
-  - biomaID: 3
+  - bioma: 3
     centro: {x: 67.1, y: -64.3}
     tamano: {x: 105.6465, y: 77.67973}
-  mostrarGrid: 1
+  debugGrid: 1
 --- !u!114 &6774472307298239358
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -88,3 +90,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4834b33cb56b6424c884f2d4a8152384, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedHeuristic: 0
+  mostrarCaminosEnEscena: 0
+--- !u!114 &5665956954002585398
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5143725211294651663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc59fe09cfeee5445a91f006c6343fe2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  capaNPC:
+    serializedVersion: 2
+    m_Bits: 8
+  prefabCirculoSeleccion: {fileID: 2157750434589645567, guid: 46ab7ac60f9433f45bbdc6aa1768192d, type: 3}
+  alturaGlobalCirculo: 0.3

@@ -29,6 +29,12 @@ public class Arrive : SteeringBehaviour
         Vector3 direction = target.Position - agent.Position;
         float distance = direction.magnitude;
 
+        // Evitar división por cero si ya estamos en el destino
+        if (distance < 0.001f)
+        {
+            return new Steering();
+        }
+
         if (distance < target.InteriorRadius)
         {
             steer.linear = -agent.Velocity / Time.deltaTime; 
@@ -46,7 +52,10 @@ public class Arrive : SteeringBehaviour
             targetSpeed = agent.MaxSpeed * distance / target.ArrivalRadius;
         }
         Vector3 targetVelocity = direction.normalized * targetSpeed;
-        steer.linear = (targetVelocity - agent.Velocity) / timeToTarget;
+        
+        // Protección contra división por cero en timeToTarget
+        float safeTimeToTarget = timeToTarget > 0 ? timeToTarget : 0.1f;
+        steer.linear = (targetVelocity - agent.Velocity) / safeTimeToTarget;
 
         if (steer.linear.magnitude > agent.MaxAcceleration)
         {
