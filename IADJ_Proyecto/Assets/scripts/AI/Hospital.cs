@@ -2,58 +2,26 @@ using UnityEngine;
 
 public class Hospital : MonoBehaviour
 {
-    [Header("Ajustes de Curación")]
-    public float curacionPorSegundo = 5f;
-    public Bando bandoHospital = Bando.Rojo;
-    public float radioDeteccion = 5f; // Radio dentro del cual buscar NPCs
-    
-    private Collider hospitalCollider;
+    public float curacionPorSegundo = 50f;
+    public Bando bandoHospital;
 
-    private void Start()
+    private int capaUnidad;
+
+    void Awake()
     {
-        hospitalCollider = GetComponent<Collider>();
-        if (hospitalCollider == null)
-        {
-            // Debug.LogError($"[HOSPITAL] ¡ERROR! Hospital {name} NO tiene Collider", gameObject);
-        }
+        capaUnidad = LayerMask.NameToLayer("Unidad");
     }
 
-    private void Update()
+    private void OnTriggerStay(Collider other)
     {
-        if (hospitalCollider == null) return;
-        
-        // Buscar todos los NPCs dentro del radio de detección
-        Collider[] collidersEnRango = Physics.OverlapSphere(transform.position, radioDeteccion);
-        
-        foreach (Collider collider in collidersEnRango)
+        // Verificamos si es la capa correcta
+        if (other.gameObject.layer != capaUnidad) return;
+
+        NPCStats stats = other.GetComponentInParent<NPCStats>();
+        if (stats != null && stats.miBando == bandoHospital && stats.NecesitaCuracion())
         {
-            NPCStats stats = collider.GetComponent<NPCStats>();
-            if (stats == null)
-            {
-                continue;
-            }
-
-            // Verificar si el NPC es del mismo bando
-            if (stats.miBando != bandoHospital)
-            {
-                continue;
-            }
-
-            // Verificar si necesita curación
-            if (!stats.NecesitaCuracion())
-            {
-                continue;
-            }
-
-            // CURAR AL NPC
             stats.RecibirCuracion(curacionPorSegundo * Time.deltaTime);
+            Debug.Log($"Curando a {stats.name}: {stats.VidaActual:F0}/{stats.VidaMax}");
         }
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        // Dibujar el radio de detección en el editor
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, radioDeteccion);
     }
 }

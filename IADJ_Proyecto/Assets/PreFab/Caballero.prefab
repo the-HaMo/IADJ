@@ -186,6 +186,7 @@ GameObject:
   - component: {fileID: -2904737461079259805}
   - component: {fileID: 4958514313082725165}
   - component: {fileID: 6289162353334776451}
+  - component: {fileID: -5459986074874970363}
   m_Layer: 3
   m_Name: Caballero
   m_TagString: Untagged
@@ -329,22 +330,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31f5f4c846157dd4ea280ca8b482ab55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  miTipoDeUnidad: 1
   miBando: 0
-  vidaMax: 120
-  vidaActual: 0
-  fuerzaAtaque: 20
+  materialRojo: {fileID: 2100000, guid: 815931dfaebdcb941a703d6f2e7abced, type: 2}
+  materialAzul: {fileID: 2100000, guid: 6f23b8422e87717448d03aecc1b44d91, type: 2}
+  crearBarraVida: 1
+  vidaMax: 1200
+  fuerzaAtaque: 200
   rangoAtaque: 1.5
   velAtaque: 1
-  costeUrbano: 10
-  costeBosque: 30
-  costePradera: 50
+  radioPercepcion: 15
   costeCamino: 10
-  materialRojo: {fileID: 2100000, guid: 6f23b8422e87717448d03aecc1b44d91, type: 2}
-  materialAzul: {fileID: 2100000, guid: 815931dfaebdcb941a703d6f2e7abced, type: 2}
-  crearBarraVida: 1
-  debugDanio: 10
-  debugCuracion: 10
+  costeBosque: 40
+  costePradera: 50
+  costeUrbano: 20
 --- !u!114 &4958514313082725165
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -360,8 +358,6 @@ MonoBehaviour:
   weight: 1
   waypoints: []
   arrivalRadius: 1.5
-  timeToTarget: 0.1
-  mostrarGizmos: 0
 --- !u!114 &6289162353334776451
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -376,3 +372,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weight: 100
   timeToTarget: 0.1
+--- !u!114 &-5459986074874970363
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7439606074143703248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95db9667bc3069149b345fe4ef5ea3e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  capaNPC:
+    serializedVersion: 2
+    m_Bits: 8
+  hospitalRojo: {x: 20.2, y: 0, z: -138}
+  hospitalAzul: {x: -21.8, y: 0, z: 102.4}
+  intervaloBusqueda: 0.2

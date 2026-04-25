@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 2023652313256171065}
   - component: {fileID: -5469692024160350344}
   - component: {fileID: 5111235339256189369}
+  - component: {fileID: 4906636193668802822}
   m_Layer: 3
   m_Name: Arquero
   m_TagString: Untagged
@@ -159,22 +160,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31f5f4c846157dd4ea280ca8b482ab55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  miTipoDeUnidad: 0
   miBando: 1
-  vidaMax: 80
-  vidaActual: 0
-  fuerzaAtaque: 15
+  materialRojo: {fileID: 2100000, guid: 815931dfaebdcb941a703d6f2e7abced, type: 2}
+  materialAzul: {fileID: 2100000, guid: 6f23b8422e87717448d03aecc1b44d91, type: 2}
+  crearBarraVida: 1
+  vidaMax: 800
+  fuerzaAtaque: 150
   rangoAtaque: 5
   velAtaque: 1.2
-  costeUrbano: 50
+  radioPercepcion: 20
+  costeCamino: 30
   costeBosque: 10
   costePradera: 10
-  costeCamino: 20
-  materialRojo: {fileID: 2100000, guid: 6f23b8422e87717448d03aecc1b44d91, type: 2}
-  materialAzul: {fileID: 2100000, guid: 815931dfaebdcb941a703d6f2e7abced, type: 2}
-  crearBarraVida: 1
-  debugDanio: 10
-  debugCuracion: 10
+  costeUrbano: 50
 --- !u!114 &-5469692024160350344
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -190,8 +188,6 @@ MonoBehaviour:
   weight: 1
   waypoints: []
   arrivalRadius: 1.5
-  timeToTarget: 0.1
-  mostrarGizmos: 0
 --- !u!114 &5111235339256189369
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -206,6 +202,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weight: 100
   timeToTarget: 0.1
+--- !u!114 &4906636193668802822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3664783347460375435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95db9667bc3069149b345fe4ef5ea3e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  capaNPC:
+    serializedVersion: 2
+    m_Bits: 8
+  hospitalRojo: {x: 20.2, y: 0, z: -138}
+  hospitalAzul: {x: -21.8, y: 0, z: 102.4}
+  intervaloBusqueda: 0.2
 --- !u!1001 &1036343615579423122
 PrefabInstance:
   m_ObjectHideFlags: 0

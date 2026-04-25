@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -52,6 +52,11 @@ public class GridManager : MonoBehaviour
         NormalizeSettings();
         UpdateOrigin();
         CreateGrid();
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.G)) debugGrid = !debugGrid;
     }
 
     void OnValidate()

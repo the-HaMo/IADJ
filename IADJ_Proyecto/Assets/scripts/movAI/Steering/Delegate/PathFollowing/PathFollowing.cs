@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,20 +5,25 @@ public class PathFollowing : SteeringBehaviour
 {
     public List<Transform> waypoints = new List<Transform>();
     public float arrivalRadius = 1.5f;
-    public float timeToTarget = 0.1f;
-    public bool mostrarGizmos = false;
 
+    private static bool mostrarGizmosGlobal = false;
     private int currentWaypointIndex = 0;
     private Agent virtualTarget;
-    private Arrive arriveBehavior;
+    private Arrive arriveBehaviour;
 
     void Awake()
     {
         this.nameSteering = "PathFollowing";
-        virtualTarget = Agent.CreateStaticVirtual(Vector3.zero, 0.1f, 0.5f, 0f, false);
-        arriveBehavior = gameObject.AddComponent<Arrive>();
-        arriveBehavior.enabled = false;
-        arriveBehavior.target = virtualTarget;
+        virtualTarget = Agent.CreateStaticVirtual(Vector3.zero, 0.1f, arrivalRadius, 0f, false);
+        arriveBehaviour = gameObject.AddComponent<Arrive>();
+        arriveBehaviour.enabled = false;
+        arriveBehaviour.target = virtualTarget;
+        arriveBehaviour.timeToTarget = 0.1f;
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.C)) mostrarGizmosGlobal = !mostrarGizmosGlobal;
     }
 
     public override Steering GetSteering(AgentNPC agent)
@@ -30,24 +34,34 @@ public class PathFollowing : SteeringBehaviour
 
         Transform targetWP = waypoints[currentWaypointIndex];
         float dist = Vector3.Distance(agent.Position, targetWP.position);
+        bool esUltimo = (currentWaypointIndex == waypoints.Count - 1);
 
+        // ¿Hemos llegado a este waypoint?
         if (dist <= arrivalRadius)
         {
-            currentWaypointIndex++;
-            if (currentWaypointIndex >= waypoints.Count)
+            if (!esUltimo)
             {
-                foreach (Transform wp in waypoints) { if (wp != null) Destroy(wp.gameObject); }
-                waypoints.Clear();
-                currentWaypointIndex = 0;
-                this.enabled = false; 
+                currentWaypointIndex++;
+                targetWP = waypoints[currentWaypointIndex];
+                esUltimo = (currentWaypointIndex == waypoints.Count - 1);
+            }
+            else
+            {
+                FinalizarMovimiento(agent);
                 return new Steering();
             }
-            targetWP = waypoints[currentWaypointIndex];
         }
 
+        // Apuntamos el target virtual al waypoint actual
         virtualTarget.Position = targetWP.position;
-        arriveBehavior.timeToTarget = timeToTarget;
-        return arriveBehavior.GetSteering(agent);
+
+        // Arrive para TODOS los waypoints para evitar overshoot a alta velocidad.
+        // Intermedios: radio grande -> frena poco pero siempre los detecta.
+        // Último: radio normal -> frena suavemente hasta parar.
+        virtualTarget.ArrivalRadius = esUltimo ? arrivalRadius : arrivalRadius * 3f;
+        virtualTarget.InteriorRadius = 0.1f;
+
+        return arriveBehaviour.GetSteering(agent);
     }
 
     public void SetPath(List<Node> nodos)
@@ -66,43 +80,49 @@ public class PathFollowing : SteeringBehaviour
             waypoints.Add(go.transform);
         }
         currentWaypointIndex = 0;
+        this.enabled = true;
+    }
+
+    public void FinalizarMovimiento(AgentNPC agent = null)
+    {
+        foreach (Transform wp in waypoints) { if (wp != null) Destroy(wp.gameObject); }
+        waypoints.Clear();
+        currentWaypointIndex = 0;
+
+        // Paramos movimiento lineal Y angular para evitar que sigan girando al parar
+        if (agent != null)
+        {
+            agent.Velocity = Vector3.zero;
+            agent.Rotation = 0f;
+        }
+        this.enabled = false;
     }
 
     private void OnDrawGizmos()
     {
-        bool debugGlobal = false;
-        Pathfinding pf = FindFirstObjectByType<Pathfinding>();
-        if (pf != null) debugGlobal = pf.mostrarCaminosEnEscena;
+        if (!mostrarGizmosGlobal || waypoints == null || waypoints.Count == 0) return;
 
-        if ((!mostrarGizmos && !debugGlobal) || waypoints == null || waypoints.Count == 0) return;
-
-        AgentNPC agent = GetComponent<AgentNPC>();
-        if (agent != null && agent.Velocity.sqrMagnitude < 0.1f && currentWaypointIndex < waypoints.Count)
-            Gizmos.color = Color.red;
-        else
-            Gizmos.color = Color.yellow;
-
+        // Línea desde el NPC al waypoint actual
         if (currentWaypointIndex < waypoints.Count && waypoints[currentWaypointIndex] != null)
+        {
+            Gizmos.color = Color.yellow;
             Gizmos.DrawLine(transform.position, waypoints[currentWaypointIndex].position);
+        }
 
-        Gizmos.color = Color.blue;
+        // Líneas del camino completo
+        Gizmos.color = Color.cyan;
         for (int i = 0; i < waypoints.Count - 1; i++)
         {
-            if (waypoints[i] != null && waypoints[i+1] != null)
+            if (waypoints[i] != null && waypoints[i + 1] != null)
                 Gizmos.DrawLine(waypoints[i].position, waypoints[i + 1].position);
         }
 
+        // Puntos: verde = destino actual, azul = resto
         for (int i = 0; i < waypoints.Count; i++)
         {
             if (waypoints[i] == null) continue;
-            Gizmos.color = (i == currentWaypointIndex) ? Color.green : Color.cyan;
-            Gizmos.DrawWireSphere(waypoints[i].position, 0.5f);
-            
-            if (i == currentWaypointIndex)
-            {
-                Gizmos.color = Color.yellow;
-                Gizmos.DrawWireSphere(waypoints[i].position, arrivalRadius);
-            }
+            Gizmos.color = (i == currentWaypointIndex) ? Color.green : Color.blue;
+            Gizmos.DrawWireSphere(waypoints[i].position, 0.3f);
         }
     }
 }
