@@ -8,7 +8,6 @@ public class Hospital : MonoBehaviour
     public float radioDeteccion = 5f; // Radio dentro del cual buscar NPCs
     
     private Collider hospitalCollider;
-    private float ultimaCuracion = 0f;
 
     private void Start()
     {

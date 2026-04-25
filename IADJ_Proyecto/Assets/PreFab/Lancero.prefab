@@ -130,16 +130,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   miTipoDeUnidad: 4
   miBando: 1
-  vidaMax: 900
-  fuerzaAtaque: 120
+  vidaMax: 90
+  vidaActual: 0
+  fuerzaAtaque: 12
   rangoAtaque: 2.5
-  velAtaque: 13
+  velAtaque: 1.3
   costeUrbano: 20
   costeBosque: 40
   costePradera: 20
   costeCamino: 10
   materialRojo: {fileID: 2100000, guid: 6f23b8422e87717448d03aecc1b44d91, type: 2}
   materialAzul: {fileID: 2100000, guid: 815931dfaebdcb941a703d6f2e7abced, type: 2}
+  crearBarraVida: 1
+  debugDanio: 10
+  debugCuracion: 10
 --- !u!114 &2504821669926425732
 MonoBehaviour:
   m_ObjectHideFlags: 0

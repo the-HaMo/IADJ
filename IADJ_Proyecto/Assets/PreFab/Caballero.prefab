@@ -188,7 +188,7 @@ GameObject:
   - component: {fileID: 6289162353334776451}
   m_Layer: 3
   m_Name: Caballero
-  m_TagString: Tanque
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -331,16 +331,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   miTipoDeUnidad: 1
   miBando: 0
-  vidaMax: 1200
-  fuerzaAtaque: 200
+  vidaMax: 120
+  vidaActual: 0
+  fuerzaAtaque: 20
   rangoAtaque: 1.5
-  velAtaque: 10
+  velAtaque: 1
   costeUrbano: 10
   costeBosque: 30
   costePradera: 50
   costeCamino: 10
   materialRojo: {fileID: 2100000, guid: 6f23b8422e87717448d03aecc1b44d91, type: 2}
   materialAzul: {fileID: 2100000, guid: 815931dfaebdcb941a703d6f2e7abced, type: 2}
+  crearBarraVida: 1
+  debugDanio: 10
+  debugCuracion: 10
 --- !u!114 &4958514313082725165
 MonoBehaviour:
   m_ObjectHideFlags: 0
