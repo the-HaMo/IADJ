@@ -22082,6 +22082,7 @@ GameObject:
   - component: {fileID: 963194228}
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
+  - component: {fileID: 963194229}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -22156,13 +22157,39 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.026801763, y: -0.94086194, z: 0.32891476, w: 0.076652855}
-  m_LocalPosition: {x: -3.8660123, y: 99.12656, z: 196.17288}
+  m_LocalRotation: {x: 0.021317745, y: -0.9617538, z: 0.2616023, w: 0.07835527}
+  m_LocalPosition: {x: 16, y: 115, z: 245}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 180}
+  m_LocalEulerAnglesHint: {x: 149.567, y: 9.315002, z: 179.999}
+--- !u!114 &963194229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fc28c93e7dd98444a3b1d6e64b9e4b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  applyInitialTransformOnPlay: 1
+  initialPosition: {x: 16, y: 115, z: 245}
+  initialEulerAngles: {x: 149.567, y: 9.315, z: 179.999}
+  moveSpeed: 25
+  fastMoveMultiplier: 10
+  scrollZoomSpeed: 50
+  minHeight: 12
+  maxHeight: 120
+  clampToMap: 1
+  mapMinXZ: {x: -245, y: -160}
+  mapMaxXZ: {x: 245, y: 160}
+  forceLimitsFromCodeOnPlay: 1
+  forcedMapMinXZ: {x: -160, y: -160}
+  forcedMapMaxXZ: {x: 160, y: 300}
 --- !u!1001 &966305985
 PrefabInstance:
   m_ObjectHideFlags: 0

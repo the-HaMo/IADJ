@@ -99,6 +99,7 @@
     <Compile Include="Assets\scripts\movAI\Grafo\Euclidean.cs" />
     <Compile Include="Assets\scripts\movAI\Grafo\Chebyshev.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\Leave.cs" />
+    <Compile Include="Assets\scripts\AI\MainCameraController.cs" />
     <Compile Include="Assets\scripts\AI\SeleccionarUnidad.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\Separation.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Delegate\Interpose\Interpose.cs" />
