@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class NPCRespawnSpawner : MonoBehaviour
 {
@@ -21,9 +22,16 @@ public class NPCRespawnSpawner : MonoBehaviour
     public bool spawnAlIniciar = false;
     public bool usarWaypointSiguienteParaRespawn = true;
     public float alturaRespawn = 2.3f;
+    public bool irAPuntoMuerteTrasRespawn = true;
 
     private int indexRespawnRojo;
     private int indexRespawnAzul;
+    private Pathfinding pathfinding;
+
+    private void Awake()
+    {
+        pathfinding = FindFirstObjectByType<Pathfinding>();
+    }
 
     private void Start()
     {
@@ -80,22 +88,7 @@ public class NPCRespawnSpawner : MonoBehaviour
             return null;
         }
 
-        posicion.y = alturaRespawn;
-
-        GameObject npc = SpawnNPCEnPosicion(plantilla.tipoUnidad, plantilla.miBando, posicion);
-        if (npc == null)
-        {
-            return null;
-        }
-
-        NPCStats stats = npc.GetComponent<NPCStats>();
-        if (stats != null)
-        {
-            stats.CopiarStatsDesde(plantilla);
-            stats.transform.position = posicion;
-        }
-
-        return npc;
+        return SpawnNPCEnPosicion(plantilla.tipoUnidad, plantilla.miBando, posicion);
     }
 
     public void SpawnBando(Bando bando, int cantidad)
@@ -129,15 +122,7 @@ public class NPCRespawnSpawner : MonoBehaviour
             return;
         }
 
-        if (wayPoints == null)
-        {
-            Debug.LogError("[NPCRespawnSpawner] No hay referencia a WayPoints.", gameObject);
-            return;
-        }
-
-        Vector3 posicion = wayPoints.GetWaypointReaparicionMasCercano(plantilla.miBando, posicionMuerte);
-        posicion.y = alturaRespawn;
-        SpawnNPCEnPosicion(plantilla, posicion);
+        RespawnNPCEnPuntoMasCercano(plantilla.tipoUnidad, plantilla.miBando, posicionMuerte);
     }
 
     public void RespawnNPCEnPuntoMasCercano(TipoUnidad tipoUnidad, Bando bando, Vector3 posicionMuerte)
@@ -149,7 +134,47 @@ public class NPCRespawnSpawner : MonoBehaviour
         }
 
         Vector3 posicion = wayPoints.GetWaypointReaparicionMasCercano(bando, posicionMuerte);
-        SpawnNPCEnPosicion(tipoUnidad, bando, posicion);
+        GameObject npcRespawneado = SpawnNPCEnPosicion(tipoUnidad, bando, posicion);
+
+        if (irAPuntoMuerteTrasRespawn)
+        {
+            EnviarNPCAlPuntoMuerte(npcRespawneado, posicionMuerte);
+        }
+    }
+
+    private void EnviarNPCAlPuntoMuerte(GameObject npc, Vector3 posicionMuerte)
+    {
+        if (npc == null)
+        {
+            return;
+        }
+
+        if (pathfinding == null)
+        {
+            pathfinding = FindFirstObjectByType<Pathfinding>();
+        }
+
+        if (pathfinding == null)
+        {
+            Debug.LogWarning("[NPCRespawnSpawner] No se encontró Pathfinding para enviar al punto de muerte.", gameObject);
+            return;
+        }
+
+        PathFollowing path = npc.GetComponent<PathFollowing>();
+        NPCStats stats = npc.GetComponent<NPCStats>();
+        if (path == null || stats == null)
+        {
+            return;
+        }
+
+        Vector3 destino = posicionMuerte;
+        destino.y = 0f;
+
+        List<Node> camino = pathfinding.FindPath(npc.transform.position, destino, stats);
+        if (camino != null && camino.Count > 0)
+        {
+            path.SetPath(camino);
+        }
     }
 
     private GameObject ObtenerPrefabPorTipo(TipoUnidad tipoUnidad)

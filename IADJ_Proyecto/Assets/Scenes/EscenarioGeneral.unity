@@ -33607,7 +33607,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bandoPropietario: 1
-  tiempoParaConquistar: 20
+  tiempoParaConquistar: 1
   modeloTorre: {fileID: 1685177454}
 --- !u!135 &1351000038
 SphereCollider:

@@ -75,9 +75,11 @@
     <Compile Include="Assets\scripts\movAI\Formaciones\FormationController.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\AntiAlign.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\VelocityMatching.cs" />
+    <Compile Include="Assets\scripts\AI\Torre.cs" />
     <Compile Include="Assets\scripts\movAI\NPC\Agent.cs" />
     <Compile Include="Assets\scripts\movAI\NPC\Bodi.cs" />
     <Compile Include="Assets\scripts\movAI\NPC\AgentPlayer.cs" />
+    <Compile Include="Assets\scripts\AI\PuntoPatrulla.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Generic\SteeringBehaviour.cs" />
     <Compile Include="Assets\Store_Unity\Characters\Mini Simple Characters Skeleton Demo\Readme\Scripts\Readme.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Delegate\LookWhereYouAreGoing\LookWhereYouAreGoing.cs" />
@@ -112,6 +114,7 @@
     <Compile Include="Assets\scripts\movAI\NPC\AgentNPC.cs" />
     <Compile Include="Assets\scripts\GridTransitable\WayPoints.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Basic\Align.cs" />
+    <Compile Include="Assets\scripts\AI\NPCPatrol.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Generic\Steering.cs" />
     <Compile Include="Assets\scripts\movAI\Grafo\Manhattan.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Delegate\WallAvoidance\WallAvoidance.cs" />
