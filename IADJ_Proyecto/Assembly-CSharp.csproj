@@ -69,6 +69,7 @@
     <Compile Include="Assets\scripts\movAI\Formaciones\FormationPattern.cs" />
     <Compile Include="Assets\scripts\GridTransitable\Aestrella.cs" />
     <Compile Include="Assets\scripts\movAI\Grafo\LssBuilder.cs" />
+    <Compile Include="Assets\scripts\AI\PercepcionNPC.cs" />
     <Compile Include="Assets\scripts\movAI\Grafo\Graph.cs" />
     <Compile Include="Assets\scripts\movAI\Grafo\HeuristicaType.cs" />
     <Compile Include="Assets\scripts\movAI\Formaciones\FormationController.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="Assets\scripts\movAI\Steering\Delegate\Jumper\Jumper.cs" />
     <Compile Include="Assets\scripts\movAI\NPC\AgentPlayerWithAnimation.cs" />
     <Compile Include="Assets\scripts\GridTransitable\Node.cs" />
+    <Compile Include="Assets\scripts\AI\NPCRespawnSpawner.cs" />
     <Compile Include="Assets\scripts\GridTransitable\GridManager.cs" />
     <Compile Include="Assets\scripts\AI\NPCStats.cs" />
     <Compile Include="Assets\scripts\movAI\Steering\Delegate\Face\Face.cs" />
