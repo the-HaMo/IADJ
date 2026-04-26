@@ -5,6 +5,8 @@ public class PathFollowing : SteeringBehaviour
 {
     public List<Transform> waypoints = new List<Transform>();
     public float arrivalRadius = 1.5f;
+    public bool loop = false; // Permite patrullas cíclicas
+    public bool autoDestroyWaypoints = true; // Si es true, destruye los waypoints al finalizar (útil para A*)
 
     private static bool mostrarGizmosGlobal = false;
     private int currentWaypointIndex = 0;
@@ -42,14 +44,19 @@ public class PathFollowing : SteeringBehaviour
             if (!esUltimo)
             {
                 currentWaypointIndex++;
-                targetWP = waypoints[currentWaypointIndex];
-                esUltimo = (currentWaypointIndex == waypoints.Count - 1);
+            }
+            else if (loop)
+            {
+                currentWaypointIndex = 0;
             }
             else
             {
                 FinalizarMovimiento(agent);
                 return new Steering();
             }
+
+            targetWP = waypoints[currentWaypointIndex];
+            esUltimo = (currentWaypointIndex == waypoints.Count - 1);
         }
 
         // Apuntamos el target virtual al waypoint actual
@@ -58,7 +65,15 @@ public class PathFollowing : SteeringBehaviour
         // Arrive para TODOS los waypoints para evitar overshoot a alta velocidad.
         // Intermedios: radio grande -> frena poco pero siempre los detecta.
         // Último: radio normal -> frena suavemente hasta parar.
-        virtualTarget.ArrivalRadius = esUltimo ? arrivalRadius : arrivalRadius * 3f;
+        if (esUltimo == true)
+        {
+            virtualTarget.ArrivalRadius = arrivalRadius;
+        }
+        else
+        {
+            virtualTarget.ArrivalRadius = arrivalRadius * 3f;
+        }
+        
         virtualTarget.InteriorRadius = 0.1f;
 
         return arriveBehaviour.GetSteering(agent);
@@ -66,7 +81,10 @@ public class PathFollowing : SteeringBehaviour
 
     public void SetPath(List<Node> nodos)
     {
-        foreach (Transform wp in waypoints) { if (wp != null) Destroy(wp.gameObject); }
+        if (autoDestroyWaypoints)
+        {
+            foreach (Transform wp in waypoints) { if (wp != null) Destroy(wp.gameObject); }
+        }
         waypoints.Clear();
 
         GameObject pathParent = GameObject.Find("Camino_A*");
@@ -80,13 +98,32 @@ public class PathFollowing : SteeringBehaviour
             waypoints.Add(go.transform);
         }
         currentWaypointIndex = 0;
+        loop = false;
+        autoDestroyWaypoints = true; // El A* siempre debe auto-destruir sus WPs temporales
+        this.enabled = true;
+    }
+
+    public void SetPatrol(List<Transform> patrolWaypoints)
+    {
+        if (autoDestroyWaypoints)
+        {
+            foreach (Transform wp in waypoints) { if (wp != null) Destroy(wp.gameObject); }
+        }
+        
+        waypoints = new List<Transform>(patrolWaypoints);
+        currentWaypointIndex = 0;
+        loop = true;
+        autoDestroyWaypoints = false; // Las patrullas suelen usar WPs persistentes en la escena
         this.enabled = true;
     }
 
     public void FinalizarMovimiento(AgentNPC agent = null)
     {
-        foreach (Transform wp in waypoints) { if (wp != null) Destroy(wp.gameObject); }
-        waypoints.Clear();
+        if (autoDestroyWaypoints)
+        {
+            foreach (Transform wp in waypoints) { if (wp != null) Destroy(wp.gameObject); }
+            waypoints.Clear();
+        }
         currentWaypointIndex = 0;
 
         // Paramos movimiento lineal Y angular para evitar que sigan girando al parar

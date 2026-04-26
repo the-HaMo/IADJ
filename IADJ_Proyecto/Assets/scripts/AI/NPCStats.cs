@@ -6,6 +6,7 @@ public enum TipoUnidad { Desconocida = -1, Caballero, Arquero, Lancero, Tanque, 
 public class NPCStats : MonoBehaviour
 {
     public event System.Action<float, float, bool> OnVidaCambiada;
+    public event System.Action OnDanioRecibido; // Evento exclusivo: el NPC avisa que recibió daño
 
     [Header("Identidad y Visual")]
     public Bando miBando;
@@ -79,6 +80,7 @@ public class NPCStats : MonoBehaviour
     {
         vidaActual -= d;
         NotificarVida(true);
+        OnDanioRecibido?.Invoke(); // El NPC notifica que recibió daño
         if (vidaActual <= 0)
         {
             if (respawnSpawner == null)

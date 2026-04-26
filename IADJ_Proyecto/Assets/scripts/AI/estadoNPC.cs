@@ -21,10 +21,17 @@ public class estadoNPC : MonoBehaviour
 
     private GameObject iconoActual;
     private Transform iconoTransform;
+    private NPCPatrol patrol;
+
+    private void Awake()
+    {
+        patrol = GetComponent<NPCPatrol>();
+    }
 
     private void Start()
     {
         CrearIconoEstado();
+        AplicarComportamientoDeEstado();
     }
 
     private void LateUpdate()
@@ -126,11 +133,25 @@ public class estadoNPC : MonoBehaviour
         return go;
     }
 
-    public void CambiarEstado(EstadoNPC nuevoEstado)
+    // Aplica el comportamiento segun el estado con el que nace el NPC
+    private void AplicarComportamientoDeEstado()
     {
-        if (estadoActual == nuevoEstado) return;
-        estadoActual = nuevoEstado;
-        CrearIconoEstado();
+        if (estadoActual == EstadoNPC.Vigilancia)
+        {
+            // Vigilancia: activa la patrulla si tiene el componente NPCPatrol
+            if (patrol != null)
+            {
+                patrol.enabled = true;
+            }
+        }
+        else if (estadoActual == EstadoNPC.Ataque)
+        {
+            // TODO: comportamiento de ataque
+        }
+        else if (estadoActual == EstadoNPC.Defensa)
+        {
+            // TODO: comportamiento de defensa
+        }
     }
 
     public EstadoNPC GetEstadoActual()

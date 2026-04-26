@@ -3,210 +3,87 @@ using UnityEngine;
 
 public class WayPoints : MonoBehaviour
 {
-    [Header("Waypoints Reaparicion Rojo")]
-    public List<Vector3> waypointReaparicionRojo = new List<Vector3>();
-    
-    [Header("Waypoints Reaparicion Azul")]
-    public List<Vector3> waypointReaparicionAzul = new List<Vector3>();
-    
-    [Header("Waypoints Curacion Rojo")]
-    public List<Vector3> waypointCuracionRojo = new List<Vector3>();
-    
-    [Header("Waypoints Curacion Azul")]
-    public List<Vector3> waypointCuracionAzul = new List<Vector3>();
-    
-    [Header("Waypoints Base Rojo")]
-    public List<Vector3> waypointBaseRojo = new List<Vector3>();
-    
-    [Header("Waypoints Base Azul")]
-    public List<Vector3> waypointBaseAzul = new List<Vector3>();
+    [Header("Puntos de Reaparicion")]
+    public List<Transform> spawnRojo;
+    public List<Transform> spawnAzul;
 
-    [Header("Waypoints Tactico Rojo")]
-    public List<Vector3> waypointTacticoRojo = new List<Vector3>();
+    [Header("Otros Puntos")]
+    public Transform hospitalRojo;
+    public Transform hospitalAzul;
+    public Transform baseRojo;
+    public Transform baseAzul;
 
-    [Header("Waypoints Tactico Azul")]
-    public List<Vector3> waypointTacticoAzul = new List<Vector3>();
-
-    [Header("Debug")]
-    [SerializeField] private bool debugWaypoints = true;
-    [SerializeField] private float radioGizmo = 1f;
-
-    private void Awake()
+    // Getters basicos para el Spawner
+    public Vector3 GetRandomReaparicion(Bando bando)
     {
-        InitializeWaypoints();
-    }
+        List<Transform> lista;
+        if (bando == Bando.Rojo) { lista = spawnRojo; }
+        else { lista = spawnAzul; }
 
-    private void InitializeWaypoints()
-    {
-        waypointReaparicionRojo.Clear();
-        waypointReaparicionAzul.Clear();
-        waypointCuracionRojo.Clear();
-        waypointCuracionAzul.Clear();
-        waypointBaseRojo.Clear();
-        waypointBaseAzul.Clear();
-        waypointTacticoRojo.Clear();
-        waypointTacticoAzul.Clear();
-
-        // Reaparicion Rojo
-        waypointReaparicionRojo.Add(new Vector3(92.4f, 0f, -47.5f));
-        waypointReaparicionRojo.Add(new Vector3(-6.67f, 0f, -95.8f));
-        waypointReaparicionRojo.Add(new Vector3(-96.6f, 0f, -116.6f));
-
-        // Reaparicion Azul
-        waypointReaparicionAzul.Add(new Vector3(80.3f, 0f, 87.1f));
-        waypointReaparicionAzul.Add(new Vector3(-6.87f, 0f, 66.5f));
-        waypointReaparicionAzul.Add(new Vector3(-103f, 0f, 27.3f));
-
-        // Curacion Rojo y Azul
-        waypointCuracionRojo.Add(new Vector3(20.2f, 0f, -138f));
-        waypointCuracionAzul.Add(new Vector3(-21.8f, 0f, 102.4f));
-
-        // Base Rojo y Azul
-        waypointBaseRojo.Add(new Vector3(98.3f, 0f, -134.8f));
-        waypointBaseAzul.Add(new Vector3(-114.6f, 0f, 105.4f));
-
-        // Tactico Rojo
-        waypointTacticoRojo.Add(new Vector3(112.1f, 0f, -7.3f));
-        waypointTacticoRojo.Add(new Vector3(6.69f, 0f, -25.4f));
-        waypointTacticoRojo.Add(new Vector3(-128.1f, 0f, -76.5f));
-
-        // Tactico Azul
-        waypointTacticoAzul.Add(new Vector3(-127.2f, 0f, -19.7f));
-        waypointTacticoAzul.Add(new Vector3(112f, 0f, 46.9f));
-        waypointTacticoAzul.Add(new Vector3(-22.8f, 0f, 2.13f));
-    }
-
-    public Vector3 GetWaypointReaparicion(Bando bando, int indice = 0)
-    {
-        if (bando == Bando.Rojo)
+        if (lista.Count > 0)
         {
-            if (indice < waypointReaparicionRojo.Count)
-                return waypointReaparicionRojo[indice];
-            return waypointReaparicionRojo.Count > 0 ? waypointReaparicionRojo[0] : Vector3.zero;
+            Transform t = lista[Random.Range(0, lista.Count)];
+            return t.position;
         }
-        
-        if (indice < waypointReaparicionAzul.Count)
-            return waypointReaparicionAzul[indice];
-        return waypointReaparicionAzul.Count > 0 ? waypointReaparicionAzul[0] : Vector3.zero;
+        return transform.position;
     }
 
-    public Vector3 GetWaypointReaparicionMasCercano(Bando bando, Vector3 posicionReferencia)
+    public Vector3 GetWaypointReaparicion(Bando bando, int index)
     {
-        List<Vector3> lista = (bando == Bando.Rojo) ? waypointReaparicionRojo : waypointReaparicionAzul;
+        List<Transform> lista;
+        if (bando == Bando.Rojo) { lista = spawnRojo; }
+        else { lista = spawnAzul; }
 
-        if (lista == null || lista.Count == 0)
+        if (lista.Count > 0)
         {
-            return Vector3.zero;
+            Transform t = lista[index % lista.Count];
+            return t.position;
         }
+        return transform.position;
+    }
 
-        Vector3 mejor = lista[0];
-        float mejorDistancia = (mejor - posicionReferencia).sqrMagnitude;
+    public Vector3 GetWaypointReaparicionMasCercano(Bando bando, Vector3 posMuerte)
+    {
+        List<Transform> lista;
+        if (bando == Bando.Rojo) { lista = spawnRojo; }
+        else { lista = spawnAzul; }
 
-        for (int i = 1; i < lista.Count; i++)
+        if (lista.Count == 0) return transform.position;
+
+        Transform mejor = lista[0];
+        float minDist = Vector3.Distance(posMuerte, mejor.position);
+
+        foreach (Transform t in lista)
         {
-            float distancia = (lista[i] - posicionReferencia).sqrMagnitude;
-            if (distancia < mejorDistancia)
+            float d = Vector3.Distance(posMuerte, t.position);
+            if (d < minDist)
             {
-                mejorDistancia = distancia;
-                mejor = lista[i];
+                minDist = d;
+                mejor = t;
             }
         }
-
-        return mejor;
+        return mejor.position;
     }
 
-    public Vector3 GetWaypointCuracion(Bando bando, int indice = 0)
+    // Getters para Hospital y Base
+    public Vector3 GetCuracion(Bando bando)
     {
-        if (bando == Bando.Rojo)
-        {
-            if (indice < waypointCuracionRojo.Count)
-                return waypointCuracionRojo[indice];
-            return waypointCuracionRojo.Count > 0 ? waypointCuracionRojo[0] : Vector3.zero;
-        }
-        
-        if (indice < waypointCuracionAzul.Count)
-            return waypointCuracionAzul[indice];
-        return waypointCuracionAzul.Count > 0 ? waypointCuracionAzul[0] : Vector3.zero;
+        if (bando == Bando.Rojo) { return hospitalRojo.position; }
+        else { return hospitalAzul.position; }
     }
 
-    public Vector3 GetWaypointBase(Bando bando, int indice = 0)
+    public Vector3 GetBase(Bando bando)
     {
-        if (bando == Bando.Rojo)
-        {
-            if (indice < waypointBaseRojo.Count)
-                return waypointBaseRojo[indice];
-            return waypointBaseRojo.Count > 0 ? waypointBaseRojo[0] : Vector3.zero;
-        }
-        
-        if (indice < waypointBaseAzul.Count)
-            return waypointBaseAzul[indice];
-        return waypointBaseAzul.Count > 0 ? waypointBaseAzul[0] : Vector3.zero;
+        if (bando == Bando.Rojo) { return baseRojo.position; }
+        else { return baseAzul.position; }
     }
 
-    public Vector3 GetWaypointTactico(Bando bando, int indice = 0)
+    public void DesactivarPuntoSpawn(Bando bando, GameObject puntoObj)
     {
-        if (bando == Bando.Rojo)
-        {
-            if (indice < waypointTacticoRojo.Count)
-                return waypointTacticoRojo[indice];
-            return waypointTacticoRojo.Count > 0 ? waypointTacticoRojo[0] : Vector3.zero;
-        }
+        List<Transform> lista;
+        if (bando == Bando.Rojo) { lista = spawnRojo; }
+        else { lista = spawnAzul; }
 
-        if (indice < waypointTacticoAzul.Count)
-            return waypointTacticoAzul[indice];
-        return waypointTacticoAzul.Count > 0 ? waypointTacticoAzul[0] : Vector3.zero;
-    }
-
-    private void OnDrawGizmos()
-    {
-        if (!debugWaypoints)
-        {
-            return;
-        }
-
-        Gizmos.color = new Color(0.85f, 0.2f, 0.2f);
-        foreach (var wp in waypointBaseRojo)
-            DrawWaypoint(wp, "R-Base");
-        
-        Gizmos.color = new Color(1f, 0.4f, 0.4f);
-        foreach (var wp in waypointCuracionRojo)
-            DrawWaypoint(wp, "R-Curacion");
-        
-        Gizmos.color = new Color(0.6f, 0.1f, 0.1f);
-        foreach (var wp in waypointReaparicionRojo)
-            DrawWaypoint(wp, "R-Reaparicion");
-
-        Gizmos.color = new Color(1f, 0.8f, 0.1f);
-        foreach (var wp in waypointTacticoRojo)
-            DrawWaypoint(wp, "R-Tactico");
-
-        Gizmos.color = new Color(0.2f, 0.5f, 0.95f);
-        foreach (var wp in waypointBaseAzul)
-            DrawWaypoint(wp, "A-Base");
-        
-        Gizmos.color = new Color(0.45f, 0.85f, 1f);
-        foreach (var wp in waypointCuracionAzul)
-            DrawWaypoint(wp, "A-Curacion");
-        
-        Gizmos.color = new Color(0.1f, 0.3f, 0.7f);
-        foreach (var wp in waypointReaparicionAzul)
-            DrawWaypoint(wp, "A-Reaparicion");
-
-        Gizmos.color = new Color(0.2f, 0.95f, 0.5f);
-        foreach (var wp in waypointTacticoAzul)
-            DrawWaypoint(wp, "A-Tactico");
-    }
-
-    private void DrawWaypoint(Vector3 posicion, string etiqueta)
-    {
-        Gizmos.DrawSphere(posicion, radioGizmo);
-        Gizmos.DrawWireSphere(posicion, radioGizmo * 1.4f);
-        
-#if UNITY_EDITOR
-        UnityEditor.Handles.Label(
-            posicion + Vector3.up * (radioGizmo + 0.4f),
-            etiqueta
-        );
-#endif
+        lista.RemoveAll(t => t == null || Vector3.Distance(t.position, puntoObj.transform.position) < 3f);
     }
 }

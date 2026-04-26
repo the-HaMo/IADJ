@@ -17,6 +17,8 @@ GameObject:
   - component: {fileID: -5469692024160350344}
   - component: {fileID: 5111235339256189369}
   - component: {fileID: 4906636193668802822}
+  - component: {fileID: -7613519062423494792}
+  - component: {fileID: -1843996809310706005}
   m_Layer: 3
   m_Name: Arquero
   m_TagString: Untagged
@@ -129,7 +131,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mass: 1
-  maxSpeed: 10
+  maxSpeed: 12.5
   maxRotation: 300
   maxAcceleration: 100
   maxAngularAcc: 500
@@ -161,6 +163,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   miBando: 1
+  tipoUnidad: -1
   materialRojo: {fileID: 2100000, guid: 815931dfaebdcb941a703d6f2e7abced, type: 2}
   materialAzul: {fileID: 2100000, guid: 6f23b8422e87717448d03aecc1b44d91, type: 2}
   crearBarraVida: 1
@@ -188,6 +191,8 @@ MonoBehaviour:
   weight: 1
   waypoints: []
   arrivalRadius: 1.5
+  loop: 0
+  autoDestroyWaypoints: 1
 --- !u!114 &5111235339256189369
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -220,6 +225,53 @@ MonoBehaviour:
   hospitalRojo: {x: 20.2, y: 0, z: -138}
   hospitalAzul: {x: -21.8, y: 0, z: 102.4}
   intervaloBusqueda: 0.2
+--- !u!114 &-7613519062423494792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3664783347460375435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 116118930bc1dd343a1a55b2b8a6cbc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  estadoActual: 0
+  alturaIcono: 2.5
+  offsetIcono: {x: 0, y: 0, z: 0}
+  escalaIcono: 1
+--- !u!114 &-1843996809310706005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3664783347460375435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fe0ff7fc4500484087524a1a224ab25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  waypointsRojo:
+  - {fileID: 5989173964139760115, guid: cb95103696e9921448975e89be2b3b5f, type: 3}
+  - {fileID: 2802637078452389979, guid: cc959bcf59a49a1498a69c392c24a78a, type: 3}
+  - {fileID: 1116244385653941725, guid: e96d3f206e38a5d48901ac430df5c105, type: 3}
+  - {fileID: 7206961573070028963, guid: dc604826eba7ddc4bb672aacf4509864, type: 3}
+  - {fileID: 703592209464423373, guid: 3386720b3d628d6498bf9493b3fa36d7, type: 3}
+  - {fileID: 7118847821959741426, guid: 4247558848b94bf4fa9c7ddf83e2a343, type: 3}
+  - {fileID: 7519873354641520169, guid: b71ec50b9932dfe42a9d3512ddd1f278, type: 3}
+  - {fileID: 5665335135575717212, guid: 0662b3438337de24c871ee5300d4f3b7, type: 3}
+  waypointsAzul:
+  - {fileID: 4672666780667870644, guid: 255ff792d8f9e4e44b8027712b308764, type: 3}
+  - {fileID: 2459580995918797341, guid: 8b1314befce724f4592efd17c84ce8fd, type: 3}
+  - {fileID: 5383744433144954355, guid: 8f6bc765137ec8949950ad3e24e5393c, type: 3}
+  - {fileID: 9013377441838299653, guid: 8c7f8229ac1cf5c4ea08c18fd2f93499, type: 3}
+  - {fileID: 1595945749000883048, guid: e0af3d7805b41404991ee31017181fab, type: 3}
+  - {fileID: 6170911950244183496, guid: 1625c8ceb32a17e4cb9298221e48ba5b, type: 3}
+  - {fileID: 140971313582434134, guid: 5c9a25f814e38eb42b2d9dca8605e24a, type: 3}
+  - {fileID: 3751227682592087268, guid: e2b2d2d4571bb3c409b1c5e53dec6034, type: 3}
+  distanciaLlegada: 2
 --- !u!1001 &1036343615579423122
 PrefabInstance:
   m_ObjectHideFlags: 0

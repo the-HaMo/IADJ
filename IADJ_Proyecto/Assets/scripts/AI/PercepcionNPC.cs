@@ -19,6 +19,8 @@ public class PercepcionNPC : MonoBehaviour
     private float nextAtaque;
     private Transform enemigoActual;
     private AgentNPC agent;
+    private NPCPatrol patrol;
+    private estadoNPC estado;
 
     private static bool mostrarGizmosGlobal = false;
 
@@ -28,6 +30,8 @@ public class PercepcionNPC : MonoBehaviour
         path = GetComponent<PathFollowing>();
         pathfinder = FindFirstObjectByType<Pathfinding>();
         agent = GetComponent<AgentNPC>();
+        patrol = GetComponent<NPCPatrol>();
+        estado = GetComponent<estadoNPC>();
     }
 
     void Update()
@@ -55,7 +59,15 @@ public class PercepcionNPC : MonoBehaviour
 
     private void LogicaCuracion()
     {
-        Vector3 destino = (stats.miBando == Bando.Rojo) ? hospitalRojo : hospitalAzul;
+        Vector3 destino;
+        if (stats.miBando == Bando.Rojo)
+        {
+            destino = hospitalRojo;
+        }
+        else
+        {
+            destino = hospitalAzul;
+        }
         ActualizarRuta(destino, 1f);
     }
 
@@ -83,10 +95,44 @@ public class PercepcionNPC : MonoBehaviour
 
         if (enemigoActual != null)
         {
+            // Hay enemigo: pausamos la patrulla si estaba activa
+            if (patrol != null)
+            {
+                if (patrol.enabled == true)
+                {
+                    patrol.enabled = false;
+                    patrol.DetenerPatrulla();
+                }
+            }
+
+            // Perseguimos al enemigo si esta fuera de rango
             float dist = Vector3.Distance(transform.position, enemigoActual.position);
-            if (dist > stats.rangoAtaque) ActualizarRuta(enemigoActual.position, 2f);
+            if (dist > stats.rangoAtaque)
+            {
+                ActualizarRuta(enemigoActual.position, 2f);
+            }
         }
-        else Parar();
+        else
+        {
+            // Sin enemigo: reanudamos la patrulla solo si el NPC esta en estado Vigilancia
+            if (patrol != null)
+            {
+                if (patrol.enabled == false)
+                {
+                    if (estado != null)
+                    {
+                        if (estado.GetEstadoActual() == EstadoNPC.Vigilancia)
+                        {
+                            patrol.enabled = true;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Parar();
+            }
+        }
     }
 
     private Transform BuscarEnemigoCercano()
