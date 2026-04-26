@@ -24,13 +24,19 @@ public class NPCRespawnSpawner : MonoBehaviour
     public float alturaRespawn = 2.3f;
     public bool irAPuntoMuerteTrasRespawn = true;
 
+    [Header("Limites")]
+    public int maxNPCsPorEquipo = 15;
+
     private int indexRespawnRojo;
     private int indexRespawnAzul;
+    private int vivosRojo;
+    private int vivosAzul;
     private Pathfinding pathfinding;
 
     private void Awake()
     {
         pathfinding = FindFirstObjectByType<Pathfinding>();
+        RecontarVivosIniciales();
     }
 
     private void Start()
@@ -54,9 +60,20 @@ public class NPCRespawnSpawner : MonoBehaviour
 
     public GameObject SpawnNPCEnPosicion(TipoUnidad tipoUnidad, Bando bando, Vector3 posicion)
     {
+        return SpawnNPCEnPosicion(tipoUnidad, bando, posicion, 0);
+    }
+
+    private GameObject SpawnNPCEnPosicion(TipoUnidad tipoUnidad, Bando bando, Vector3 posicion, int cupoExtraTemporal)
+    {
         if (wayPoints == null)
         {
             Debug.LogError("[NPCRespawnSpawner] No hay referencia a WayPoints.", gameObject);
+            return null;
+        }
+
+        int vivosDelBando = ObtenerVivos(bando);
+        if (vivosDelBando >= maxNPCsPorEquipo + cupoExtraTemporal)
+        {
             return null;
         }
 
@@ -77,6 +94,8 @@ public class NPCRespawnSpawner : MonoBehaviour
             stats.miBando = bando;
             stats.AplicarMaterial();
         }
+
+        IncrementarVivos(bando);
 
         return npc;
     }
@@ -134,12 +153,19 @@ public class NPCRespawnSpawner : MonoBehaviour
         }
 
         Vector3 posicion = wayPoints.GetWaypointReaparicionMasCercano(bando, posicionMuerte);
-        GameObject npcRespawneado = SpawnNPCEnPosicion(tipoUnidad, bando, posicion);
+        // El NPC muerto puede seguir contado en este frame; cupoExtraTemporal=1 evita bloquear su reemplazo.
+        GameObject npcRespawneado = SpawnNPCEnPosicion(tipoUnidad, bando, posicion, 1);
 
         if (irAPuntoMuerteTrasRespawn)
         {
             EnviarNPCAlPuntoMuerte(npcRespawneado, posicionMuerte);
         }
+    }
+
+    public void RegistrarMuerteYRespawn(TipoUnidad tipoUnidad, Bando bando, Vector3 posicionMuerte)
+    {
+        DecrementarVivos(bando);
+        RespawnNPCEnPuntoMasCercano(tipoUnidad, bando, posicionMuerte);
     }
 
     private void EnviarNPCAlPuntoMuerte(GameObject npc, Vector3 posicionMuerte)
@@ -219,4 +245,43 @@ public class NPCRespawnSpawner : MonoBehaviour
 
         return posicion;
     }
+
+    private void RecontarVivosIniciales()
+    {
+        vivosRojo = 0;
+        vivosAzul = 0;
+
+        NPCStats[] todos = FindObjectsByType<NPCStats>(FindObjectsSortMode.None);
+
+        foreach (NPCStats stats in todos)
+        {
+            if (stats == null)
+            {
+                continue;
+            }
+
+            if (stats.miBando == Bando.Rojo) vivosRojo++;
+            else if (stats.miBando == Bando.Azul) vivosAzul++;
+        }
+    }
+
+    private int ObtenerVivos(Bando bando)
+    {
+        return bando == Bando.Rojo ? vivosRojo : vivosAzul;
+    }
+
+    private void IncrementarVivos(Bando bando)
+    {
+        if (bando == Bando.Rojo) vivosRojo++;
+        else if (bando == Bando.Azul) vivosAzul++;
+    }
+
+    private void DecrementarVivos(Bando bando)
+    {
+        if (bando == Bando.Rojo) vivosRojo = Mathf.Max(0, vivosRojo - 1);
+        else if (bando == Bando.Azul) vivosAzul = Mathf.Max(0, vivosAzul - 1);
+    }
+
+    public int GetVivosRojo() => vivosRojo;
+    public int GetVivosAzul() => vivosAzul;
 }

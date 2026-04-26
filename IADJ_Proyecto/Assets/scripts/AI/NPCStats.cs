@@ -90,7 +90,7 @@ public class NPCStats : MonoBehaviour
 
             if (respawnSpawner != null)
             {
-                respawnSpawner.RespawnNPCEnPuntoMasCercano(tipoUnidad, miBando, transform.position);
+                respawnSpawner.RegistrarMuerteYRespawn(tipoUnidad, miBando, transform.position);
             }
 
             Destroy(gameObject);
