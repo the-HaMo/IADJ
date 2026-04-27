@@ -5,7 +5,6 @@ public class Torre : MonoBehaviour
     [Header("Configuracion")]
     public Bando bandoPropietario;
     public float tiempoParaConquistar = 20f;
-    public GameObject modeloTorre;
 
     private bool conquistada = false;
     private float progresoCaptura = 0f;
@@ -104,18 +103,12 @@ public class Torre : MonoBehaviour
         
         Debug.Log("<color=green>¡TORRE CONQUISTADA!</color>");
 
-        // Informar a WayPoints para que desactive el spawn mas cercano a esta torre
         WayPoints wp = FindFirstObjectByType<WayPoints>();
         if (wp != null)
         {
             wp.DesactivarPuntoSpawn(bandoPropietario, gameObject);
         }
 
-        if (modeloTorre != null)
-        {
-            modeloTorre.SetActive(false);
-        }
-
-        GetComponent<Collider>().enabled = false;
+        Destroy(gameObject);
     }
 }

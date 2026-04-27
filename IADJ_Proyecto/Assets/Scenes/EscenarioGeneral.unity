@@ -13308,9 +13308,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 597270216}
-  - component: {fileID: 597270219}
   - component: {fileID: 597270218}
   - component: {fileID: 597270217}
+  - component: {fileID: 597270220}
   m_Layer: 0
   m_Name: CastilloAzul
   m_TagString: Untagged
@@ -13380,29 +13380,22 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
+  m_Radius: 29.83
   m_Center: {x: 0, y: 0, z: 0}
---- !u!135 &597270219
-SphereCollider:
+--- !u!114 &597270220
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 597270215}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 29.7
-  m_Center: {x: 0, y: 0, z: 0}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d439be0dccdb4e2448dc284491af84a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bandoPropietario: 1
+  tiempoParaConquistar: 3
 --- !u!1 &597954100
 GameObject:
   m_ObjectHideFlags: 0
@@ -18449,6 +18442,8 @@ MonoBehaviour:
   spawnAlIniciar: 1
   usarWaypointSiguienteParaRespawn: 1
   alturaRespawn: 2.3
+  irAPuntoMuerteTrasRespawn: 1
+  maxNPCsPorEquipo: 15
 --- !u!1 &824391639
 GameObject:
   m_ObjectHideFlags: 0
@@ -23564,7 +23559,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bandoPropietario: 1
   tiempoParaConquistar: 20
-  modeloTorre: {fileID: 1836347581}
 --- !u!135 &1014157872
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -29071,6 +29065,8 @@ MonoBehaviour:
   spawnAlIniciar: 1
   usarWaypointSiguienteParaRespawn: 1
   alturaRespawn: 2.3
+  irAPuntoMuerteTrasRespawn: 1
+  maxNPCsPorEquipo: 15
 --- !u!65 &1190793253
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -29115,6 +29111,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   radio: 1
+--- !u!1 &1197146555 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5143725211294651663, guid: 3b7df681e7d489940a8ff8fdc524c1b0, type: 3}
+  m_PrefabInstance: {fileID: 5626314357223145438}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1197146560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1197146555}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4426e704138f1be4db2e5482c62e8f5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CastilloRojo: {fileID: 1287745471}
+  CastilloAzul: {fileID: 597270216}
 --- !u!1 &1200225037
 GameObject:
   m_ObjectHideFlags: 0
@@ -29126,6 +29141,7 @@ GameObject:
   - component: {fileID: 1200225038}
   - component: {fileID: 1200225040}
   - component: {fileID: 1200225039}
+  - component: {fileID: 1200225041}
   m_Layer: 0
   m_Name: TorreAzul (2)
   m_TagString: Untagged
@@ -29163,7 +29179,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bandoPropietario: 1
   tiempoParaConquistar: 20
-  modeloTorre: {fileID: 758188145}
 --- !u!135 &1200225040
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -29185,6 +29200,33 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 17.62
   m_Center: {x: -0.0016503249, y: 0.0025256462, z: -0.19566096}
+--- !u!54 &1200225041
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1200225037}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &1202375568
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -31513,9 +31555,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1287745471}
-  - component: {fileID: 1287745474}
   - component: {fileID: 1287745473}
   - component: {fileID: 1287745472}
+  - component: {fileID: 1287745475}
   m_Layer: 0
   m_Name: CastilloRojo
   m_TagString: Untagged
@@ -31585,29 +31627,22 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
+  m_Radius: 30.8
   m_Center: {x: 0, y: 0, z: 0}
---- !u!135 &1287745474
-SphereCollider:
+--- !u!114 &1287745475
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1287745470}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 30.2
-  m_Center: {x: 0, y: 0, z: 0}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d439be0dccdb4e2448dc284491af84a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bandoPropietario: 0
+  tiempoParaConquistar: 30
 --- !u!1 &1288147294
 GameObject:
   m_ObjectHideFlags: 0
@@ -33571,6 +33606,7 @@ GameObject:
   - component: {fileID: 1351000036}
   - component: {fileID: 1351000038}
   - component: {fileID: 1351000037}
+  - component: {fileID: 1351000039}
   m_Layer: 0
   m_Name: TorreAzul (1)
   m_TagString: Untagged
@@ -33607,8 +33643,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bandoPropietario: 1
-  tiempoParaConquistar: 1
-  modeloTorre: {fileID: 1685177454}
+  tiempoParaConquistar: 20
 --- !u!135 &1351000038
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -33630,6 +33665,33 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 17.62
   m_Center: {x: -0.0016503249, y: 0.0025256462, z: -0.19566096}
+--- !u!54 &1351000039
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1351000035}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &1361238355
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -39706,6 +39768,7 @@ GameObject:
   - component: {fileID: 1672346125}
   - component: {fileID: 1672346127}
   - component: {fileID: 1672346126}
+  - component: {fileID: 1672346128}
   m_Layer: 0
   m_Name: TorreRoja (1)
   m_TagString: Untagged
@@ -39743,7 +39806,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bandoPropietario: 0
   tiempoParaConquistar: 20
-  modeloTorre: {fileID: 1190793250}
 --- !u!135 &1672346127
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -39765,6 +39827,33 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 17.62
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &1672346128
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1672346124}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &1673491461
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -41497,6 +41586,8 @@ MonoBehaviour:
   spawnAlIniciar: 1
   usarWaypointSiguienteParaRespawn: 1
   alturaRespawn: 2.3
+  irAPuntoMuerteTrasRespawn: 1
+  maxNPCsPorEquipo: 15
 --- !u!65 &1754205391
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -45359,6 +45450,7 @@ GameObject:
   - component: {fileID: 1913885366}
   - component: {fileID: 1913885368}
   - component: {fileID: 1913885367}
+  - component: {fileID: 1913885369}
   m_Layer: 0
   m_Name: TorreRoja
   m_TagString: Untagged
@@ -45396,7 +45488,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bandoPropietario: 0
   tiempoParaConquistar: 20
-  modeloTorre: {fileID: 820313436}
 --- !u!135 &1913885368
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -45418,6 +45509,33 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 17.62
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &1913885369
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1913885365}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &1916166225
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -51350,6 +51468,7 @@ GameObject:
   - component: {fileID: 2128771840}
   - component: {fileID: 2128771842}
   - component: {fileID: 2128771841}
+  - component: {fileID: 2128771843}
   m_Layer: 0
   m_Name: TorreRoja (2)
   m_TagString: Untagged
@@ -51387,7 +51506,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bandoPropietario: 0
   tiempoParaConquistar: 20
-  modeloTorre: {fileID: 1754205388}
 --- !u!135 &2128771842
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -51409,6 +51527,33 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 17.62
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &2128771843
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2128771839}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &2133884295
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -52425,7 +52570,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5143725211294651663, guid: 3b7df681e7d489940a8ff8fdc524c1b0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1197146560}
   m_SourcePrefab: {fileID: 100100000, guid: 3b7df681e7d489940a8ff8fdc524c1b0, type: 3}
 --- !u!1001 &5670979341943383029
 PrefabInstance:
