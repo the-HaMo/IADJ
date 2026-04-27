@@ -1,26 +1,26 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PercepcionNPC : MonoBehaviour
 {
+    [Header("Detección")]
     public LayerMask capaNPC;
-    
+    public float intervaloBusqueda = 0.2f;
+
     [Header("Coordenadas Hospitales")]
     public Vector3 hospitalRojo;
     public Vector3 hospitalAzul;
-    
-    public float intervaloBusqueda = 0.2f;
 
     private NPCStats stats;
     private PathFollowing path;
     private Pathfinding pathfinder;
-    private Vector3 lastDest;
-    private float nextTick;
-    private float nextAtaque;
-    private Transform enemigoActual;
     private AgentNPC agent;
     private NPCPatrol patrol;
     private estadoNPC estado;
+
+    private Transform enemigoActual;
+    private Vector3 lastDest;
+    private float nextTick;
+    private float nextAtaque;
 
     private static bool mostrarGizmosGlobal = false;
 
@@ -38,120 +38,87 @@ public class PercepcionNPC : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.C)) mostrarGizmosGlobal = !mostrarGizmosGlobal;
 
+        // 1. Curación (Prioridad)
         if (stats.NecesitaCuracion())
         {
             enemigoActual = null;
-            LogicaCuracion();
+            ActualizarRuta((stats.miBando == Bando.Rojo) ? hospitalRojo : hospitalAzul, 1f);
+            return;
         }
-        else if (enemigoActual != null)
+
+        // 2. Búsqueda de enemigos (cada intervalo)
+        if (Time.time >= nextTick)
         {
-            LogicaAtaque();
+            nextTick = Time.time + intervaloBusqueda;
+            enemigoActual = BuscarEnemigoCercano();
         }
 
-        if (Time.time < nextTick) return;
-        nextTick = Time.time + intervaloBusqueda;
-
-        if (!stats.NecesitaCuracion())
-        {
-            LogicaBusquedaYCombate();
-        }
-    }
-
-    private void LogicaCuracion()
-    {
-        Vector3 destino;
-        if (stats.miBando == Bando.Rojo)
-        {
-            destino = hospitalRojo;
-        }
-        else
-        {
-            destino = hospitalAzul;
-        }
-        ActualizarRuta(destino, 1f);
-    }
-
-    private void LogicaAtaque()
-    {
-        float dist = Vector3.Distance(transform.position, enemigoActual.position);
-        if (dist <= stats.rangoAtaque)
-        {
-            Parar();
-            if (Time.time >= nextAtaque)
-            {
-                NPCStats targetStats = enemigoActual.GetComponent<NPCStats>();
-                if (targetStats != null)
-                {
-                    targetStats.RecibirDanio(stats.poder);
-                    nextAtaque = Time.time + stats.velAtaque;
-                }
-            }
-        }
-    }
-
-    private void LogicaBusquedaYCombate()
-    {
-        enemigoActual = BuscarEnemigoCercano();
-
+        // 3. Comportamiento
         if (enemigoActual != null)
         {
-            // Hay enemigo: pausamos la patrulla si estaba activa
-            if (patrol != null)
-            {
-                if (patrol.enabled == true)
-                {
-                    patrol.enabled = false;
-                    patrol.DetenerPatrulla();
-                }
-            }
+            if (patrol != null && patrol.enabled) { patrol.enabled = false; patrol.DetenerPatrulla(); }
 
-            // Perseguimos al enemigo si esta fuera de rango
             float dist = Vector3.Distance(transform.position, enemigoActual.position);
-            if (dist > stats.rangoAtaque)
+
+            if (dist <= stats.rangoAtaque)
             {
-                ActualizarRuta(enemigoActual.position, 2f);
-            }
-        }
-        else
-        {
-            // Sin enemigo: reanudamos la patrulla solo si el NPC esta en estado Vigilancia
-            if (patrol != null)
-            {
-                if (patrol.enabled == false)
-                {
-                    if (estado != null)
-                    {
-                        if (estado.GetEstadoActual() == EstadoNPC.Vigilancia)
-                        {
-                            patrol.enabled = true;
-                        }
-                    }
-                }
+                Parar();
+                EjecutarAtaque();
             }
             else
             {
-                Parar();
+                // Perseguir usando la distancia exacta del rangoAtaque
+                Vector3 dir = (transform.position - enemigoActual.position).normalized;
+                Vector3 destino = enemigoActual.position + dir * stats.rangoAtaque;
+                ActualizarRuta(destino, 1f);
             }
         }
+        else
+        {
+            GestionarVigilancia();
+        }
+    }
+
+    private void EjecutarAtaque()
+    {
+        if (Time.time >= nextAtaque && enemigoActual != null)
+        {
+            NPCStats targetStats = enemigoActual.GetComponent<NPCStats>();
+            if (targetStats != null)
+            {
+                targetStats.RecibirDanio(stats.poder);
+                nextAtaque = Time.time + stats.velAtaque;
+            }
+        }
+    }
+
+    private void GestionarVigilancia()
+    {
+        if (patrol != null && !patrol.enabled && estado != null && estado.GetEstadoActual() == EstadoNPC.Vigilancia)
+            patrol.enabled = true;
+        else if (patrol == null)
+            Parar();
     }
 
     private Transform BuscarEnemigoCercano()
     {
+        if (stats.miBando == Bando.Default) return null;
+
         Collider[] hits = Physics.OverlapSphere(transform.position, stats.radioPercepcion, capaNPC);
-        Transform mejorTarget = null;
+        Transform mejor = null;
         float minDist = float.MaxValue;
 
         foreach (var hit in hits)
         {
             if (hit.transform == transform) continue;
-            NPCStats targetStats = hit.GetComponent<NPCStats>();
-            if (targetStats && targetStats.miBando != stats.miBando)
+            NPCStats ts = hit.GetComponent<NPCStats>();
+            if (ts != null && ts.miBando != stats.miBando && ts.miBando != Bando.Default)
             {
                 float d = Vector3.Distance(transform.position, hit.transform.position);
-                if (d < minDist) { minDist = d; mejorTarget = hit.transform; }
+                if (d < minDist) { minDist = d; mejor = hit.transform; }
             }
         }
-        return mejorTarget;
+        return mejor;
     }
 
     private void ActualizarRuta(Vector3 destino, float umbral)
@@ -175,19 +142,10 @@ public class PercepcionNPC : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (mostrarGizmosGlobal && stats != null)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position, stats.radioPercepcion);
-        }
-
-        if (stats != null && stats.NecesitaCuracion())
-        {
-            Gizmos.color = Color.green;
-            Vector3 posIcono = transform.position + Vector3.up * 2.5f;
-            Gizmos.DrawWireSphere(posIcono, 0.3f);
-            Gizmos.DrawLine(posIcono + Vector3.left * 0.2f, posIcono + Vector3.right * 0.2f);
-            Gizmos.DrawLine(posIcono + Vector3.down * 0.2f, posIcono + Vector3.up * 0.2f);
-        }
+        if (!mostrarGizmosGlobal || stats == null) return;
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, stats.radioPercepcion);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, stats.rangoAtaque);
     }
 }

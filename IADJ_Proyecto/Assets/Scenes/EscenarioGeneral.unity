@@ -5856,29 +5856,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tanque
       objectReference: {fileID: 0}
-    - target: {fileID: 961614647817374387, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 1090984687882915185, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
       propertyPath: miBando
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1090984687882915185, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
-      propertyPath: vidaMax
-      value: 1500
-      objectReference: {fileID: 0}
-    - target: {fileID: 1090984687882915185, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
-      propertyPath: velAtaque
-      value: 0.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 1090984687882915185, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
-      propertyPath: fuerzaAtaque
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 1090984687882915185, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
-      propertyPath: miTipoDeUnidad
-      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4801554191257664401, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5919,18 +5899,6 @@ PrefabInstance:
     - target: {fileID: 4801554191257664401, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5197754927143992081, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
-      propertyPath: maxSpeed
-      value: 7.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5197754927143992081, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
-      propertyPath: maxRotation
-      value: 70
-      objectReference: {fileID: 0}
-    - target: {fileID: 5197754927143992081, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
-      propertyPath: maxAcceleration
-      value: 50
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9497,29 +9465,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tanque (1)
       objectReference: {fileID: 0}
-    - target: {fileID: 961614647817374387, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 1090984687882915185, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
       propertyPath: miBando
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1090984687882915185, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
-      propertyPath: vidaMax
-      value: 1500
-      objectReference: {fileID: 0}
-    - target: {fileID: 1090984687882915185, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
-      propertyPath: velAtaque
-      value: 0.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 1090984687882915185, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
-      propertyPath: fuerzaAtaque
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 1090984687882915185, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
-      propertyPath: miTipoDeUnidad
-      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4801554191257664401, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -9560,18 +9508,6 @@ PrefabInstance:
     - target: {fileID: 4801554191257664401, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5197754927143992081, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
-      propertyPath: maxSpeed
-      value: 7.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5197754927143992081, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
-      propertyPath: maxRotation
-      value: 70
-      objectReference: {fileID: 0}
-    - target: {fileID: 5197754927143992081, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
-      propertyPath: maxAcceleration
-      value: 50
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -15595,49 +15531,9 @@ PrefabInstance:
       propertyPath: miBando
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 2023652313256171065, guid: 3327ede9bca67ae4b892a25815046519, type: 3}
-      propertyPath: costeCamino
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2023652313256171065, guid: 3327ede9bca67ae4b892a25815046519, type: 3}
-      propertyPath: costeUrbano
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2023652313256171065, guid: 3327ede9bca67ae4b892a25815046519, type: 3}
-      propertyPath: rangoAtaque
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2023652313256171065, guid: 3327ede9bca67ae4b892a25815046519, type: 3}
-      propertyPath: costePradera
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2627967870010474064, guid: 3327ede9bca67ae4b892a25815046519, type: 3}
-      propertyPath: gizmos
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2627967870010474064, guid: 3327ede9bca67ae4b892a25815046519, type: 3}
-      propertyPath: maxSpeed
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 2627967870010474064, guid: 3327ede9bca67ae4b892a25815046519, type: 3}
-      propertyPath: maxRotation
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 2627967870010474064, guid: 3327ede9bca67ae4b892a25815046519, type: 3}
-      propertyPath: maxAcceleration
-      value: 100
-      objectReference: {fileID: 0}
     - target: {fileID: 3664783347460375435, guid: 3327ede9bca67ae4b892a25815046519, type: 3}
       propertyPath: m_Name
       value: Arquero
-      objectReference: {fileID: 0}
-    - target: {fileID: 3664783347460375435, guid: 3327ede9bca67ae4b892a25815046519, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4906636193668802822, guid: 3327ede9bca67ae4b892a25815046519, type: 3}
-      propertyPath: capaNPC.m_Bits
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -17462,58 +17358,6 @@ PrefabInstance:
       propertyPath: miBando
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1555305787705937760, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: vidaMax
-      value: 900
-      objectReference: {fileID: 0}
-    - target: {fileID: 1555305787705937760, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: velAtaque
-      value: 1.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 1555305787705937760, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: rangoAtaque
-      value: 2.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1555305787705937760, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: fuerzaAtaque
-      value: 120
-      objectReference: {fileID: 0}
-    - target: {fileID: 1555305787705937760, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: miTipoDeUnidad
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 2160717074149720456, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: maxSpeed
-      value: 9
-      objectReference: {fileID: 0}
-    - target: {fileID: 2160717074149720456, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2160717074149720456, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: maxAcceleration
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 2504821669926425732, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: gizmos
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2504821669926425732, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: arrivalRadius
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 5803758464188460713, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5803758464188460713, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5803758464188460713, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 5803758464188460713, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
       propertyPath: m_LocalPosition.x
       value: -24.640007
@@ -17557,10 +17401,6 @@ PrefabInstance:
     - target: {fileID: 6986243360470267362, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
       propertyPath: m_Name
       value: Lancero (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 6986243360470267362, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -25251,10 +25091,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 423907913755495700, guid: 9731d6b00c403f44cab356d723046421, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.060231
-      objectReference: {fileID: 0}
     - target: {fileID: 2521664143930922704, guid: 9731d6b00c403f44cab356d723046421, type: 3}
       propertyPath: m_LocalPosition.x
       value: -8.84
@@ -25303,18 +25139,6 @@ PrefabInstance:
       propertyPath: miBando
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7791033422857505868, guid: 9731d6b00c403f44cab356d723046421, type: 3}
-      propertyPath: gizmos
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8529683559007007045, guid: 9731d6b00c403f44cab356d723046421, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.057726
-      objectReference: {fileID: 0}
-    - target: {fileID: 8529683559007007045, guid: 9731d6b00c403f44cab356d723046421, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.32209
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -25332,14 +25156,6 @@ PrefabInstance:
       propertyPath: miBando
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: -2904737461079259805, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
-      propertyPath: materialAzul
-      value: 
-      objectReference: {fileID: 2100000, guid: 6f23b8422e87717448d03aecc1b44d91, type: 2}
-    - target: {fileID: -2904737461079259805, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
-      propertyPath: materialRojo
-      value: 
-      objectReference: {fileID: 2100000, guid: 815931dfaebdcb941a703d6f2e7abced, type: 2}
     - target: {fileID: 2073061667386998701, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
       propertyPath: m_LocalPosition.x
       value: -93.66
@@ -25383,22 +25199,6 @@ PrefabInstance:
     - target: {fileID: 7439606074143703248, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
       propertyPath: m_Name
       value: Caballero
-      objectReference: {fileID: 0}
-    - target: {fileID: 7439606074143703248, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9181909348905035567, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
-      propertyPath: maxSpeed
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 9181909348905035567, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
-      propertyPath: maxRotation
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 9181909348905035567, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
-      propertyPath: maxAcceleration
-      value: 100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -28986,45 +28786,9 @@ PrefabInstance:
       propertyPath: miBando
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2023652313256171065, guid: 3327ede9bca67ae4b892a25815046519, type: 3}
-      propertyPath: costeCamino
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2023652313256171065, guid: 3327ede9bca67ae4b892a25815046519, type: 3}
-      propertyPath: costeUrbano
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2023652313256171065, guid: 3327ede9bca67ae4b892a25815046519, type: 3}
-      propertyPath: rangoAtaque
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2023652313256171065, guid: 3327ede9bca67ae4b892a25815046519, type: 3}
-      propertyPath: costePradera
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2627967870010474064, guid: 3327ede9bca67ae4b892a25815046519, type: 3}
-      propertyPath: gizmos
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2627967870010474064, guid: 3327ede9bca67ae4b892a25815046519, type: 3}
-      propertyPath: maxSpeed
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 2627967870010474064, guid: 3327ede9bca67ae4b892a25815046519, type: 3}
-      propertyPath: maxRotation
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 2627967870010474064, guid: 3327ede9bca67ae4b892a25815046519, type: 3}
-      propertyPath: maxAcceleration
-      value: 100
-      objectReference: {fileID: 0}
     - target: {fileID: 3664783347460375435, guid: 3327ede9bca67ae4b892a25815046519, type: 3}
       propertyPath: m_Name
       value: Arquero (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 3664783347460375435, guid: 3327ede9bca67ae4b892a25815046519, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -29111,25 +28875,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   radio: 1
---- !u!1 &1197146555 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5143725211294651663, guid: 3b7df681e7d489940a8ff8fdc524c1b0, type: 3}
-  m_PrefabInstance: {fileID: 5626314357223145438}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1197146560
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1197146555}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4426e704138f1be4db2e5482c62e8f5a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CastilloRojo: {fileID: 1287745471}
-  CastilloAzul: {fileID: 597270216}
 --- !u!1 &1200225037
 GameObject:
   m_ObjectHideFlags: 0
@@ -47050,58 +46795,6 @@ PrefabInstance:
       propertyPath: miBando
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 1555305787705937760, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: vidaMax
-      value: 900
-      objectReference: {fileID: 0}
-    - target: {fileID: 1555305787705937760, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: velAtaque
-      value: 1.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 1555305787705937760, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: rangoAtaque
-      value: 2.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1555305787705937760, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: fuerzaAtaque
-      value: 120
-      objectReference: {fileID: 0}
-    - target: {fileID: 1555305787705937760, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: miTipoDeUnidad
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 2160717074149720456, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: maxSpeed
-      value: 9
-      objectReference: {fileID: 0}
-    - target: {fileID: 2160717074149720456, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2160717074149720456, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: maxAcceleration
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 2504821669926425732, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: gizmos
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2504821669926425732, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: arrivalRadius
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 5803758464188460713, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5803758464188460713, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5803758464188460713, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 5803758464188460713, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
       propertyPath: m_LocalPosition.x
       value: -106.4
@@ -47145,10 +46838,6 @@ PrefabInstance:
     - target: {fileID: 6986243360470267362, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
       propertyPath: m_Name
       value: Lancero
-      objectReference: {fileID: 0}
-    - target: {fileID: 6986243360470267362, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -52126,10 +51815,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 423907913755495700, guid: 9731d6b00c403f44cab356d723046421, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.060231
-      objectReference: {fileID: 0}
     - target: {fileID: 2521664143930922704, guid: 9731d6b00c403f44cab356d723046421, type: 3}
       propertyPath: m_LocalPosition.x
       value: -90.6
@@ -52177,22 +51862,6 @@ PrefabInstance:
     - target: {fileID: 5821688143771638782, guid: 9731d6b00c403f44cab356d723046421, type: 3}
       propertyPath: miBando
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5821688143771638782, guid: 9731d6b00c403f44cab356d723046421, type: 3}
-      propertyPath: tipoUnidad
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 7791033422857505868, guid: 9731d6b00c403f44cab356d723046421, type: 3}
-      propertyPath: gizmos
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8529683559007007045, guid: 9731d6b00c403f44cab356d723046421, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.057726
-      objectReference: {fileID: 0}
-    - target: {fileID: 8529683559007007045, guid: 9731d6b00c403f44cab356d723046421, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.32209
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -52507,21 +52176,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 987761780851132559, guid: 3b7df681e7d489940a8ff8fdc524c1b0, type: 3}
-      propertyPath: debugGrid
-      value: 0
-      objectReference: {fileID: 0}
+    - target: {fileID: 1370737666407402013, guid: 3b7df681e7d489940a8ff8fdc524c1b0, type: 3}
+      propertyPath: CastilloAzul
+      value: 
+      objectReference: {fileID: 597270216}
+    - target: {fileID: 1370737666407402013, guid: 3b7df681e7d489940a8ff8fdc524c1b0, type: 3}
+      propertyPath: CastilloRojo
+      value: 
+      objectReference: {fileID: 1287745471}
     - target: {fileID: 5143725211294651663, guid: 3b7df681e7d489940a8ff8fdc524c1b0, type: 3}
       propertyPath: m_Name
       value: Controlador
-      objectReference: {fileID: 0}
-    - target: {fileID: 5665956954002585398, guid: 3b7df681e7d489940a8ff8fdc524c1b0, type: 3}
-      propertyPath: debugDanioSeleccion
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 5665956954002585398, guid: 3b7df681e7d489940a8ff8fdc524c1b0, type: 3}
-      propertyPath: debugCuracionSeleccion
-      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 5978327706410386704, guid: 3b7df681e7d489940a8ff8fdc524c1b0, type: 3}
       propertyPath: m_LocalPosition.x
@@ -52563,17 +52228,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6774472307298239358, guid: 3b7df681e7d489940a8ff8fdc524c1b0, type: 3}
-      propertyPath: mostrarCaminosEnEscena
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5143725211294651663, guid: 3b7df681e7d489940a8ff8fdc524c1b0, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1197146560}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3b7df681e7d489940a8ff8fdc524c1b0, type: 3}
 --- !u!1001 &5670979341943383029
 PrefabInstance:

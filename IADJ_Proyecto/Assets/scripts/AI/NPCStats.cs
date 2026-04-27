@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum Bando { Rojo, Azul }
+public enum Bando { Rojo, Azul, Default }
 public enum TipoUnidad { Caballero, Arquero, Lancero, Tanque, Explorador }
 
 public class NPCStats : MonoBehaviour
@@ -9,7 +9,7 @@ public class NPCStats : MonoBehaviour
     public event System.Action OnDanioRecibido; // Evento exclusivo: el NPC avisa que recibió daño
 
     [Header("Identidad y Visual")]
-    public Bando miBando;
+    public Bando miBando= Bando.Default;
     public TipoUnidad tipoUnidad = TipoUnidad.Caballero;
     public Material materialRojo, materialAzul;
     public bool crearBarraVida = true;
