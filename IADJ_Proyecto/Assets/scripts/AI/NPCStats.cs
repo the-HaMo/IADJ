@@ -1,7 +1,7 @@
 using UnityEngine;
 
 public enum Bando { Rojo, Azul }
-public enum TipoUnidad { Desconocida = -1, Caballero, Arquero, Lancero, Tanque, Explorador }
+public enum TipoUnidad { Caballero, Arquero, Lancero, Tanque, Explorador }
 
 public class NPCStats : MonoBehaviour
 {
@@ -10,13 +10,13 @@ public class NPCStats : MonoBehaviour
 
     [Header("Identidad y Visual")]
     public Bando miBando;
-    public TipoUnidad tipoUnidad = TipoUnidad.Desconocida;
+    public TipoUnidad tipoUnidad = TipoUnidad.Caballero;
     public Material materialRojo, materialAzul;
     public bool crearBarraVida = true;
 
     [Header("Estadísticas de Combate")]
     public float vidaMax = 1000f;
-    public float fuerzaAtaque = 100f;
+    public float poder = 100f;
     public float rangoAtaque = 2f;
     public float velAtaque = 1f;
     public float radioPercepcion = 15f;
@@ -33,19 +33,16 @@ public class NPCStats : MonoBehaviour
     public float VidaPorcentaje => vidaMax > 0 ? vidaActual / vidaMax : 0;
 
     private float vidaActual;
-    private bool estaEnTratamiento = false; // Nueva bandera para no irse hasta estar al 100%
+    private bool estaEnTratamiento = false;
     private NPCRespawnSpawner respawnSpawner;
+    private GridManager gridManager;
 
     void Awake()
     {
-        if (tipoUnidad == TipoUnidad.Desconocida)
-        {
-            tipoUnidad = InferirTipoUnidadDesdeNombre(gameObject.name);
-        }
-
         vidaActual = vidaMax;
         AplicarMaterial();
         respawnSpawner = FindFirstObjectByType<NPCRespawnSpawner>();
+        gridManager = FindFirstObjectByType<GridManager>();
     }
 
     void Start()
@@ -111,7 +108,7 @@ public class NPCStats : MonoBehaviour
         crearBarraVida = origen.crearBarraVida;
 
         vidaMax = origen.vidaMax;
-        fuerzaAtaque = origen.fuerzaAtaque;
+        poder = origen.poder;
         rangoAtaque = origen.rangoAtaque;
         velAtaque = origen.velAtaque;
         radioPercepcion = origen.radioPercepcion;
@@ -144,19 +141,6 @@ public class NPCStats : MonoBehaviour
         if (r) r.material = (miBando == Bando.Rojo) ? materialRojo : materialAzul;
     }
 
-    private TipoUnidad InferirTipoUnidadDesdeNombre(string nombre)
-    {
-        string limpio = nombre.Replace("(Clone)", "").Trim();
-
-        if (limpio.StartsWith("Caballero")) return TipoUnidad.Caballero;
-        if (limpio.StartsWith("Arquero")) return TipoUnidad.Arquero;
-        if (limpio.StartsWith("Lancero")) return TipoUnidad.Lancero;
-        if (limpio.StartsWith("Tanque")) return TipoUnidad.Tanque;
-        if (limpio.StartsWith("Explorador")) return TipoUnidad.Explorador;
-
-        return TipoUnidad.Desconocida;
-    }
-
     public int ObtenerCosteTerreno(Bioma bioma)
     {
         return bioma switch {
@@ -165,5 +149,21 @@ public class NPCStats : MonoBehaviour
             Bioma.Urbano => costeUrbano,
             _ => costeCamino
         };
+    }
+
+    // --- Posicion en el mundo ---
+
+    /// <summary>Devuelve el nodo del grid en el que se encuentra actualmente este NPC.</summary>
+    public Node ObtenerNodoActual()
+    {
+        if (gridManager == null) return null;
+        return gridManager.NodeFromWorldPoint(transform.position);
+    }
+
+    /// <summary>Devuelve el bioma en el que se encuentra actualmente este NPC.</summary>
+    public Bioma ObtenerBiomaActual()
+    {
+        Node nodo = ObtenerNodoActual();
+        return (nodo != null) ? nodo.bioma : Bioma.Pradera;
     }
 }

@@ -82,7 +82,7 @@ public class PercepcionNPC : MonoBehaviour
                 NPCStats targetStats = enemigoActual.GetComponent<NPCStats>();
                 if (targetStats != null)
                 {
-                    targetStats.RecibirDanio(stats.fuerzaAtaque);
+                    targetStats.RecibirDanio(stats.poder);
                     nextAtaque = Time.time + stats.velAtaque;
                 }
             }

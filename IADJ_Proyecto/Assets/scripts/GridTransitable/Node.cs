@@ -24,11 +24,11 @@ public class Node
     public Bioma bioma;
     public int influenceValue; // El valor de influencia/peligro de este nodo
 
-    // Coste total (F = G + H + InfluenciaTáctica). 
-    // NOTA: El coste del terreno se sumará en el Pathfinding al calcular el gCost, dependiendo del NPC.
+    // Coste total (F = G + H).
+    // NOTA: El influenceValue y el coste del terreno se suman al gCost en el Pathfinding, no aqui.
     public int fCost
     {
-        get { return gCost + hCost + influenceValue; }
+        get { return gCost + hCost; }
     }
 
     public Node(bool _isWalkable, Vector3 _worldPos, int _gridX, int _gridY)
