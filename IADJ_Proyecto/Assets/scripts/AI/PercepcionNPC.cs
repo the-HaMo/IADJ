@@ -301,6 +301,22 @@ public class PercepcionNPC : MonoBehaviour
         }
     }
 
+    // --- Inicializacion de Estados (llamado por estadoNPC) ---
+    public void PrepararVigilancia()
+    {
+        enemigoActual = null; // Pierde el interes al volver a patrullar
+    }
+
+    public void PrepararAtaque()
+    {
+        // Listo para agredir
+    }
+
+    public void PrepararDefensa()
+    {
+        nextDefenseUpdate = 0f; // Fuerza a recalcular la ruta defensiva inmediatamente
+    }
+
     // --- Utilidades Defensivas ---
     public bool TieneAliadosCerca()
     {

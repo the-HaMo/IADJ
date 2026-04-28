@@ -138,12 +138,26 @@ public class estadoNPC : MonoBehaviour
     // que consulta GetEstadoActual(). Aqui solo activamos/desactivamos la patrulla base.
     private void AplicarComportamientoDeEstado()
     {
-        // Vigilancia: la patrulla esta activa.
-        // Ataque: la patrulla NO esta activa (PercepcionNPC busca enemigos con radio mayor).
-        // Defensa: la patrulla NO esta activa (PercepcionNPC se queda anclado a la base).
         if (patrol != null)
         {
             patrol.enabled = (estadoActual == EstadoNPC.Vigilancia);
+        }
+
+        PercepcionNPC percepcion = GetComponent<PercepcionNPC>();
+        if (percepcion != null)
+        {
+            switch (estadoActual)
+            {
+                case EstadoNPC.Vigilancia:
+                    percepcion.PrepararVigilancia();
+                    break;
+                case EstadoNPC.Ataque:
+                    percepcion.PrepararAtaque();
+                    break;
+                case EstadoNPC.Defensa:
+                    percepcion.PrepararDefensa();
+                    break;
+            }
         }
     }
 

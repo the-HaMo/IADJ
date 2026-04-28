@@ -31685,8 +31685,6 @@ MonoBehaviour:
   intervaloActualizacion: 0.5
   radioInfluencia: 10
   pesoPoder: 0.3
-  pathfindingTacticoActivo: 1
-  pesoCostePathfinding: 1.5
 --- !u!114 &1294030584
 MonoBehaviour:
   m_ObjectHideFlags: 0
