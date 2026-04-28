@@ -133,24 +133,17 @@ public class estadoNPC : MonoBehaviour
         return go;
     }
 
-    // Aplica el comportamiento segun el estado con el que nace el NPC
+    // Aplica el comportamiento segun el estado con el que nace el NPC.
+    // El comportamiento "fino" (patrullar, perseguir, atacar...) lo gestiona PercepcionNPC,
+    // que consulta GetEstadoActual(). Aqui solo activamos/desactivamos la patrulla base.
     private void AplicarComportamientoDeEstado()
     {
-        if (estadoActual == EstadoNPC.Vigilancia)
+        // Vigilancia: la patrulla esta activa.
+        // Ataque: la patrulla NO esta activa (PercepcionNPC busca enemigos con radio mayor).
+        // Defensa: la patrulla NO esta activa (PercepcionNPC se queda anclado a la base).
+        if (patrol != null)
         {
-            // Vigilancia: activa la patrulla si tiene el componente NPCPatrol
-            if (patrol != null)
-            {
-                patrol.enabled = true;
-            }
-        }
-        else if (estadoActual == EstadoNPC.Ataque)
-        {
-            // TODO: comportamiento de ataque
-        }
-        else if (estadoActual == EstadoNPC.Defensa)
-        {
-            // TODO: comportamiento de defensa
+            patrol.enabled = (estadoActual == EstadoNPC.Vigilancia);
         }
     }
 
@@ -158,4 +151,17 @@ public class estadoNPC : MonoBehaviour
     {
         return estadoActual;
     }
+
+    public void SetEstado(EstadoNPC nuevo)
+    {
+        if (estadoActual == nuevo) return;
+        estadoActual = nuevo;
+        CrearIconoEstado();
+        AplicarComportamientoDeEstado();
+    }
+
+    // Helpers para que PercepcionNPC consulte semanticamente
+    public bool EsAgresivo()  => estadoActual == EstadoNPC.Ataque;
+    public bool EsDefensivo() => estadoActual == EstadoNPC.Defensa;
+    public bool EsVigilante() => estadoActual == EstadoNPC.Vigilancia;
 }

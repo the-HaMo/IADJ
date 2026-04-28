@@ -1,38 +1,78 @@
-# Unity generated files (IMPORTANT)
+# =====================================================================
+# .gitignore Unity (recomendado oficial + ajustes para este proyecto)
+# =====================================================================
 
+# Carpetas autogeneradas por Unity (NUNCA versionar)
 [Ll]ibrary/
 [Tt]emp/
+[Oo]bj/
 [Bb]uild/
 [Bb]uilds/
 [Ll]ogs/
-UserSettings/
-# Visual Studio / Rider
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+[Rr]ecordings/
+
+# Carpetas de cache de Unity
+[Aa]ssets/[Aa]ssetStoreTools*
+[Aa]ssets/[Pp]lugins/[Ee]ditor/JetBrains*
+
+# IDEs
 .vs/
 .vscode/
 .idea/
-
-# OS generated files
-.DS_Store
-Thumbs.db
-
-# Build results
-*.apk
-*.unitypackage
-
-# MonoDevelop / Visual Studio Code
+.consulo/
 *.csproj
+*.unityproj
 *.sln
 *.suo
+*.tmp
 *.user
 *.userprefs
 *.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Unity3D generated meta files (OJO: SOLO los de carpetas vacias o de carpetas ignoradas)
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# Build / packaged
+*.apk
+*.aab
+*.unitypackage
+*.app
+*.exe
+*.unity3d
+ExportedObj/
+.consulo/
+crashlytics-build.properties
+sysinfo.txt
+
+# Cache de shaders / Burst
+ShaderCache/
+BurstCache/
+*.opendb
 
 # Crash reports
 *.stackdump
+[Aa]ssets/[Cc]rashlytics/
 
-# Cache and shader artifacts
-ShaderCache/
-BurstCache/
+# Sistema operativo
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
 
-# Packed files
-*.unity3d
+# Backup
+[Bb]ackup/
+*.bak

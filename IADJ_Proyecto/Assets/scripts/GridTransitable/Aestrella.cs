@@ -9,16 +9,36 @@ public class Pathfinding : MonoBehaviour
     [Header("Configuración A*")]
     public HeuristicType selectedHeuristic = HeuristicType.Manhattan;
 
+    [Header("Pathfinding tactico")]
+    [Tooltip("Si esta activo, el A* sumara la influencia enemiga del MapaInfluencia al coste. Tecla I para alternar.")]
+    public bool usarPathfindingTactico = true;
+    public KeyCode teclaToggleTactico = KeyCode.I;
+
     [Header("Debug Visual")]
     public bool mostrarCaminosEnEscena = false;
 
     private GridManager gridManager;
     private HeuristicaType heuristicaInstancia;
+    private MapaInfluencia mapaInfluencia;
 
     void Awake()
     {
         gridManager = GetComponent<GridManager>();
         InicializarHeuristica();
+    }
+
+    void Start()
+    {
+        mapaInfluencia = FindFirstObjectByType<MapaInfluencia>();
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(teclaToggleTactico))
+        {
+            usarPathfindingTactico = !usarPathfindingTactico;
+            Debug.Log($"[Pathfinding] Componente tactico: {(usarPathfindingTactico ? "ON" : "OFF")}");
+        }
     }
 
     // Se ejecuta automáticamente al cambiar valores en el Inspector
@@ -74,7 +94,16 @@ public class Pathfinding : MonoBehaviour
                 int penalizacionTerreno = (statsUnidad != null) ? statsUnidad.ObtenerCosteTerreno(neighbor.bioma) : 1;
 
                 int costToNeighbor = GetStepCost(currentNode, neighbor);
-                int newMovementCostToNeighbor = currentNode.gCost + costToNeighbor + penalizacionTerreno + neighbor.influenceValue;
+
+                // Coste tactico: si esta activo y tenemos mapa de influencia + bando del NPC,
+                // sumamos la influencia ENEMIGA del nodo (las zonas con mucho enemigo cuestan mas).
+                int penalizacionInfluencia = 0;
+                if (usarPathfindingTactico && mapaInfluencia != null && statsUnidad != null)
+                {
+                    penalizacionInfluencia = mapaInfluencia.GetCosteInfluencia(statsUnidad.miBando, neighbor.gridX, neighbor.gridY);
+                }
+
+                int newMovementCostToNeighbor = currentNode.gCost + costToNeighbor + penalizacionTerreno + penalizacionInfluencia;
                 
                 if (newMovementCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
                 {

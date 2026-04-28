@@ -155,6 +155,16 @@ public class GridManager : MonoBehaviour
         return grid[columna, fila];
     }
 
+    public Node GetNode(int columna, int fila)
+    {
+        if (grid == null) return null;
+        if (columna < 0 || columna >= gridSizeX || fila < 0 || fila >= gridSizeY) return null;
+        return grid[columna, fila];
+    }
+
+    public int GridSizeX => gridSizeX;
+    public int GridSizeY => gridSizeY;
+
     public void ResetGridNodes()
     {
         if (grid == null) return;

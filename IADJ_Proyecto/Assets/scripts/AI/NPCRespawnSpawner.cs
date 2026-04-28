@@ -100,16 +100,6 @@ public class NPCRespawnSpawner : MonoBehaviour
         return npc;
     }
 
-    public GameObject SpawnNPCEnPosicion(NPCStats plantilla, Vector3 posicion)
-    {
-        if (plantilla == null)
-        {
-            return null;
-        }
-
-        return SpawnNPCEnPosicion(plantilla.tipoUnidad, plantilla.miBando, posicion);
-    }
-
     public void SpawnBando(Bando bando, int cantidad)
     {
         for (int i = 0; i < cantidad; i++)
@@ -132,16 +122,6 @@ public class NPCRespawnSpawner : MonoBehaviour
         }
 
         RespawnNPCEnPuntoMasCercano(stats.tipoUnidad, stats.miBando, npc.transform.position);
-    }
-
-    public void RespawnNPCEnPuntoMasCercano(NPCStats plantilla, Vector3 posicionMuerte)
-    {
-        if (plantilla == null)
-        {
-            return;
-        }
-
-        RespawnNPCEnPuntoMasCercano(plantilla.tipoUnidad, plantilla.miBando, posicionMuerte);
     }
 
     public void RespawnNPCEnPuntoMasCercano(TipoUnidad tipoUnidad, Bando bando, Vector3 posicionMuerte)

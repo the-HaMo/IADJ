@@ -7,6 +7,7 @@ public class NPCStats : MonoBehaviour
 {
     public event System.Action<float, float, bool> OnVidaCambiada;
     public event System.Action OnDanioRecibido; // Evento exclusivo: el NPC avisa que recibió daño
+    public event System.Action<NPCStats> OnAtacado; // Igual que el anterior pero pasando el atacante
 
     [Header("Identidad y Visual")]
     public Bando miBando= Bando.Default;
@@ -73,11 +74,12 @@ public class NPCStats : MonoBehaviour
         return false;
     }
 
-    public void RecibirDanio(float d)
+    public void RecibirDanio(float d, NPCStats atacante = null)
     {
         vidaActual -= d;
         NotificarVida(true);
-        OnDanioRecibido?.Invoke(); // El NPC notifica que recibió daño
+        OnDanioRecibido?.Invoke();      // Evento sin atacante (Torre, etc.)
+        OnAtacado?.Invoke(atacante);    // Evento con atacante (PercepcionNPC)
         if (vidaActual <= 0)
         {
             if (respawnSpawner == null)
@@ -92,6 +94,21 @@ public class NPCStats : MonoBehaviour
 
             Destroy(gameObject);
         }
+    }
+
+    // Wrapper que aplica directamente la formula del Anexo II usando SistemaCombate.
+    // El atacante llama: defensor.RecibirAtaqueDe(this);
+    public SistemaCombate.ResultadoAtaque RecibirAtaqueDe(NPCStats atacante)
+    {
+        SistemaCombate.ResultadoAtaque res = default;
+        if (atacante == null) return res;
+
+        Bioma terrenoAtacante = atacante.ObtenerBiomaActual();
+        Bioma terrenoDefensor = ObtenerBiomaActual();
+
+        res = SistemaCombate.CalcularDanio(atacante, terrenoAtacante, this, terrenoDefensor);
+        RecibirDanio(res.danio, atacante);
+        return res;
     }
 
     public void CopiarStatsDesde(NPCStats origen)
