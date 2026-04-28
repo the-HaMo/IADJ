@@ -18,29 +18,42 @@ public static class SistemaCombate
     // FAD: Factor por tipo de Atacante / Defensor.
     // Indices: TipoUnidad => Caballero=0, Arquero=1, Lancero=2, Tanque=3, Explorador=4
     // FAD[atacante, defensor]
+    //
+    // Valores acordados con la memoria (orden alfabetico en la memoria, aqui
+    // permutado al orden del enum). La memoria muestra:
+    //                Arq    Cab    Exp    Lan    Tan
+    //   Arq atk      1.00   0.75   1.25   1.50   0.50
+    //   Cab atk      1.50   1.00   0.75   0.50   1.25
+    //   Exp atk      1.25   0.50   1.00   0.75   1.50
+    //   Lan atk      0.50   1.50   1.25   1.00   0.75
+    //   Tan atk      1.50   1.25   0.50   0.75   1.00
     // ----------------------------------------------------------------------
     private static readonly float[,] FAD = new float[5, 5]
     {
         // Defensor:  Cab    Arq    Lan    Tan    Exp
-        /* Cab */   { 1.00f, 1.50f, 0.75f, 0.50f, 1.25f },
-        /* Arq */   { 1.00f, 1.00f, 1.25f, 1.00f, 0.75f },
-        /* Lan */   { 1.50f, 0.50f, 1.00f, 1.50f, 1.00f },
-        /* Tan */   { 1.50f, 1.25f, 0.50f, 1.00f, 1.75f },
-        /* Exp */   { 0.75f, 1.75f, 1.00f, 0.25f, 1.00f }
+        /* Cab */   { 1.00f, 1.50f, 0.50f, 1.25f, 0.75f },
+        /* Arq */   { 0.75f, 1.00f, 1.50f, 0.50f, 1.25f },
+        /* Lan */   { 1.50f, 0.50f, 1.00f, 0.75f, 1.25f },
+        /* Tan */   { 1.25f, 1.50f, 0.75f, 1.00f, 0.50f },
+        /* Exp */   { 0.50f, 1.25f, 0.75f, 1.50f, 1.00f }
     };
 
     // ----------------------------------------------------------------------
     // FTA: Factor por terreno del Atacante.
     // Indices: Bioma => Pradera=0, Camino=1, Bosque=2, Urbano=3
     // FTA[bioma, tipoUnidad]
+    //
+    // Valores de la memoria para Pradera/Bosque/Urbano. Camino se anade
+    // siguiendo las afinidades narradas en la introduccion (Caballero
+    // prefiere camino, Tanque y Explorador lo evitan).
     // ----------------------------------------------------------------------
     private static readonly float[,] FTA = new float[4, 5]
     {
         //              Cab    Arq    Lan    Tan    Exp
-        /* Pradera */ { 1.00f, 0.75f, 1.00f, 1.00f, 1.00f },
-        /* Camino  */ { 1.25f, 1.00f, 1.00f, 1.50f, 1.00f },
-        /* Bosque  */ { 0.50f, 0.50f, 0.75f, 0.25f, 1.50f },
-        /* Urbano  */ { 0.75f, 1.50f, 0.75f, 0.50f, 1.25f }
+        /* Pradera */ { 1.50f, 1.00f, 1.00f, 1.00f, 1.00f },
+        /* Camino  */ { 1.25f, 1.00f, 1.00f, 0.75f, 0.75f },
+        /* Bosque  */ { 0.75f, 1.50f, 0.75f, 0.50f, 1.25f },
+        /* Urbano  */ { 0.50f, 0.75f, 1.25f, 1.50f, 1.25f }
     };
 
     // ----------------------------------------------------------------------
@@ -50,10 +63,10 @@ public static class SistemaCombate
     private static readonly float[,] FTD = new float[4, 5]
     {
         //              Cab    Arq    Lan    Tan    Exp
-        /* Pradera */ { 1.00f, 1.00f, 1.00f, 1.00f, 1.00f },
-        /* Camino  */ { 0.75f, 0.75f, 0.75f, 0.50f, 1.25f },
-        /* Bosque  */ { 1.25f, 1.50f, 1.50f, 1.75f, 1.50f },
-        /* Urbano  */ { 1.50f, 0.75f, 1.50f, 1.75f, 0.75f }
+        /* Pradera */ { 0.75f, 1.00f, 1.00f, 1.00f, 1.00f },
+        /* Camino  */ { 1.25f, 1.00f, 1.00f, 0.75f, 0.75f },
+        /* Bosque  */ { 1.25f, 0.50f, 1.25f, 1.50f, 0.75f },
+        /* Urbano  */ { 1.50f, 1.25f, 0.75f, 0.50f, 0.75f }
     };
 
     public static float ObtenerFAD(TipoUnidad atacante, TipoUnidad defensor)

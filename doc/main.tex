@@ -1,974 +1,857 @@
+% =====================================================================
+%  Memoria Bloque 2 - IA Estrategica y Tactica
+%  Asignatura: IA para el Desarrollo de Juegos (UMU)
+% =====================================================================
+
 \documentclass[12pt,a4paper]{article}
+
+% --------------- Paquetes ---------------
 \usepackage[utf8]{inputenc}
-\usepackage[spanish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage{lmodern}
+
 \usepackage{graphicx}
 \usepackage{geometry}
 \usepackage{hyperref}
-\hypersetup{colorlinks=true, linkcolor=black, urlcolor=black, citecolor=black}
-\usepackage{listings}
 \usepackage{xcolor}
+\usepackage{listings}
 \usepackage{fancyhdr}
 \usepackage{titlesec}
 \usepackage{tocloft}
 \usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{ragged2e}
-\usepackage{placeins}  % Para FloatBarrier
-\usepackage{float}     % Para usar [H] en figuras
+\usepackage{placeins}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{colortbl}
+\usepackage{tcolorbox}
+\usepackage{microtype}
+\usepackage{caption}
 
-% Configuración de márgenes
+% --------------- Configuracion general ---------------
 \geometry{margin=2.5cm, headheight=15pt}
 
-% Configuración de colores para código
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue!60!black,
+    citecolor=black,
+    pdftitle={Memoria Bloque 2 IADJ},
+    pdfauthor={Mohammed Amrou, Sergio Garcia, Diego Ballesta}
+}
+
+% --------------- Colores ---------------
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
 \definecolor{codepurple}{rgb}{0.58,0,0.82}
-\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\definecolor{backcolour}{rgb}{0.96,0.96,0.92}
+\definecolor{bonusgreen}{rgb}{0.85,1.0,0.85}
+\definecolor{malusred}{rgb}{1.0,0.85,0.85}
+\definecolor{neutralgray}{rgb}{0.97,0.97,0.97}
+\definecolor{umumaroon}{rgb}{0.45,0.05,0.18}
 
-% Estilo para código
+% --------------- Estilo de codigo ---------------
 \lstdefinestyle{mystyle}{
-    backgroundcolor=\color{backcolour},   
+    backgroundcolor=\color{backcolour},
     commentstyle=\color{codegreen},
     keywordstyle=\color{magenta},
     numberstyle=\tiny\color{codegray},
     stringstyle=\color{codepurple},
     basicstyle=\ttfamily\footnotesize,
-    breakatwhitespace=false,         
-    breaklines=true,                 
-    captionpos=b,                    
-    keepspaces=true,                 
-    numbers=left,                    
-    numbersep=5pt,                  
-    showspaces=false,                
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
     showstringspaces=false,
-    showtabs=false,                  
+    showtabs=false,
     tabsize=4,
-    language=C
+    frame=single,
+    rulecolor=\color{codegray},
+    framesep=4pt,
+    language=[Sharp]C
 }
 \lstset{style=mystyle}
 
-% Configuración de encabezados y pies de página
+% --------------- Encabezados ---------------
 \pagestyle{fancy}
 \fancyhf{}
-\rhead{Bloque 1. Movimiento}
-\lhead{IADJ}
-\rfoot{Página \thepage}
+\rhead{\small Bloque 2 — IA Estrategica y Tactica}
+\lhead{\small IADJ}
+\rfoot{\small Pagina \thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.0pt}
 
+% --------------- Estilo de secciones ---------------
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{umumaroon}}{\thesection}{0.7em}{}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries}{\thesubsection}{0.6em}{}
+
+% --------------- Indice mas espaciado ---------------
+\renewcommand{\cftsecfont}{\bfseries}
+\setlength{\cftbeforesecskip}{6pt}
+
+% --------------- Caja de formula destacada ---------------
+\newtcolorbox{formulabox}[1][]{
+    colback=backcolour,
+    colframe=umumaroon,
+    boxrule=0.6pt,
+    arc=2pt,
+    left=8pt, right=8pt, top=6pt, bottom=6pt,
+    #1
+}
+
+% --------------- Macros para colorear celdas de tablas ---------------
+\newcommand{\bonus}[1]{\cellcolor{bonusgreen}#1}
+\newcommand{\malus}[1]{\cellcolor{malusred}#1}
+\newcommand{\neutral}[1]{\cellcolor{neutralgray}#1}
+
+% =====================================================================
 \begin{document}
 
+% --------------- Portada ---------------
 \begin{titlepage}
     \centering
-    
-    \vspace*{0.5cm}
-    
-    % Título arriba
-    {\Huge\bfseries IA PARA EL  DESARROLLO DE JUEGOS\\[0.15cm] BLOQUE 1. MOVIMIENTO\par}
-    
-    \vspace{1.0cm}
-    
-    % Logo centrado en medio
-    \includegraphics[width=0.65\textwidth]{img/umu.png}
-    
-    \vspace{1.0cm}
-    
-    % Autores
-    {\large\bfseries Autores:\par}
-    \vspace{0.3cm}
-    {\normalsize Mohammed Amrou Labied Nasser, 49857930W\par}
-    \vspace{0.15cm}
-    {\normalsize Sergio García García, 49308323A\par}
-    \vspace{0.15cm}
-    {\normalsize Diego Sergio Ballesta Gonzaléz de la Higuera, 30299322L \par}
-    
+
+    \vspace*{0.6cm}
+    {\color{umumaroon}\rule{\linewidth}{1.4pt}}\\[0.4cm]
+    {\Huge\bfseries IA para el Desarrollo de Juegos\par}
     \vspace{0.4cm}
-    
-    {\large\bfseries Tutor:\par}
-    \vspace{0.15cm}
-     {\normalsize Luis Daniel Hernandéz Molinero- \par}
-    \vspace{0.15cm}
-    
-    \vspace{0.4cm}
-    
-    {\large\bfseries Grupo y subgrupo: 1.1\par}
-    \vspace{0.15cm}
-    {\large\bfseries Fecha de entrega:\par}
-    \vspace{0.15cm}
-    {\normalsize 21-03-2026 \par}
-    
+    {\Large\bfseries Bloque 2 — IA Estrategica y Tactica\par}
+    {\color{umumaroon}\rule{\linewidth}{1.4pt}}
+
+    \vspace{1.5cm}
+
+    \includegraphics[width=0.55\textwidth]{img/umu.png}
+
+    \vspace{1.5cm}
+
+    \begin{tabular}{r l}
+        \multicolumn{2}{l}{\large\bfseries Autores:} \\[0.2cm]
+        & Mohammed Amrou Labied Nasser \quad 49857930W \\
+        & Sergio Garcia Garcia \quad 49308323A \\
+        & Diego Sergio Ballesta Gonzalez de la Higuera \quad 30299322L \\[0.5cm]
+        \multicolumn{2}{l}{\large\bfseries Tutor:} \\[0.2cm]
+        & Francisco Javier Marin-Blazquez Gomez \\[0.5cm]
+        \multicolumn{2}{l}{\large\bfseries Grupo / subgrupo:} \\[0.2cm]
+        & 1.1 \\[0.5cm]
+        \multicolumn{2}{l}{\large\bfseries Fecha de entrega:} \\[0.2cm]
+        & 09 de mayo de 2026 \\
+    \end{tabular}
+
+    \vfill
+    {\small Curso 2025-2026 \ \textbar\ Universidad de Murcia}
 \end{titlepage}
 
-% ==================== ÍNDICE ====================
+% --------------- Indice ---------------
 \newpage
 \tableofcontents
+\thispagestyle{empty}
 \newpage
+\setcounter{page}{1}
 
-% ==================== INTRODUCCIÓN ====================
-\section{Introducción}
+% =====================================================================
+\section{Introduccion}
 
+Esta memoria documenta la implementacion del \textbf{Bloque 2} de la practica
+de Inteligencia Artificial para el Desarrollo de Juegos. El bloque se centra
+en IA \emph{estrategica} (a nivel de bando) y \emph{tactica} (a nivel de cada
+unidad individual) en un escenario de juego de guerra en tiempo real
+construido sobre Unity.
 
- En esta memoria se documenta el diseño y la implementación del \textbf{Bloque 1: Movimiento} de la asignatura Inteligencia Artificial para Videojuegos. El propósito principal de este bloque es el desarrollo de un sistema de navegación reactivo y autónomo  (steering behaviors) para diferentes tipos de agentes dentro del motor de desarrollo \textbf{Unity}.
-\newline
-A lo largo de este documento, se detallarán los métodos y soluciones aplicados para resolver los desafíos de movilidad planteados en el enunciado. Se explicará cómo se han estructurado los elementos pedidos en el enunciado, algunos elementos fundamentales son los siguientes;
+El proyecto enfrenta a dos bandos (\textbf{Rojo} y \textbf{Azul}) en un mapa
+con barrera natural y varios biomas. Cada bando dispone de su base, hospital,
+puntos de respawn y unidades de cinco tipos distintos. La IA combina:
 
-\begin{itemize}
-\item \textbf{Motor de físicas: }Como diseñamos distintos aspectos de nuestro motor; como el movimiento angular, la aceleración, el movimiento rectilíneo, etc. Mediante las ecuaciones de Newton-Euler, operaciones de vectores, transformadas, etc. Con el objetivo de trabajar sobre una dimensión 2.5D.   
-\item \textbf{Sistemas de Steering :} Desarrollo de algoritmos para el control de la aceleración y dirección de los agentes, incluyendo comportamientos básicos como Seek y Arrive, y delegados como Wander.
-\item \textbf{Detección y Evitación de Obstáculos:} Implementación de sistemas de colisión basados en rayos (\textit{raycasts}) o "bigotes" para garantizar una navegación fluida en entornos complejos.
-\item \textbf{Gestión de Grupos y Formaciones:} Organización de múltiples unidades bajo estructuras de movimiento coordinado y seguimiento de líderes.
-\item\textbf{Búsqueda de Caminos (Pathfinding):} Aplicación del algoritmo \textbf{LRTA}* sobre una representación del escenario basada en rejillas (\textit{grids}) para alcanzar el objetivo.
+\begin{itemize}[leftmargin=1.5em]
+    \item Toma de decisiones individual basada en \emph{estado} y \emph{tipo} de unidad.
+    \item Sistema de combate con \emph{matchups} entre tipos y modificadores por terreno.
+    \item Mapa de influencia que afecta tanto al pathfinding como a la decision de huida.
+    \item Estrategia de bando con modos \emph{defensivo}, \emph{ofensivo} y \emph{guerra total}.
+    \item Pathfinding A* con heuristica seleccionable y coste tactico opcional.
 \end{itemize}
 
-\newpage
-\FloatBarrier
+Las decisiones de diseno mas relevantes son:
 
-% ==================== DESARRROLLO ====================
-\section{Arquitectura del proyecto}
+\paragraph{Deteccion de biomas mixta.}
+Para los biomas con formas irregulares (caminos curvos, manchas de bosque,
+rios) se utilizan \texttt{Collider} con su \texttt{LayerMask}, mientras que
+para zonas rectangulares regulares (urbano, pradera) se definen mediante
+coordenadas de centro y tamano en el inspector de \texttt{GridManager}. Esta
+mezcla evita crear colliders innecesarios para zonas grandes y resulta
+sensiblemente mas eficiente al construir el grid.
 
-    \subsection{Esquema de escenas del proyecto}
+\paragraph{Heuristicas escaladas $\times 10$.}
+Como el coste de paso del A* es 10 (ortogonal) o 14 (diagonal) mas las
+penalizaciones de terreno e influencia, las heuristicas devuelven distancias
+multiplicadas por 10 para mantener el mismo orden de magnitud y conservar
+la admisibilidad.
 
-\begin{figure}[H]
+\paragraph{Cinco tipos de unidad con afinidades diferenciadas.}
+Cada tipo tiene preferencias propias de movimiento (que afectan al pathfinding)
+y de combate (que afectan a las tablas FTA/FTD del sistema de daño):
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \textbf{Arquero}: prefiere bosque y pradera; evita urbano.
+    \item \textbf{Caballero}: prefiere urbano y camino; evita pradera y bosque.
+    \item \textbf{Explorador}: prefiere urbano y bosque; evita pradera y camino.
+    \item \textbf{Lancero}: evita bosque, el resto le es indiferente.
+    \item \textbf{Tanque}: prefiere urbano; evita camino y bosque.
+\end{itemize}
+
+% =====================================================================
+\section{Software y hardware utilizado}
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \textbf{Unity 2021.3.16f1 LTS} con la plantilla 3D estandar (no URP/HDRP), tal como exige el enunciado.
+    \item Lenguaje \textbf{C\# 9.0}.
+    \item Editores: Visual Studio 2022 y Visual Studio Code.
+    \item Sistemas operativos de desarrollo: Windows 10 y 11.
+    \item Control de versiones: \textbf{Git + GitHub}, con scripts \texttt{.bat} y \texttt{.sh} de equipo (\texttt{push.bat}, \texttt{pull.bat}, \texttt{reset-unity.bat}) para evitar los conflictos clasicos con los ficheros autogenerados por Unity (\texttt{Library/}, \texttt{Temp/}, \texttt{*.csproj}, \texttt{*.sln}, \texttt{.vscode/}).
+\end{itemize}
+
+\textbf{Hardware} de pruebas: equipos personales de los integrantes del
+grupo (Windows con tarjeta grafica integrada o dedicada). El proyecto se
+ejecuta sin problema en cualquier equipo capaz de mover Unity 2021 LTS.
+
+% =====================================================================
+\section{Elementos implementados}
+
+\subsection{Obligatorios (Bloque 2)}
+
+\begin{enumerate}[label=(\alph*),leftmargin=1.5em]
+    \item Comportamiento tactico diferenciado por tipo de unidad — \texttt{TacticasPorTipo.cs} + \texttt{PercepcionNPC.cs}.
+    \item Comportamiento estrategico ofensivo / defensivo a nivel de bando — \texttt{EstrategiaBando.cs}.
+    \item Sistema de combate cuerpo a cuerpo y a distancia con tablas FAD/FTA/FTD y criticos — \texttt{SistemaCombate.cs} + \texttt{NPCStats.cs}.
+    \item Mapa tactico de influencia — \texttt{MapaInfluencia.cs}.
+    \item Minimapa con areas de influencia (heatmap rojo/azul) — \texttt{MinimapaInfluencia.cs}.
+    \item Uso de la informacion del mapa de influencia en el comportamiento tactico (decision de huida y reorientacion) — \texttt{PercepcionNPC.cs}.
+    \item Modo Guerra Total — \texttt{EstrategiaBando.cs}, tecla \texttt{T}.
+    \item Algoritmo de pathfinding A* — \texttt{Aestrella.cs}.
+    \item Pathfinding tactico individual sumando influencia enemiga al coste — \texttt{Aestrella.cs} consultando a \texttt{MapaInfluencia.cs}.
+    \item Patrullas con itinerario prefijado, que reaccionan ante enemigos — \texttt{NPCPatrol.cs}.
+    \item Modo depuracion: pantalla de ayuda \texttt{F1}, gizmos togglables (\texttt{C}, \texttt{G}), toggle del componente tactico del A* (\texttt{I}), debug de daño/curacion (\texttt{J}, \texttt{K}).
+\end{enumerate}
+
+\subsection{Opcionales}
+
+\begin{itemize}[leftmargin=1.5em]
+    \item Sistema de captura de torres con condicion de victoria propia (\texttt{Torre.cs} + \texttt{CastilloDerrumbado.cs}).
+    \item Heuristicas multiples seleccionables (Manhattan, Euclidea, Chebyshev) en el A*.
+    \item Spawner que respawnea al NPC en el waypoint mas cercano a su muerte y le envia automaticamente al punto donde cayo.
+    \item Indicadores en pantalla del modo estrategico actual y barras de vida sobre cada NPC.
+\end{itemize}
+
+% =====================================================================
+\section{Escenario}
+
+El escenario \texttt{EscenarioGeneral.unity} contiene:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \textbf{Dos paises} separados por una barrera natural (un rio) con un puente como zona de paso. Esto crea cuellos de botella interesantes para la IA tactica y para la fase de Guerra Total.
+    \item \textbf{Cuatro biomas} (Pradera, Camino, Bosque, Urbano), cada uno con coste de movimiento por tipo de unidad y modificadores propios para el combate (FTA y FTD).
+    \item \textbf{Una base por bando} (CastilloRojo y CastilloAzul) que conviene defender; su destruccion decide la partida.
+    \item \textbf{Hospitales}, donde las unidades recuperan vida si entran en su trigger y son del mismo bando.
+    \item \textbf{Puntos de respawn} (\texttt{WayPoints}) por bando.
+    \item \textbf{Torres conquistables} a lo largo del mapa.
+\end{itemize}
+
+\subsection{Construccion del grid}
+
+El grid (\texttt{GridManager.cs}) es de $105 \times 105$ celdas de 3 unidades
+de lado, lo que cubre el mapa completo. Para cada celda:
+
+\begin{enumerate}[leftmargin=1.5em]
+    \item Se comprueba si es transitable mediante \texttt{Physics.CheckBox} sobre la \texttt{unwalkableMask}.
+    \item Se asigna un bioma siguiendo este orden de prioridad:
+    \begin{itemize}
+        \item Si un \texttt{Collider} de bioma cubre la celda, se usa ese bioma.
+        \item Si no, si la celda cae dentro de un area rectangular declarada en el inspector (\texttt{biomasAreas}), se usa ese bioma.
+        \item Por defecto, Pradera.
+    \end{itemize}
+\end{enumerate}
+
+% =====================================================================
+\section{Sistema de combate}
+
+\subsection{Fundamentos}
+
+El sistema de combate es una adaptacion del ejemplo del Anexo II de la
+practica. La fuerza efectiva de atacante y defensor se calculan como:
+
+\begin{formulabox}
 \centering
-\begin{minipage}{0.95\textwidth}
-\begin{verbatim}
-Scenes/
-|____Arbitros.unity
-|____PathFinding
-|    |____PathFinding.unity
-|____Basic
-|    |____Seek_Flee_Arrive.unity
-|    |____Align-AntiAlign.unity
-|____Delegate
-|    |____PathFollowing+Face+Wander.unity
-|    |____PathFollowing+Jumping.unity
-|    |____WallAvoidance.unity
-|____Formaciones
-     |____LeaderFollowing.unity
-\end{verbatim}
-\caption{Estructura de escenas del proyecto en Unity}
-\label{fig:estructura-escenas}
-\end{minipage}
-\end{figure}
+$FA = \text{Calidad}_{atacante} \cdot FAD \cdot FTA \qquad FD = \text{Calidad}_{defensor} \cdot FTD$
+\end{formulabox}
 
+Lo que en el enunciado se llama \textbf{Calidad} se ha implementado como
+el atributo \texttt{poder} de \texttt{NPCStats}, ya que resulta mas
+intuitivo cuando una unidad actua como defensora.
 
-    \textbf{Descripción de las escenas del proyecto:}\\
-    El proyecto está dividido en varias escenas, cada una diseñada para mostrar y probar diferentes comportamientos de los agentes y técnicas de inteligencia artificial en Unity. A continuación se explica brevemente el propósito de cada una:
-    \begin{itemize}
-        \item \textbf{Arbitros.unity}: Escena dedicada a los agentes árbitros, que combinan varios comportamientos de steering para gestionar situaciones complejas y tomar decisiones en tiempo real.
-        \item \textbf{PathFinding/PathFinding.unity}: Aquí se implementa y prueba el algoritmo de búsqueda de caminos (LRTA*) sobre una rejilla, permitiendo a los agentes navegar el escenario y encontrar rutas óptimas evitando obstáculos.
-        \item \textbf{Basic/Seek\_Flee\_Arrive.unity}: Escena para los comportamientos básicos de steering: Seek (perseguir), Flee (huir) y Arrive (llegada suave al destino), mostrando la lógica fundamental de movimiento.
-        \item \textbf{Basic/Align-AntiAlign.unity}: Centrada en los comportamientos de alineación, donde los agentes ajustan su orientación para coincidir o contrarrestar la de un objetivo.
-        \item \textbf{Delegate/PathFollowing+Face+Wander.unity}: Combina Path Following (seguir un camino), Face (orientarse hacia un objetivo) y Wander (deambular de forma autónoma), mostrando la alternancia entre estos comportamientos.
-        \item \textbf{Delegate/PathFollowing+Jumping.unity}: Prueba el seguimiento de caminos junto con la capacidad de los agentes para saltar obstáculos, mostrando una navegación avanzada.
-        \item \textbf{Delegate/WallAvoidance.unity}: Dedicada a la detección y evasión de paredes u obstáculos mediante raycasts o bigotes, asegurando movimientos sin colisiones.
-        \item \textbf{Formaciones/LeaderFollowing.unity}: Implementa la lógica de formaciones, donde varios agentes siguen a un líder, manteniendo posiciones relativas y desplazándose como un grupo coordinado.
-    \end{itemize}
+\subsection{Tablas de modificadores}
 
-\section{Diseño de Agentes}
-\subsection{Componente física Body}
-\subsection{Componente Agent}
-\subsection{Componente AgentNPC}
-\subsection{Roles de los NPCs}
-En el proyecto se han definido distintos NPCs con características diferenciadas para representar roles adaptados a entornos específicos. Cada uno ajusta sus parámetros de movimiento para explotar mejor sus cualidades según el terreno en el que se encuentra.
+\begin{table}[H]
+\centering
+\caption{FAD: Factor por tipo Atacante / Defensor}
+\label{tab:fad}
+\begin{tabular}{l|ccccc}
+\toprule
+\textbf{Atacante \textbackslash{} Defensor} & \textbf{Arquero} & \textbf{Caballero} & \textbf{Explorador} & \textbf{Lancero} & \textbf{Tanque} \\
+\midrule
+\textbf{Arquero}    & \neutral{1.00} & \malus{0.75} & \bonus{1.25} & \bonus{1.50} & \malus{0.50} \\
+\textbf{Caballero}  & \bonus{1.50} & \neutral{1.00} & \malus{0.75} & \malus{0.50} & \bonus{1.25} \\
+\textbf{Explorador} & \bonus{1.25} & \malus{0.50} & \neutral{1.00} & \malus{0.75} & \bonus{1.50} \\
+\textbf{Lancero}    & \malus{0.50} & \bonus{1.50} & \bonus{1.25} & \neutral{1.00} & \malus{0.75} \\
+\textbf{Tanque}     & \bonus{1.50} & \bonus{1.25} & \malus{0.50} & \malus{0.75} & \neutral{1.00} \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-Este enfoque permite que los agentes no se comporten de forma uniforme: algunos priorizan velocidad punta, otros estabilidad o capacidad de giro, y su rendimiento varía en función del contexto. Así, ante terrenos diferentes, cada NPC muestra ventajas y limitaciones acordes a su especialización.
+\begin{table}[H]
+\centering
+\caption{FTA: Factor de tipo Ataque por bioma}
+\label{tab:fta}
+\begin{tabular}{l|cccc}
+\toprule
+\textbf{Unidad} & \textbf{Pradera} & \textbf{Camino} & \textbf{Bosque} & \textbf{Urbano} \\
+\midrule
+Arquero    & \neutral{1.00} & \neutral{1.00} & \bonus{1.50} & \malus{0.75} \\
+Caballero  & \bonus{1.50} & \bonus{1.25} & \malus{0.75} & \malus{0.50} \\
+Explorador & \neutral{1.00} & \malus{0.75} & \bonus{1.25} & \bonus{1.25} \\
+Lancero    & \neutral{1.00} & \neutral{1.00} & \malus{0.75} & \bonus{1.25} \\
+Tanque     & \neutral{1.00} & \malus{0.75} & \malus{0.50} & \bonus{1.50} \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\section{Steering básicos acelerados}
+\begin{table}[H]
+\centering
+\caption{FTD: Factor de tipo Defensa por bioma (mayor $\Rightarrow$ menor daño recibido)}
+\label{tab:ftd}
+\begin{tabular}{l|cccc}
+\toprule
+\textbf{Unidad} & \textbf{Pradera} & \textbf{Camino} & \textbf{Bosque} & \textbf{Urbano} \\
+\midrule
+Arquero    & \neutral{1.00} & \neutral{1.00} & \malus{0.50} & \bonus{1.25} \\
+Caballero  & \malus{0.75} & \bonus{1.25} & \bonus{1.25} & \bonus{1.50} \\
+Explorador & \neutral{1.00} & \malus{0.75} & \malus{0.75} & \malus{0.75} \\
+Lancero    & \neutral{1.00} & \neutral{1.00} & \bonus{1.25} & \malus{0.75} \\
+Tanque     & \neutral{1.00} & \malus{0.75} & \bonus{1.50} & \malus{0.50} \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\subsection{Seek}
-\subsubsection{Introducción}
-El comportamiento \textbf{Seek} hace que un agente persiga de forma directa un objetivo, calculando continuamente la dirección entre su posición actual y la del \texttt{target}. A diferencia de otros steerings con frenado, Seek mantiene una tendencia de avance constante, por lo que el movimiento es muy reactivo y simple.
+\textit{Verde claro} indica bonus $> 1.0$, \textit{rojo claro} indica
+penalizacion $< 1.0$, \textit{gris} es valor neutro.
 
-En nuestra implementación, el agente obtiene un vector dirección hacia el objetivo y genera una aceleración lineal en ese sentido. Como no existe una fase de desaceleración al aproximarse, cuando llega con velocidad alta puede sobrepasar el objetivo, girar para volver a encararlo y repetir este ciclo de ida y vuelta de manera indefinida.
+\subsection{Formula de daño}
 
-\subsubsection{Implementación y Parametrización}
-Para ejecutar Seek son necesarios los siguientes parámetros:
+Por cada ataque se aplica:
 
-\begin{itemize}
-    \item \textbf{target} (\texttt{Agent}): referencia al agente u objeto que se quiere perseguir.
+\begin{formulabox}
+\begin{itemize}[leftmargin=1.5em]
+    \item Con probabilidad $1/100$ (ataque \textbf{critico}): $\text{daño} = \text{CteImpacto} \cdot 50$.
+    \item En caso normal:
+    $$\text{daño} = \frac{FA}{FD} \cdot \text{CteImpacto} \cdot \text{Random}[0.5,\, 1.0]$$
+    \item Si el daño calculado no llega al 10\% de \texttt{CteImpacto}, se garantiza un minimo entre el 10\% y el 20\% para que ningun ataque resulte completamente inutil.
+\end{itemize}
+\end{formulabox}
+
+Con $\text{CteImpacto} = 100$ y $\text{vidaMax} = 1000$ un combate
+equilibrado dura unos 10–15 ataques. Un critico, en cambio, puede
+matar de un golpe a unidades con vida media.
+
+\subsection{Ejemplo numerico}
+
+Caballero (poder 100) ataca a Arquero (poder 70). Caballero esta en
+Pradera, Arquero en Bosque:
+
+\begin{align*}
+FA &= 100 \cdot \underbrace{1.50}_{FAD\text{(Cab vs Arq)}} \cdot \underbrace{1.50}_{FTA\text{(Pradera, Cab)}} = 225 \\
+FD &= 70 \cdot \underbrace{0.50}_{FTD\text{(Bosque, Arq)}} = 35 \\
+\text{daño}_{\text{Random}=0.7} &= \tfrac{225}{35} \cdot 100 \cdot 0.7 \approx 450
+\end{align*}
+
+El Caballero tumba al Arquero en 2-3 ataques. Si la situacion fuera la
+inversa (Arquero atacando a Caballero, Arquero en Bosque), el FA seria
+$70 \cdot 0.75 \cdot 1.50 = 78.75$ y el FD del Caballero seria
+$100 \cdot 0.75 = 75$, dando un daño $\approx 105$, y el Arquero
+necesitaria muchos mas turnos.
+
+\subsection{Implementacion}
+
+El sistema vive en \texttt{SistemaCombate.cs} (clase estatica con las tres
+matrices y la funcion \texttt{CalcularDanio}). Para que un atacante pegue
+a un defensor basta con:
+
+\begin{lstlisting}[caption={Llamada al sistema de combate desde PercepcionNPC.cs}]
+SistemaCombate.ResultadoAtaque res = targetStats.RecibirAtaqueDe(stats);
+nextAtaque = Time.time + stats.velAtaque;
+
+if (res.esCritico)
+    Debug.Log($"CRITICO {stats.name} -> {targetStats.name}: {res.danio:F0}");
+\end{lstlisting}
+
+\texttt{NPCStats.RecibirAtaqueDe(atacante)} consulta los biomas de
+atacante y defensor, llama a \texttt{SistemaCombate.CalcularDanio} y
+aplica el resultado. Adicionalmente dispara dos eventos:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \texttt{OnDanioRecibido()} (sin atacante) — usado por la torre para resetear su contador de captura.
+    \item \texttt{OnAtacado(NPCStats atacante)} — usado por \texttt{PercepcionNPC} para reaccionar al atacante.
 \end{itemize}
 
-El algoritmo comienza comprobando la existencia de un objetivo \texttt{target}. 
-En caso de no existir, se devuelve una aceleración nula.
+\subsection{Reaccion al ataque}
 
-A continuación, se calcula el vector dirección entre el agente y el objetivo:
+Cuando un NPC es golpeado, su \texttt{PercepcionNPC.AlSerAtacado}:
 
-\[
-\mathbf{d} = \mathbf{p}_{\text{target}} - \mathbf{p}_{\text{agent}}
-\]
-
-donde \(\mathbf{p}_{\text{target}}\) y \(\mathbf{p}_{\text{agent}}\) representan las posiciones del objetivo y del agente, respectivamente.
-
-Si la magnitud de este vector es cercana a cero, es decir, si \( \|\mathbf{d}\| \approx 0 \), no se aplica ninguna fuerza con el fin de evitar inestabilidades numéricas. 
-En caso contrario, el vector se normaliza para obtener la dirección de movimiento:
-
-\[
-\hat{\mathbf{d}} = \frac{\mathbf{d}}{\|\mathbf{d}\|}
-\]
-
-El \textit{steering} lineal se construye entonces con magnitud igual a la velocidad máxima del agente, manteniendo la componente angular igual a cero.
-
-\[
-\mathbf{v}_{\text{target}} = v_{\text{max}} \, \hat{\mathbf{d}}
-\]
-
-Finalmente, en \texttt{AgentNPC}, este vector se utiliza como aceleración para actualizar el estado del agente en cada fotograma, integrando la velocidad y la posición del agente a lo largo del tiempo.
-
-\subsubsection{Ejemplo de Uso}
-En la Figura \ref{fig:seek_basico} se muestra un caso de uso básico en el que un NPC persigue un objetivo fijo en escena mediante Seek.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{img/seek.png}
-    \caption{Comportamiento Seek persiguiendo un objetivo en escena.}
-    \label{fig:seek_basico}
-\end{figure}
-
-La línea rosa indica visualmente la posición del objetivo, facilitando comprobar que el agente recalcula su dirección de persecución en tiempo real. También se aprecia el comportamiento típico de Seek: movimiento muy directo y respuesta inmediata, pero con posibilidad de sobrepaso del punto objetivo al no aplicar desaceleración cerca del destino.
-
-\subsection{Flee}
-\subsubsection{Introducción}
-El comportamiento \textbf{Flee} es conceptualmente el opuesto directo a Seek: en lugar de perseguir a un objetivo, el agente huye de él lo más rápido posible. Conceptualmente puede entenderse como el resultado de invertir la dirección que calcularía Seek, es decir, multiplicar ese vector por $-1$ para obtener la orientación contraria. El agente evalúa continuamente su posición relativa al \texttt{target} y acelera en sentido opuesto, manteniéndose así alejándose de forma constante sin ningún criterio de parada.
-
-\subsubsection{Implementación y Parametrización}
-Para ejecutar Flee es necesario el siguiente parámetro:
-
-\begin{itemize}
-    \item \textbf{target} (\texttt{Agent}): referencia al agente u objeto del que se quiere huir.
-\end{itemize}
-
-El algoritmo calcula en primer lugar la velocidad objetivo a partir del vector que va desde el objetivo hasta el agente:
-
-\[
-\mathbf{d} = \mathbf{p}_{\text{agent}} - \mathbf{p}_{\text{target}}
-\]
-
-donde \(\mathbf{p}_{\text{agent}}\) y \(\mathbf{p}_{\text{target}}\) representan las posiciones del agente y del objetivo, respectivamente.
-
-Este vector se normaliza para obtener únicamente la dirección de movimiento:
-
-\[
-\hat{\mathbf{d}} = \frac{\mathbf{d}}{\|\mathbf{d}\|}
-\]
-
-y se escala posteriormente por la velocidad máxima del agente para calcular la velocidad objetivo:
-
-\[
-\mathbf{v}_{\text{target}} = v_{\text{max}} \, \hat{\mathbf{d}}
-\]
-
-A continuación, el \textit{steering} lineal se obtiene restando la velocidad actual del agente a esta velocidad objetivo:
-
-\[
-\mathbf{a}_{\text{steering}} = \mathbf{v}_{\text{target}} - \mathbf{v}
-\]
-
-lo que produce una corrección de aceleración que orienta y empuja al agente en dirección opuesta al objetivo, siendo este el único aspecto que diferencia al \textit{steering} del seek. El componente angular se mantiene igual a cero.
-
-\subsubsection{Ejemplo de Uso}
-En la Figura \ref{fig:flee_basico} se muestra el comportamiento Flee en acción: el NPC se aleja de un objetivo fijo situado en escena.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{img/flee.png}
-    \caption{Comportamiento Flee alejándose de un objetivo en escena.}
-    \label{fig:flee_basico}
-\end{figure}
-
-De manera muy similar a la imagen de Seek, la línea rosa indica la posición del objetivo. En este caso, sin embargo, el agente se desplaza en la dirección opuesta, alejándose de dicho punto de forma continua. Si el agente alcanza el límite del escenario y no hay ningún mecanismo de rebote o parada, continuará intentando huir indefinidamente.
-
-\subsection{Arrive}
-\subsubsection{Introducción}
-El comportamiento \textbf{Arrive} es una evolución directa de Seek: el agente también se dirige hacia un objetivo, pero a diferencia de Seek no lo sobrepasa indefinidamente, sino que reduce su velocidad de forma progresiva conforme se acerca y se detiene de manera suave al alcanzarlo. Esto lo convierte en el comportamiento idóneo para cualquier situación en la que el NPC deba llegar a un punto concreto y quedar estático en él, como posicionarse en una formación o acudir a un punto de interés.
-
-\subsubsection{Implementación y Parametrización}
-Para ejecutar Arrive son necesarios los siguientes parámetros:
-
-\begin{itemize}
-    \item \textbf{target} (\texttt{Agent}): referencia al agente u objeto al que se quiere llegar.
-    \item \textbf{timeToTarget}: tiempo en segundos en el que el agente intentará alcanzar la velocidad deseada. Actúa como suavizador de la aceleración.
-\end{itemize}
-
-El algoritmo distingue tres zonas en función de la distancia al objetivo. 
-Si el agente se encuentra fuera del radio de llegada \texttt{ArrivalRadius}, se desplaza a velocidad máxima, de forma equivalente al comportamiento \textit{Seek}. 
-
-En la corona anular comprendida entre \texttt{ArrivalRadius} y \texttt{InteriorRadius}, la velocidad objetivo se reduce de forma lineal según la distancia al objetivo:
-
-\[
-v_{\text{target}} = v_{\text{max}} \cdot \frac{d}{R_{\text{arrival}}}
-\]
-
-donde \(d\) representa la distancia al objetivo, \(v_{\text{max}}\) la velocidad máxima del agente y \(R_{\text{arrival}}\) el radio de llegada. Esta relación produce una desaceleración progresiva a medida que el agente se aproxima al destino.
-
-Cuando el agente se encuentra dentro del radio interior \texttt{InteriorRadius}, se aplica una fuerza de frenado destinada a cancelar la velocidad actual:
-
-\[
-\mathbf{a} = - \frac{\mathbf{v}}{\Delta t}
-\]
-
-donde \(\mathbf{v}\) es la velocidad actual del agente y \(\Delta t\) el intervalo temporal de simulación. Esta aceleración se limita posteriormente por la aceleración máxima permitida.
-
-Finalmente, el vector de \textit{steering} lineal se calcula como:
-
-\[
-\mathbf{a}_{\text{steering}} = \frac{\mathbf{v}_{\text{target}} - \mathbf{v}}{t_{\text{target}}}
-\]
-
-\subsubsection{Ejemplo de Uso}
-En la Figura \ref{fig:arrive_basico} se muestra el comportamiento Arrive en acción: el NPC se aproxima al objetivo y reduce su velocidad hasta detenerse sobre él.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{img/arrive.png}
-    \caption{Comportamiento Arrive aproximándose y deteniéndose sobre el objetivo.}
-    \label{fig:arrive_basico}
-\end{figure}
-
-Al igual que en Seek y Flee, la línea rosa (no visible en la imagen) indica la posición del objetivo. La diferencia visual clave respecto a Seek es que el agente no sobrepasa el punto de destino: a medida que se acerca, la trayectoria se va suavizando hasta quedar estático sobre él. Esto hace que Arrive sea especialmente adecuado cuando se requiere precisión en el posicionamiento final del agente.
-
-\subsection{Leave}
-\subsubsection{Introducción}
-El comportamiento \textit{Leave} (Alejarse y Parar) es un movimiento uniformemente acelerado que nace como una evolución del comportamiento \textit{Flee}. Mientras que en \textit{Flee} el agente se aleja de un objetivo de manera indefinida e infinita (acelerando constantemente en dirección contraria), el comportamiento \textit{Leave} introduce el concepto de \textbf{distancia segura}.
-
-Su objetivo principal es dotar de realismo a la huida: una vez que el personaje ha recorrido una distancia suficiente y se encuentra fuera del "radio de huida", dejará de correr y frenará hasta detenerse por completo. Es el equivalente a un animal que huye ante una presencia, pero se detiene y recupera la calma en cuanto se aleja a una distancia prudencial.
-
-\subsubsection{Implementación y Parametrización}
-Para que este comportamiento funcione correctamente, en el script (\texttt{Leave.cs}) se definen los siguientes parámetros clave:
-
-\begin{itemize}
-    \item \texttt{Target}: Es el objetivo del que nuestro agente quiere huir (el jugador, un enemigo o un peligro estático). A partir de su posición, el algoritmo calcula el vector de dirección opuesta.
-    \item \texttt{Escape Radius}: Es el radio de seguridad. Representa la distancia a partir de la cual el agente deja de acelerar en dirección contraria al perseguidor. Si la distancia actual entre el NPC y el objetivo es mayor o igual a este radio, el personaje iniciará el proceso de frenado. 
-\end{itemize}
-\\
-El comportamiento Leave es una variación avanzada del Flee (Huir). Funciona como un movimiento acelerado que hace que un agente huya en dirección opuesta a una amenaza, pero introduce un importante límite espacial: el Radio de Escape (escapeRadius).
-
-Mientras la distancia entre el agente y el objetivo sea menor que este radio, el personaje intentará escapar a su máxima velocidad. Sin embargo, en el momento que la distancia sea igual o mayor al Radio de Escape, el agente considerará que está en una "distancia segura" y desactivará su huida.
-
-\subsubsection{Ejemplo de Uso}
-Este comportamiento se utiliza principalmente en NPCs que deben reaccionar ante la proximidad de otros agentes o peligros. En la escena \texttt{Arbitros.unity}, se puede observar cómo el NPC mantiene una "distancia de respeto": si el objetivo se acerca demasiado, el comportamiento \textit{Leave} se activa para alejar al NPC. 
-
-Una vez que el agente supera el radio de huida y alcanza una zona segura, el comportamiento \textit{Leave} devuelve un vector nulo (desactivando su influencia), lo que permite ceder de nuevo el control principal al comportamiento \textit{Wander}. Esta transición permite compaginar varias funcionalidades a la vez: el agente puede deambular de forma autónoma por el escenario, pero reaccionará de manera reactiva y orgánica ante la presencia de amenazas, deteniendo su huida en el momento preciso para retomar su movimiento.
-
-\subsection{Align}
-\subsubsection{Introducción}
-El comportamiento \textbf{Align} controla exclusivamente la rotación del agente: su objetivo es hacer que el NPC iguale su orientación a la del \texttt{target}, girando con suavidad y sin sacudidas. A diferencia de Seek o Arrive, Align no aplica ninguna fuerza lineal; solo genera aceleración angular. Es la base de otros comportamientos delegados como \textit{Face}, que internamente delegan en Align para calcular el giro necesario.
-
-El agente calcula continuamente la diferencia angular con el objetivo, reduce esa diferencia al intervalo $(-180°, 180°)$ para elegir siempre el camino de rotación más corto, y ajusta su velocidad angular de forma proporcional hasta detenerse al coincidir con la orientación del \texttt{target}.
-
-\subsubsection{Implementación y Parametrización}
-Para ejecutar Align son necesarios los siguientes parámetros:
-
-\begin{itemize}
-    \item \textbf{target} (\texttt{Agent}): referencia al agente cuya orientación se quiere igualar.
-    \item \textbf{timeToTarget}: tiempo en segundos en el que el agente intentará alcanzar la velocidad de rotación deseada. Actúa como suavizador del giro.
-\end{itemize}
-
-El algoritmo calcula la diferencia angular entre el objetivo y el agente:
-
-\[
-\theta = \theta_{\text{target}} - \theta_{\text{agent}}
-\]
-
-y la normaliza al rango \((-180^\circ, 180^\circ)\) mediante la función \texttt{MapToRange}. 
-
-Si el valor absoluto de esta diferencia es menor que \texttt{InteriorAngle} (propiedad del \texttt{target}), se aplica un frenado angular activo para detener la rotación. 
-Si la diferencia supera \texttt{ExteriorAngle} (propiedad del \texttt{target}), el agente gira a la velocidad angular máxima \( \omega_{\text{max}} \). 
-En caso contrario, la velocidad de rotación objetivo se escala linealmente en función del ángulo:
-
-\[
-\omega_{\text{target}} = \omega_{\text{max}} \cdot \frac{|\theta|}{\theta_{\text{exterior}}}
-\]
-
-El signo de \(\theta\) determina el sentido del giro. Finalmente, la aceleración angular de \textit{steering} se calcula como:
-
-\[
-\alpha_{\text{steering}} = \frac{\omega_{\text{target}} - \omega}{t_{\text{target}}}
-\]
-
-donde \(\omega\) es la velocidad angular actual del agente. Este valor se limita posteriormente por la aceleración angular máxima \texttt{MaxAngularAcc}.
-
-\subsubsection{Ejemplo de Uso}
-En la Figura \ref{fig:align_basico} se muestra el comportamiento Align en acción: el NPC ajusta su orientación para igualar la del objetivo.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{img/align.png}
-    \caption{Comportamiento Align igualando la orientación del agente a la del objetivo.}
-    \label{fig:align_basico}
-\end{figure}
-
-En la imagen se puede apreciar cómo el agente gira progresivamente hasta quedar orientado en la misma dirección que el \texttt{target}. El giro no es instantáneo sino que se suaviza gracias a \texttt{timeToTarget}, evitando sacudidas bruscas. A diferencia de los comportamientos lineales anteriores, aquí no hay desplazamiento en el espacio: el agente permanece en su posición y únicamente modifica su rotación.
-
-\subsection{Anti-Align}
-\subsubsection{Introducción}
-El comportamiento \textbf{Anti-Align} es el opuesto directo a Align: en lugar de igualar su orientación a la del \texttt{target}, el agente busca girar hasta quedar orientado exactamente en sentido contrario, es decir, $180°$ alejado de la orientación del objetivo. Al igual que Align, no aplica ninguna fuerza lineal, solo aceleración angular, y emplea el mismo mecanismo de suavizado y zonas de velocidad.
-
-\subsubsection{Implementación y Parametrización}
-Para ejecutar Anti-Align son necesarios los siguientes parámetros:
-
-\begin{itemize}
-    \item \textbf{target} (\texttt{Agent}): referencia al agente cuya orientación opuesta se quiere alcanzar.
-    \item \textbf{timeToTarget}: tiempo en segundos en el que el agente intentará alcanzar la velocidad de rotación deseada. Actúa como suavizador del giro.
-\end{itemize}
-
-El algoritmo es idéntico al de Align salvo en el cálculo inicial de la diferencia angular, donde se suma $180°$ a la orientación del objetivo antes de restar la del agente:
-
-\[
-\theta = (\theta_{\text{target}} + 180°) - \theta_{\text{agent}}
-\]
-
-Este desplazamiento hace que el ángulo de referencia apunte en dirección contraria al \texttt{target}. A partir de ahí, la diferencia se normaliza al rango $(-180°, 180°)$ con \texttt{MapToRange} y se aplican las mismas tres zonas que en Align:
-
-Si $|\theta| < \theta_{\text{interior}}$, se frena la rotación activamente. Si $|\theta| > \theta_{\text{exterior}}$, se gira a velocidad máxima $\omega_{\text{max}}$. En caso contrario:
-
-\[
-\omega_{\text{target}} = \omega_{\text{max}} \cdot \frac{|\theta|}{\theta_{\text{exterior}}}
-\]
-
-El signo de $\theta$ determina el sentido del giro y la aceleración final es:
-
-\[
-\alpha_{\text{steering}} = \frac{\omega_{\text{target}} - \omega}{t_{\text{target}}}
-\]
-
-acotada por \texttt{MaxAngularAcc}.
-
-\subsubsection{Ejemplo de Uso}
-En la Figura \ref{fig:antialign_basico} se muestra el comportamiento Anti-Align en acción: el NPC gira hasta quedar orientado en dirección opuesta a la del objetivo.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{img/antialign.png}
-    \caption{Comportamiento Anti-Align orientando al agente en dirección opuesta al objetivo.}
-    \label{fig:antialign_basico}
-\end{figure}
-
-La imagen es visualmente muy similar a la de Align: el agente permanece en su posición y solo modifica su rotación. La diferencia clave es la orientación final resultante: si en Align el agente acaba mirando en la misma dirección que el \texttt{target}, aquí termina mirando exactamente hacia el lado contrario. El giro se suaviza de igual forma gracias a \texttt{timeToTarget}, evitando cualquier sacudida brusca.
-
-\section{Steering Delegado}
-\subsection{Face}
-\subsubsection{Introducción}
-El comportamiento de \textbf{Face} tiene como objetivo lograr que el agente gire sobre s\'i mismo hasta mirar directamente hacia el objetivo. Resulta fundamental para que las interacciones entre entidades sean creíbles, permitiendo, por ejemplo, que un NPC se gire a mirar al jugador cuando tiene que interactuar con el, o que un enemigo apunte visualmente hacia su presa antes de perseguirla. 
-
-\subsubsection{Implementación y Parametrización}
-Face consta del calculo geométrico del angulo necesario para mirar hacia un punto en el espacio usando los siguientes parámetros:
-
-\begin{itemize}
-    \item \textbf{target}: El objetivo hacia el cual el bot debe rotar para mirarlo de frente.
-    \item \textbf{timeToTarget}: El tiempo en segundos en el que el NPC intentar\'a alcanzar la velocidad de rotación necesaria. Funciona como un suavizador del movimiento.
-\end{itemize}
-\\
-En la practica, el script de Face se encarga de calcular la rotación que necesita hacer el NPC para mirar a su objetivo. Una vez se haya calculado esta orientación, el comportamiento no realiza un giro brusco sobre si mismo, sino que calcula el camino mas corto a recorrer, lo que genera un movimiento mas realista y fluido.
-\\
-\subsubsection{Ejemplo de Uso}
-En este proyecto, hemos implementado el comportamiento de Face en escenarios donde se necesita precisión visual o dirigir la atención del personaje. Por ejemplo, en la escena \texttt{Delegate/PathFollowing+Face+Wander.unity}, se utiliza \textbf{Face} como una funcionalidad diseñada para conseguir que el NPC siempre fije la mirada en un punto de interés especifico.
-
-Como se puede apreciar en la Figura \ref{fig:face_direccion}, el funcionamiento practico es muy sencillo y directo. Al asignar otro objeto o personaje en el parámetro \texttt{Target} del Inspector, el agente evalúa constantemente su posición. Mediante el sistema de pesos del script, se puede compaginar la ejecución simultanea del comportamiento Face con otras acciones como \textit{PathFollowing}, como se muestra en el ejemplo a continuación:
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{img/face_direccion.png} 
-    \caption{NPC orienta su rotación hacia un \textit{Target} en escena mientras sigue una ruta.}
-    \label{fig:face_direccion}
-\end{figure}
-En la imagen se muestra al personaje avanzando por un camino mediante PathFollowing (flecha roja). Durante este desplazamiento, el comportamiento Face actúa en segundo plano corrigiendo la rotación en tiempo real, garantizando que el modelo mire siempre de frente al objetivo (flecha verde).
-
-\subsection{Wander}
-\subsubsection{Introducción}
-Para dotar de realismo y fluidez al entorno del juego, resulta fundamental evitar que los NPCs permanezcan estáticos cuando no tienen una tarea u objetivo definido. El comportamiento de \texttt{Wander} (o deambular) resuelve este problema dotando al agente de un movimiento autónomo. El objetivo principal con esta implementación fue conseguir un desplazamiento natural de movimiento aleatorio, evitando los giros bruscos o el movimiento tembloroso (\textit{jittering}) que produciría una simple selección de rotaciones aleatorias, y logrando así una sensación de movimiento natural en la escena.
-\subsubsection{Implementación y Parametrización}
-\\
-Wander consta de la proyección de un circulo imaginario por delante del personaje usando los siguientes parámetros:
-\begin{itemize}
-    \item \textbf{wanderOffset}: Distancia proyectada hacia adelante desde el personaje hasta el centro del circulo imaginario.
-    \item \textbf{wanderRadius}: El radio de dicho circulo sobre el cual se calcula el movimiento aleatorio.
-    \item \textbf{wanderRate}: La variación máxima del angulo objetivo en cada \textit{frame}.
-    \item \textbf{showGizmos}: Permite visualizar en la escena las guías de depuración.
-\end{itemize}
-Durante la ejecución, el algoritmo calcula un punto objetivo posicionado sobre el perímetro de ese circulo, el cual va rotando aleatoriamente en cada \textit{frame}. Luego, se halla el angulo de giro mas corto posible y se ajusta la rotación del personaje de forma suave hacia ese punto.
-\\
-
-\textbf{Dificultades y Ajustes Experimentados:}
-Durante el desarrollo de \texttt{Wander}, nos encontramos con dos problemas visuales bastante molestos que tuvimos que corregir mediante código:
-\begin{itemize}
-    \item \textbf{El personaje daba vueltas sobre sí mismo:} Al principio, si el punto objetivo del círculo caía muy a la espalda del personaje, este a veces intentaba girar por el camino más largo (dando casi una vuelta completa) o giraba demasiado rápido pareciendo una peonza. Para solucionarlo, usamos la función \texttt{MapToRange} para asegurarnos de que el cálculo del ángulo siempre elija el giro más corto posible. Además, hicimos que la velocidad de rotación disminuya progresivamente a medida que termina de girar, evitando que se pase de largo y tiemble.
-
-    \item \textbf{El personaje se deslizaba de lado ("Patinaba"):} Otro problema fue que el personaje a veces aplicaba fuerza hacia el objetivo antes de haber terminado de rotar su cuerpo hacia él. Esto provocaba que caminara en diagonal o de lado, como si patinara sobre el hielo. La solución fue modificar el cálculo de la aceleración: obligamos a que el empuje hacia adelante siempre vaya estrictamente en la dirección a la que está mirando el personaje en ese momento (multiplicando su aceleración máxima por su vector direccional \textit{Forward}), sin importar dónde esté el objetivo calculando por el Wander.
-\end{itemize}
-
-\subsubsection{Ejemplo de Uso}
-En este proyecto, hemos compaginado el comportamiento de \texttt{Wander} con \texttt{WallAvoidance} para lograr que el agente deambule de forma autónoma y natural dentro de una zona delimitada. En la escena \texttt{Delegate/PathFollowing+Face+Wander.unity} utilizamos \texttt{Wander} como el estado base de movimiento. 
-
-Visualmente, el NPC calcula de forma constante su punto objetivo proyectado y se desplaza trazando curvas fluidas por el espacio continuo. Este "deambular" se mantiene activo como prioridad principal, pero está diseñado para ceder el control instantáneamente frente a otros steerings reactivos mediante el sistema de pesos del Árbitro. Así, si el agente detecta un obstáculo durante su patrulla aleatoria, el comportamiento de evasión toma el control temporalmente, demostrando una combinación perfecta entre exploración libre y navegación segura.
-\\
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.6\textwidth]{img/gizmo_wander.png}
-    \caption{Visualización en el editor (Gizmo) del comportamiento Wander.}
-    \label{fig:gizmo_wander}
-\end{figure}
-
-Como se aprecia en la Figura \ref{fig:gizmo_wander}, hemos creado un \textit{Gizmo} en Unity para facilitar la depuración visual de \texttt{Wander}:
-\begin{itemize}
-    \item \textbf{Círculo Azul:} Representa el área proyectada hacia el frente donde se generará nuestro objetivo. Su posición y tamaño se configuran desde el inspector con \texttt{wanderOffset} y \texttt{wanderRadius}.
-    \item \textbf{Esfera Roja:} Muestra la posición exacta del punto objetivo fluctuante que el agente intenta alcanzar en este instante. Este punto se desliza suavemente por el borde del círculo azul.
-    \item \textbf{Línea Verde:} Indica la dirección visual directa calculada desde el agente hacia la esfera roja, que es la dirección que en ese instante se usará para aplicar la fuerza matemática.
-\end{itemize}
-
-
-\subsection{Path Following sin PathOffset}
-\subsubsection{Introducción}
-\subsubsection{Implementación y Parametrización}
-\subsubsection{Ejemplo de Uso}
-
-\section{Detección de colisiones (WallAvoidance)}
-\subsection{Introducción}
-
-Todo NPC debe ser capaz de detectar un obstáculo, ya sean paredes o decoración de una escena, para luego ser capaz de rodearlo y evitarlo. Sin esta implementación, el personaje simplemente atravesaría el escenario y no se vería realista. Para ello se usan $bigotes$ como detectores para medir la distancia a la que está el obstáculo, aplicar las fuerzas necesarias y ser capaz de evitarlo a tiempo.
-
-
-\subsection{Implementación y Parametrización}
-
-\texttt{WallAvoidance} consta de la proyección de uno o más rayos desde la perspectiva del agente usando los siguientes parámetros:
-\begin{itemize}
-    \item \texttt{lookahead}: Distancia máxima que los detectores pueden "ver" hacia adelante.
-    \item \texttt{numWhiskers}: Cantidad de "bigotes" que tiene el NPC para detectar los obstaculos
-    \item \texttt{whiskerAngle}: Distancia que tienen los bigotes entre ellos si \texttt{numWhiskers > 1}.
-\end{itemize}
-
-Durante la ejecución, el algoritmo calcula hacia dónde miran los bigotes en función de la velocidad y orientación actual del agente. Luego se utiliza la función \texttt{Physics.Raycast} de Unity, la cual lanza una línea invisible y devuelve información sobre qué es lo que ha tocado.
-
-Cuando el algoritmo detecta un \textit{Hit} (es decir, el bigote ha hecho contacto con algo), se verifica cuál es la colisión más cercana de entre todos los bigotes. Para poder evitar el choque, usamos su componente normal. La \textit{Normal} de una pared no es más que un vector imaginario que sale apuntando completamente recto hacia afuera de forma perpendicular a la superficie (\texttt{closestHit.normal}). Una vez tenemos esa dirección, simplemente se empuja al agente multiplicando esa fuerza por su máxima aceleración (\texttt{MaxAcceleration}) causando que se aleje de golpe y evite el obstáculo satisfactoriamente.
-\\
-
-\textbf{Dificultades y Ajustes Experimentados:}
-A lo largo del desarrollo del proyecto, nos encontramos con varios problemas:
-\begin{itemize}
-    \item \textbf{Deteccion constante del Suelo:} Usando los mensajes de debug de los bigotes, nos dimos cuenta de que los bigotes detectaban de forma constante e inadvertida la superficie del suelo provocando que no detectase las paredes u otros obstaculos debido a que era el obstaculo mas cercano, esto se pudo solucionar ajustando la dsitancia minima con la que se tiene en contacto con un objeto, si era muy baja la distancia, esta se ignora ya que es el suelo. 
-    \item \textbf{Interferencia de grupo (Agentes Bloqueándose entre sí):} En los testeos por separado de WallAvoidance en escenarios vacíos, este se desenvolvía correctamente. Pero en el contexto real de la escena, apareció un problema cuando colocamos 2 NPC juntos uno detras de otro, los rayos de WallAvoidance detectaban a un NPC como obstaculo, obligando al agente perseguidor a esquivarlo tomando una dirección totalmente opuesta a la esperada.
-    \item \textbf{Rebote de Normales en Entornos Estrechos:} Otro factor interesante lo observamos al inicio de la escena en zonas estrechas con el agente de "3 bigotes" y el de "2 bigotes". Al arrancar rodeado de obstáculos cercanos a la vez, recibía lecturas ambas paredes en la izquierda y en la derecha. Las repulsiones procedentes de la sumatoria de estas normales ralentizaban mucho el movimiento inicial por la latencia en las resoluciones opuestas.
-\end{itemize}
-
-
-\subsection{Ejemplo de Uso}
-
-WallAvoidance se implementa universalmente como un comportamiento prioritario en conjunto con otros comportamientos como puede ser Wander o Seek. Actúa en segundo plano mientras el agente ejecuta otros Steerings. Solo se activa  ante la posible detección de colisiones, devolviendo el control al objetivo primario en cuanto detecta que el área frontal está despejada.
-\\
-
-A continuación se mostrara como se ven los bigotes gracias al Gizmo. En la Figura 2 se puede ver instantes antes de que se detecten una colisión contra un muro. En este caso el NPC detectara la pared, y la normal de la pared hará posible el evitar la colisión.
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.6\textwidth]{img/gizmo_wallavoidance.png}
-    \caption{Gizmo de los bigotes de WallAvoidance.}
-    \label{fig:gizmo_wallavoidance}
-\end{figure}
-\\
-
-Como se comento anteriormente, el Steering de WallAvoidance se suele compaginar con otros scripts, por ejemplo en la escena "WallAvoidance" se aplica a un NPC WallAvoidance y Seek. Como se puede ver en la Figura 3, Seek es de manera principal el que controla el personaje pero en el momento que se detecte una colisión a 3 de distancia, el script de detección de colisiones al tener mas peso este tomara el control sobre seek y evitara esta colisión.
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.6\textwidth]{img/inspector_wallavoidance.png}
-    \caption{Inspector del WallAvoidance con Seek.}
-    \label{fig:inspector_wallavoidance}
-\end{figure}
-
-
-\section{Steering combinado (Árbitros)}
-\section{Formaciones}
-(PROBLEMAS TENIDOS SERIOG)
-Problema 1 — Celdas del destino no se verificaban al crear la formación Al pulsar F, la comprobación de celdas bloqueadas se ejecutaba dentro de 
-
-MoveGrid()
-, antes de que los agentes estuvieran asignados a sus slots. Como los slots estaban vacíos, la función no encontraba nada que reasignar y quedaba inútil. Solución: se movió la llamada a 
-
-ReasignarCeldasOcupadas()
- para que se ejecute justo después del bucle de 
-
-LinkToSlot()
-, cuando todos los NPCs ya están vinculados a sus celdas.
-
-Problema 2 — Formación incorrecta al pulsar F más de una vez Al disolver la formación con G y volver a pulsar F con nuevos agentes, el objeto 
-
-GridFormation
- seguía existiendo con datos de la formación anterior (slots con referencias antiguas). Al reutilizarlo, los nuevos agentes se asignaban sobre un estado corrupto y la formación salía incorrecta. Solución: en 
-
-Formar()
- se libera y destruye siempre el grid existente antes de crear uno nuevo, garantizando un estado limpio en cada nueva formación.
-
-Problema 3 — OverlapSphere detectaba el terreno como obstáculo Al comprobar si una celda estaba libre de obstáculos, el OverlapSphere se lanzaba al ras del suelo y con radio igual a cellSize, lo que hacía que el collider del terreno entrara en la esfera y todas las celdas se consideraran bloqueadas. Esto impedía colocar la formación en cualquier punto del mapa. Solución: se elevó el punto de muestreo 0.5 unidades sobre el suelo y se redujo el radio a cellSize * 0.9f, suficiente para detectar paredes y objetos reales sin interferir con el terreno.
-
-Problema 4 — 
-
-WallAvoidance
- y 
-
-Seek
- activos durante el reposicionamiento en celda Tras la fase de Wander, los seguidores tenían 
-
-WallAvoidance
- y 
-
-Seek
- activos. Al llamar a 
-
-AgentsToCell()
- para reformar, estos behaviours seguían empujando a los NPCs y competían con Arrive + Align, causando que los agentes no llegaran correctamente a sus posiciones. Solución: se añadió la desactivación explícita de 
-
-WallAvoidance
- y 
-
-Seek
- dentro de 
-
-AgentsToCell()
-, antes de activar los behaviours de posicionamiento.
-
-Problema 5 — El bucle Wander intentaba volver al destino original Al terminar el Wander, el código llamaba a grid.LeaderFollowing(), que mandaba al líder de vuelta al último punto de clic en el mapa. El comportamiento correcto es que los seguidores se formen alrededor de donde esté el líder en ese momento, sin que este se mueva a ningún sitio previo. Solución: se simplificó 
-
-FinishTimer()
- para que, al expirar el temporizador, el grid se recentre en la posición actual del líder y se llame directamente a 
-
-AgentsToCell()
-, sin forzar ningún desplazamiento previo.
-
-Descripción del problema
-En el sistema de formaciones (Ataque y Defensa), cada patrón define una celda fija para el líder (
-
-(2,1)
- en Ataque, 
-
-(2,3)
- en Defensa). Cuando se ordena mover la formación, el sistema comprueba si las celdas del grid están libres de obstáculos (objetos con tag OCUPADO) y reasigna los seguidores a celdas alternativas en caso de colisión. Sin embargo, el líder estaba excluido explícitamente de este proceso:
-
-csharp
-if (slots[i, j].npc == null || slots[i, j].leaderCell) continue;
-Esto provocaba que, si la celda destino del líder coincidía con un obstáculo, el líder se desplazara igualmente hasta esa posición, superponiéndose con el objeto. Adicionalmente, 
-
-AgentsToCell()
- no volvía a comprobar si las celdas seguían libres en el momento en que los NPCs partían hacia ellas.
-
-Solución aplicada
-Se aplicaron dos correcciones en 
-
-GridFormation.cs
-:
-
-1. El líder participa en la reasignación. Se eliminó la condición que lo excluía. Si su celda está bloqueada, se busca la primera celda libre y se reubica allí. El flag leaderCell se transfiere a la nueva celda, por lo que el resto del sistema sigue identificando correctamente al líder sin cambios adicionales:
-\subsection{Estructuras Fijas}
-\subsection{Criterio Leader Following}
-
-El \textbf{Leader Following} es un criterio de movimiento en formación en el que un conjunto de agentes seguidores se desplazan dinámicamente persiguiendo a un líder, manteniendo su cohesión como grupo sin colisionar entre sí ni solaparse con el propio líder. A diferencia de las estructuras fijas, en las que cada NPC se dirige directamente a su celda, durante el Leader Following los seguidores siguen al líder en tiempo real mientras este se mueve, y solo se recolocan en sus celdas exactas una vez que el líder ha llegado a destino.
-
-El movimiento de cada seguidor resulta de la \textbf{combinación ponderada} de tres comportamientos de steering:
-
-\subsubsection{Arrive}
-
-Actúa como el motor principal del seguimiento. Cada seguidor tiene como objetivo directo el líder y se desplaza hacia él con frenado progresivo. Gracias a la zona de frenado de Arrive, el seguidor no sobrepasa al líder ni oscila alrededor de él, lo que produce un movimiento fluido y controlado conforme reduce la distancia.
-
-\subsubsection{Flee}
-
-Funciona como mecanismo anti-solapamiento con el líder. El comportamiento Flee solo se activa cuando la distancia entre el seguidor y el líder cae por debajo de un umbral crítico (establecido en 1.2 unidades en la implementación), momento en el que el seguidor es empujado en sentido contrario para evitar que se incruste sobre el líder. Cuando el seguidor está suficientemente lejos, Flee permanece desactivado para no interferir con Arrive.
-
-\subsubsection{Separation}
-
-La Separación es un steering que genera fuerzas de repulsión entre agentes vecinos para impedir que se solapen entre sí. A diferencia de Flee, que reacciona frente al líder, Separation actúa entre los propios seguidores.
-
-El algoritmo detecta, mediante un \texttt{OverlapSphere} con radio \texttt{desiredSeparation}, todos los agentes \texttt{AgentNPC} que se encuentren en el entorno inmediato del seguidor. Para cada vecino encontrado, calcula una fuerza de repulsión proporcional a la inversa del cuadrado de la distancia:
-
-\[
-f_i = \min\!\left(\texttt{maxAcceleration},\; \frac{\texttt{decayCoefficient}}{d_i^2}\right)
-\]
-
-La dirección de esta fuerza apunta desde el vecino hacia el propio agente, de modo que cuanto más cerca esté el vecino, mayor es la repulsión. Las contribuciones de todos los vecinos se suman y el resultado se limita a la aceleración máxima del agente.
-
-Los parámetros que controlan el comportamiento son:
-
-\begin{itemize}
-    \item \textbf{Desired Separation (1.8)}: radio de influencia en unidades de mundo. Solo los agentes dentro de esta esfera generan fuerza de repulsión.
-    \item \textbf{Decay Coefficient (1)}: controla la intensidad de la repulsión. Un valor de 1 produce una caída cuadrática natural; aumentarlo haría la separación más agresiva incluso a distancias mayores.
-    \item \textbf{Max Neighbours (8)}: límite de vecinos procesados por frame. Evita picos de coste computacional en situaciones de alta densidad de agentes.
-\end{itemize}
-
-\subsubsection{Resultado del movimiento combinado}
-
-La suma de los tres comportamientos produce un movimiento coherente: Arrive arrastra al seguidor hacia el líder, Flee lo empuja si se acerca demasiado, y Separation le impide fusionarse con sus compañeros. El resultado visible es que el grupo se desplaza como una masa orgánica y cohesionada detrás del líder, sin apilamientos ni cruces.
-
-En la Figura \ref{fig:leader_following} se muestra el comportamiento del grupo durante el desplazamiento: los seguidores mantienen distancias razonables entre sí mientras persiguen al líder a través de la escena.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.82\textwidth]{img/leaderfollowing.png}
-    \caption{Grupo de seguidores en movimiento aplicando Leader Following. El líder avanza hacia su destino mientras los seguidores se mantienen cohesionados gracias a la combinación de Arrive, Flee y Separation.}
-    \label{fig:leader_following}
-\end{figure}
-
-\FloatBarrier
-
-\subsubsection{Pesos aplicados y justificación}
-
-Los pesos asignados a cada steering (visibles en el Inspector de Unity) determinan la importancia relativa de cada comportamiento en el vector de aceleración final:
-
-\begin{itemize}
-    \item \textbf{Arrive (peso 4)}: recibe el peso más alto porque es el único responsable de que los seguidores alcancen y mantengan su posición relativa al líder. Sin una contribución dominante de Arrive, los demás comportamientos podrían desviar al seguidor indefinidamente y perder al líder.
-
-    \item \textbf{Separation (peso 3)}: el segundo peso en importancia, ya que los seguidores se mueven en grupo y los solapamientos laterales son constantes. Una contribución de separación relativamente alta garantiza que los agentes mantengan distancias razonables entre sí durante todo el trayecto, sin que la cohesión del grupo se rompa por acumulación.
-
-    \item \textbf{Flee (peso 2)}: es el de menor peso porque solo interviene de forma puntual cuando la distancia al líder cae por debajo de 1.2 u. Su contribución ha de ser suficiente para empujar al seguidor hacia atrás en ese momento crítico, pero sin dominar el movimiento general; de lo contrario, el seguidor se alejaría del líder en lugar de mantenerse cerca de él.
-\end{itemize}
-
-Esta jerarquía de pesos (4-3-2) asegura que el grupo siga al líder de forma robusta, mantenga orden interno entre seguidores, y se separe del líder solo cuando es estrictamente necesario.
-
-\section{LRTA*}
-
-LRTA* (\textit{Learning Real-Time A*}) es un algoritmo de búsqueda en tiempo real que no necesita calcular la ruta completa antes de moverse. En cada decisión, el agente observa un entorno local, aprende (actualiza su estimación de coste) y ejecuta solo el siguiente movimiento. Este enfoque es especialmente útil en videojuegos porque permite reaccionar de forma continua, con coste computacional acotado por frame.
-
-Formalmente, LRTA* mantiene una función de coste aprendido $h(s)$ para cada celda $s$. En cada iteración se aplica una actualización local tipo Bellman:
-\[
-h(u) \leftarrow \max\left(h(u),\; \min_{v \in N(u)}\left(c(u,v) + h(v)\right)\right)
-\]
-donde $N(u)$ son los vecinos transitables y $c(u,v)$ es el coste de transición.
-
-
-\subsection{Diseño e implementación aplicada en nuestro proyecto}
-
-La implementación se ha organizado por módulos para separar claramente representación del mapa, heurística, construcción del espacio local y control del agente:
-\begin{itemize}
-    \item \textbf{Representación del entorno (\texttt{Graph.cs})}: define la rejilla ($nFilas$, $nColumnas$, $tamCelda$), convierte coordenadas mundo-grid y detecta celdas bloqueadas mediante \texttt{Physics.OverlapBox} y etiqueta \texttt{OCUPADO}.
-    \item \textbf{Heurísticas (\texttt{HeuristicaType} + implementaciones)}: estrategia intercambiable (Manhattan, Chebyshev y Euclídea). Además de estimar distancia, cada heurística define si permite diagonales.
-    \item \textbf{Espacio local (\texttt{LssBuilder.cs})}: construye el \textit{Local Search Space} (LSS) con un BFS acotado por \texttt{maxLSSNodes}.
-    \item \textbf{Núcleo LRTA* (\texttt{LRTA.cs})}: integra inicialización de costes, actualización de valores, selección de acción y conexión con el steering \texttt{Seek} mediante un objetivo virtual.
-\end{itemize}
-
-La estructura interna del flujo en \texttt{LRTAStar(start, goal)} sigue tres fases por ciclo:
-\begin{enumerate}
-    \item Construcción del LSS local alrededor del estado actual.
-    \item Aprendizaje de costes en ese LSS (\texttt{ValueUpdateStep}).
-    \item Elección de la mejor acción inmediata (\texttt{GetBestNeighbor}).
+\begin{enumerate}[leftmargin=1.5em]
+    \item Si no tenia objetivo, apunta directamente al atacante.
+    \item Si ya tenia objetivo, calcula los ratios $FA/FD$ contra ambos candidatos (a si mismo, en su bioma actual) y conserva al mas peligroso.
+    \item Si alguno de los dos pertenece a la lista de \emph{objetivos preferidos} de su perfil tactico (definido en \texttt{TacticasPorTipo}, p.~ej.\ el Lancero prioriza Tanques y Caballeros), recibe un bonus del 30\,\% en su valoracion.
 \end{enumerate}
 
-Con este diseño, el sistema está desacoplado: se pueden cambiar heurísticas, tamaño del LSS o política de recálculo sin rehacer el resto del algoritmo.
+% =====================================================================
+\section{Comportamiento de los agentes}
 
+Cada NPC tiene tres estados individuales (\texttt{estadoNPC.cs}):
+\textbf{Vigilancia}, \textbf{Ataque} y \textbf{Defensa}. Sobre estos, el
+bando aplica un modo estrategico (vease seccion siguiente).
 
-\subsection{Generación y validación del grafo de búsqueda}
+\subsection{Estado Vigilancia}
 
-Antes de planificar, se validan inicio y objetivo: deben estar dentro de la rejilla y no ser celdas ocupadas. El coste aprendido se almacena en \texttt{cellCosts[row,col]}:
-\begin{itemize}
-    \item Celdas bloqueadas $\rightarrow +\infty$.
-    \item Celdas transitables $\rightarrow h$ inicial según heurística elegida.
+El NPC patrulla entre waypoints predefinidos (\texttt{NPCPatrol.cs}). En cada
+\texttt{Update} de \texttt{PercepcionNPC} se ejecuta:
+
+\begin{lstlisting}[caption={Pseudocodigo del bucle de PercepcionNPC en Vigilancia},language=]
+Cada frame:
+  1. Modo estrategico = EstrategiaBando.GetModo(miBando)
+  2. Si NecesitaCuracion()  o  DebeHuirPorInfluencia():
+        enemigoActual = null
+        Ir al hospital propio
+        return
+
+  3. Cada 0.2s recalcular:
+        radio = stats.radioPercepcion
+        Si modo == GuerraTotal -> radio *= 2.5
+        Si estado == Ataque    -> radio *= 1.6
+        Si bioma actual == perfil.biomaPreferido -> radio *= 1.2-1.5
+        enemigoActual = mejor candidato dentro de radio
+
+  4. Si enemigoActual != null:
+        Cancelar patrulla
+        Si distancia <= rangoAtaque -> ATACAR (cada velAtaque)
+        Si distancia > rangoAtaque  -> perseguir hasta rangoAtaque * distPref
+     Si no:
+        Estado Defensa  -> volver al ancla si te has alejado
+        Estado Ataque   -> ir a base enemiga
+        Estado Vigilancia + bando Ofensivo/GuerraTotal -> ir a base enemiga
+        Estado Vigilancia + bando Defensivo -> reanudar patrulla
+\end{lstlisting}
+
+\subsection{Estado Ataque}
+
+La patrulla queda desactivada de forma permanente (mientras el estado
+sea Ataque). El radio de percepcion crece $\times 1.6$ y, si no hay
+enemigos en vista, el NPC avanza hacia la base enemiga sin esperar a que
+el bando lo ordene.
+
+\subsection{Estado Defensa}
+
+El NPC se ancla a la posicion que tenia al entrar en este estado. Si por
+una persecucion se aleja, vuelve al ancla en cuanto pierde el objetivo.
+No se desplaza a buscar combate.
+
+\subsection{Tacticas por tipo de unidad}
+
+\texttt{TacticasPorTipo.cs} expone un \texttt{PerfilTactico} por tipo
+con los siguientes campos relevantes:
+
+\begin{table}[H]
+\centering
+\caption{Perfiles tacticos por tipo de unidad}
+\label{tab:perfiles}
+\begin{tabular}{l|c|c|c|c}
+\toprule
+\textbf{Tipo} & \textbf{vidaCriticaPct} & \textbf{distCombatePref} & \textbf{Bioma preferido} & \textbf{Aguanta influencia} \\
+\midrule
+Caballero  & 0.30 & 1.0  & Pradera & No \\
+Arquero    & 0.45 & 1.6  & Pradera & No \\
+Lancero    & 0.25 & 1.0  & Urbano  & No \\
+Tanque     & 0.15 & 1.0  & Camino  & \textbf{Si} \\
+Explorador & 0.50 & 1.2  & Bosque  & No \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Estas diferencias provocan comportamientos visiblemente distintos:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \textbf{Tanque} es el unico que no huye por influencia enemiga ($\text{aguantaInfluenciaEnemiga} = \text{true}$). Aguanta hasta el 15\,\% de vida.
+    \item \textbf{Explorador} tiene el umbral de huida mas alto (50\,\%) y un bonus de agresividad de $\times 1.5$ en su bioma preferido (Bosque).
+    \item \textbf{Arquero} mantiene la distancia: persigue hasta $1.6 \cdot \text{rangoAtaque}$ en lugar de pegarse al enemigo (\emph{kiting}).
+    \item \textbf{Lancero} prioriza atacar al Tanque y al Caballero (objetivos preferidos).
+    \item \textbf{Caballero} prioriza Arquero y Explorador.
 \end{itemize}
 
-El vecindario se construye con \texttt{GetTraversableNeighbours}. Si la heurística no permite diagonal (caso Manhattan), solo se usan movimientos ortogonales. Si hay diagonal (Chebyshev/Euclídea), se evita \textit{corner cutting}, es decir, atravesar una esquina entre dos bloqueos.
+\subsection{Decision de huida (uso del mapa de influencia)}
 
-El coste de movimiento usado es:
-\[
-c(u,v)=
-\begin{cases}
-1 & \text{si el movimiento es ortogonal}\\
-2 & \text{si el movimiento es diagonal}
-\end{cases}
-\]
+En cada tick, el NPC consulta al \texttt{MapaInfluencia} la influencia
+enemiga en su posicion actual. Si
 
+\begin{formulabox}
+\centering
+$\text{vidaPorcentaje} < \text{perfil.vidaCriticaPct} \quad \wedge \quad \text{influenciaEnemigaLocal} \geq \text{umbral}$
+\end{formulabox}
 
-\subsection{LRTA* un paso (fase de preparación)}
+interrumpe lo que estaba haciendo y se dirige al hospital propio
+(salvo el Tanque). Esta es la integracion explicita del mapa de
+influencia en la toma de decisiones individual exigida por el
+requisito (f).
 
-Para verificar que el aprendizaje era correcto, primero trabajamos con una versión de comportamiento equivalente a \textbf{1 paso de decisión por iteración}: el agente calcula, aprende y avanza solo al mejor vecino. En esta fase observamos el patrón típico de LRTA*: en zonas ambiguas, el NPC puede avanzar y retroceder temporalmente hasta que los costes aprendidos penalizan la ruta mala.
+% =====================================================================
+\section{Estrategia de bando y Guerra Total}
 
-Ese comportamiento de ``ida y vuelta'' fue clave para validar que el aprendizaje estaba activo: cuando una zona intermedia del mapa acumula coste alto por repetición (máximo local de coste aprendido), el agente deja de insistir en ese corredor y estabiliza el avance por la alternativa correcta.
+\texttt{EstrategiaBando.cs} mantiene un modo por bando: Defensivo,
+Ofensivo o GuerraTotal. Cubre los requisitos (b) y (g) del enunciado.
 
-En nuestra implementación, esta dinámica se ve reforzada porque se puede recalcular en cada celda (\texttt{recalculateEachCell}), y porque la acción final siempre se toma tras actualizar valores con \texttt{ValueUpdateStep}.
+\subsection{Modo Defensivo}
 
+Las unidades en Vigilancia patrullan sus rutas; las unidades en
+Defensa se anclan a su posicion; las unidades en Ataque siguen siendo
+agresivas. Si un enemigo entra en el radio de percepcion, se le
+persigue, pero ningun NPC en Vigilancia se aleja proactivamente.
 
-\subsection{LRTA* con n-pasos y espacio local (LSS)}
+\subsection{Modo Ofensivo}
 
-Una vez validado el caso base, ampliamos a LRTA* con \textbf{n-pasos de exploración local} mediante LSS. El parámetro \texttt{maxLSSNodes} controla cuántos nodos del entorno se consideran antes de actuar:
-\begin{itemize}
-    \item Si \texttt{maxLSSNodes} es pequeño, el comportamiento se aproxima al LRTA* más reactivo (muy local).
-    \item Si \texttt{maxLSSNodes} aumenta, el aprendizaje por iteración es más informativo y reduce oscilaciones.
+Las unidades en Vigilancia abandonan la patrulla y avanzan hacia la base
+enemiga (\texttt{WayPoints.GetBase(enemigo)}). Si encuentran enemigos
+por el camino, los engagean. Las unidades en Defensa siguen ancladas.
+
+\subsection{Modo Guerra Total}
+
+Anula los modos individuales de ambos bandos. Aumenta el radio de
+percepcion de cada NPC ($\times 2.5$ por defecto), de modo que ven
+enemigos mucho mas lejos. Todos los NPCs entran en modo agresivo y
+avanzan a por la victoria. Se activa con la tecla \texttt{T} y se
+muestra un cartel rojo en pantalla \texttt{*** GUERRA TOTAL ***}.
+
+\subsection{Indicador en pantalla}
+
+\texttt{EstrategiaBando} dibuja en la esquina superior derecha el modo
+actual de cada bando:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item En blanco/rojo claro: \texttt{Rojo: Defensivo} / \texttt{Azul: Defensivo}.
+    \item En rojo si esta activa Guerra Total.
 \end{itemize}
 
-En términos prácticos, este espacio local mejora la eficiencia global porque evita ``reaprender'' lo mismo en cada celda con información mínima. En cada ciclo se actualiza un bloque de estados vecinos (no solo el estado actual), de forma que la política mejora más rápido con menos pasos físicos del NPC.
+% =====================================================================
+\section{Mapa tactico de influencia}
 
+\subsection{Calculo}
 
-\subsection{Ejemplo ficticio del cálculo de n-pasos}
+El mapa se almacena en dos matrices del tamaño del grid: \texttt{infRojo}
+e \texttt{infAzul}. Cada \texttt{intervaloActualizacion} segundos
+(0.5\,s por defecto) se hace un barrido completo:
 
-Supongamos un mapa de $7\times7$, inicio en $(1,1)$, meta en $(5,5)$ y un obstáculo central que obliga a rodear. Si fijamos \texttt{maxLSSNodes = 6}:
-\begin{enumerate}
-    \item El BFS del LSS toma 6 celdas alcanzables desde $(1,1)$.
-    \item En esas 6 celdas, se aplica la actualización:
-    $h(u)=\min_{v\in N(u)}(c(u,v)+h(v))$ (sin disminuir por debajo del valor ya aprendido).
-    \item Después se selecciona la mejor acción desde el estado actual:
-    \[a^*=\arg\min_{v\in N(s)}\left(c(s,v)+h(v)\right)\]
-    \item El agente avanza solo a ese vecino y repite el proceso en la siguiente iteración.
+\begin{enumerate}[leftmargin=1.5em]
+    \item Se limpian las dos matrices.
+    \item Por cada NPC vivo, se identifica su nodo y se "irradia" influencia a todas las celdas dentro de un radio configurable. La formula del aporte es:
+    \begin{formulabox}
+    \centering
+    $\text{aporte}(d) = \dfrac{\text{poder}_{NPC} \cdot \text{pesoPoder}}{1 + d^2}$
+    \end{formulabox}
+    donde $d$ es la distancia en celdas. Esto crea picos intensos cerca del NPC y decae suavemente.
+    \item Se vuelca la influencia neta al campo \texttt{Node.influenceValue} para compatibilidad con consumidores que no usen el API directamente.
 \end{enumerate}
 
-Si en una iteración el frente local detecta que seguir ``hacia el obstáculo'' implica valores crecientes, el coste aprendido de esa zona sube y en las siguientes decisiones el algoritmo prefiere bordear el bloqueo. Esa es la razón de que, con n-pasos, el comportamiento sea más estable y converja antes que en el caso puramente de 1 paso.
+\subsection{Uso en pathfinding (req. i)}
 
+Aestrella consulta a \texttt{MapaInfluencia} en cada paso del A*:
 
-\subsection{Heurísticas}
+\begin{formulabox}
+\centering
+$\text{coste}(n \to v) = \text{stepCost} + \text{costeBioma}_{tipo}(v) + \text{costeInfluenciaEnemiga}_{bando}(v)$
+\end{formulabox}
 
-La selección de heurística se realiza mediante \texttt{enum} y un \texttt{switch} en tiempo de inicialización:
+donde
 
-\subsubsection{Manhattan}
+$$\text{costeInfluenciaEnemiga}_{bando}(v) = \text{Round}\big(\text{influencia}_{enemigo}(v) \cdot \text{pesoCostePathfinding}\big)$$
 
-\[
-h(n)=|x_n-x_g| + |y_n-y_g|
-\]
-No permite diagonales y es coherente con movimientos ortogonales en rejilla.
+Como solo se suma la influencia \emph{enemiga} (siempre $\geq 0$), no se
+rompe la admisibilidad de la heuristica. La tecla \texttt{I} permite
+desactivar este componente para comparar comportamientos en la demo.
 
-\subsubsection{Chebychev}
+\subsection{Visualizacion: minimapa (req. e)}
 
-\[
-h(n)=\max\left(|x_n-x_g|,|y_n-y_g|\right)
-\]
-Permite diagonales y modela bien desplazamientos en 8 direcciones con coste uniforme aproximado.
+\texttt{MinimapaInfluencia.cs} pinta un \texttt{Texture2D} del tamaño
+del grid en la esquina superior izquierda (toggle con tecla \texttt{M}).
+Cada celda se colorea:
 
-\subsubsection{Euclídea}
-
-\[
-h(n)=\sqrt{(x_n-x_g)^2 + (y_n-y_g)^2}
-\]
-Permite diagonales y aporta una estimación geométrica directa de la distancia al objetivo.
-
-
-\subsection{Integración con steering y depuración}
-
-La salida de LRTA* se integra con el movimiento del NPC mediante un objetivo virtual, que alimenta el comportamiento \texttt{Seek}. Así se desacopla el razonamiento discreto (grid) del movimiento continuo del agente en mundo 3D.
-
-Además, se implementaron mecanismos de depuración visual muy útiles durante el desarrollo:
-\begin{itemize}
-    \item Dibujo del último LSS en verde semitransparente.
-    \item Dibujo del último tramo de camino calculado.
-    \item Visualización de costes aprendidos por celda (\textit{wire cubes} + etiqueta numérica).
+\begin{itemize}[leftmargin=1.5em]
+    \item Tonalidad de \textbf{rojo} si la influencia neta es positiva (Rojo dominante).
+    \item Tonalidad de \textbf{azul} si la influencia neta es negativa (Azul dominante).
+    \item Color de bioma si no hay influencia (Pradera verde, Camino marron, Bosque verde oscuro, Urbano gris).
+    \item Negro si el nodo no es transitable.
 \end{itemize}
 
-Esta instrumentación permitió comprobar en tiempo real cómo evolucionaban los valores aprendidos y por qué el agente cambiaba de decisión en cada iteración.
+% =====================================================================
+\section{Pathfinding A*}
 
-\section{Implementación de elementos Opcionales}
-\subsection{Jumper}
-Introduccion:
-Implementacion y Parametrizacion:
-Ejemplo de Uso:
-\section{Mecanismo de depuración}
-GIZMO
-\section{Manual de uso}
-\subsection{Arbitros.unity (Automático)}
+\subsection{Algoritmo}
 
-Esta escena funciona de manera autónoma sin necesidad de que el usuario controle a los personajes. En ella se pueden observar tres NPCs en una zona con puntos que forman un camino y un obstáculo en medio. Cada NPC tiene una configuración distinta que demuestra cómo los scripts se pueden combinar para dar más realismo y personalidad al movimiento.
+\texttt{Aestrella.cs} implementa A* clasico sobre el grid generado por
+\texttt{GridManager.cs}. Para cada vecino:
 
-\begin{itemize}
-    \item \textbf{NPC PathFollower + Face + Jumper:} 
-    Este agente realiza un seguimiento de camino (\textit{Path Following}) y, en determinados puntos de su recorrido, realiza un salto. Esto se consigue ajustando los pesos: el comportamiento de salto tiene prioridad sobre el seguir el camino en el momento del salto. Además, se mantiene siempre orientado (\textit{Face}) hacia otro NPC mientras se desplaza.
+\begin{align*}
+g(v) &= g(\text{padre}) + \text{stepCost}(\text{padre}, v) + \text{costeBioma}(v) + \text{costeInfluencia}(v) \\
+f(v) &= g(v) + h(v)
+\end{align*}
 
-    \item \textbf{NPC Wander + Leave + WallAvoidance:} 
-    Es un agente que se mueve de forma libre por el escenario. 
-    \begin{itemize}
-        \item \textbf{Movimiento genérico:} Deambula aleatoriamente por el escenario gracias al \textit{Wander} y evita chocar con las paredes usando un \textit{WallAvoidance} de 3 bigotes.
-        \item \textbf{Maniobra de Huida:} En el momento en que otro NPC se le acerca demasiado, se activa el comportamiento \textit{Leave}. Como este tiene más peso que el deambular, el NPC deja de dar vueltas e intenta alejarse del perseguidor hasta que alcanza una distancia segura; una vez lejos, retoma su movimiento aleatorio.
-    \end{itemize}
+donde \texttt{stepCost} vale 10 (ortogonal) o 14 (diagonal). El
+algoritmo continua hasta extraer el nodo objetivo o vaciar la frontera.
 
-    \item \textbf{NPC Seek + Face + WallAvoidance:} 
-    Este personaje se encarga de perseguir constantemente a su objetivo. Su lógica combina la persecución directa (\textit{Seek}) con la orientación constante hacia lo que persigue. Sus movimientos están limitados por el \textit{WallAvoidance}, lo que garantiza que, aunque quiera alcanzar a su objetivo, no atraviese paredes ni objetos del escenario.
+\subsection{Heuristicas}
+
+Se ofrecen tres heuristicas seleccionables en el Inspector:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \textbf{Manhattan}: para movimientos solo en ortogonal.
+    \item \textbf{Euclidea}: distancia real.
+    \item \textbf{Chebyshev}: para movimientos donde diagonal y ortogonal cuestan lo mismo.
 \end{itemize}
 
-Al ver la escena, se aprecia cómo los tres interactúan: mientras uno huye y otro persigue, el sistema de pesos evita que choquen con el entorno, logrando que el movimiento sea fluido y no se quede bloqueado contra los obstáculos.
+Las tres devuelven la distancia \emph{multiplicada por 10}. El motivo
+es directo: si la heuristica devolviera distancias en celdas (1, 2,
+3...) infraestimaria drasticamente el coste real (10 o 14 por paso),
+ralentizando enormemente la convergencia. El factor $\times 10$ las
+hace comparables sin romper la admisibilidad.
 
-\subsection{PathFinding.unity (Automático / Selección de Heurística)}
-Esta escena se basa en la resolución de un pequeño laberinto donde el NPC debe llegar hasta la meta mediante el sistema de búsqueda de rutas \textit{LRTA*} mencionado anteriormente. El funcionamiento es sencillo: el algoritmo que se seleccione en el inspector del NPC será el que se use para la heurística, pudiendo elegir entre \textbf{Manhattan}, \textbf{Chebyshev} o \textbf{Euclídea} según se prefiera. Durante el recorrido, el NPC detecta y evita las paredes y obstáculos del escenario por sí mismo hasta que consigue alcanzar la meta.
+\subsection{Pathfinding tactico}
 
-\subsection{Seek-Flee-Arrive.unity (Manual)}
+Como se explica en la seccion del mapa de influencia, el A* lee el
+\texttt{costeInfluenciaEnemiga} si el flag \texttt{usarPathfindingTactico}
+esta activo. Esto cumple el requisito (i) del enunciado, que pide
+\emph{añadir} informacion tactica al coste (no contar solo el coste
+del bioma).
 
-Esta escena es distinta a las anteriores, ya que requiere la intervención del usuario para funcionar. En ella existen tres NPCs y un jugador controlado manualmente. Cada NPC presenta un comportamiento reactivo diferente:
+% =====================================================================
+\section{Patrullas y respawn}
 
-\begin{itemize}
-    \item \textbf{NPC Seek:} Se encarga de localizar al jugador y dirigirse hacia su posición en todo momento. Su movimiento es constante y no reduce la velocidad al acercarse, intentando alcanzar el objetivo de forma directa.
-    \item \textbf{NPC Flee:} Realiza el comportamiento opuesto a \textit{Seek}. Su lógica se basa en detectar la posición del jugador y huir de él, alejándose de manera constante para mantener la mayor distancia posible.
-    \item \textbf{NPC Arrive:} Actúa de manera similar a \textit{Seek} en cuanto a la dirección, pero con una diferencia clave en la gestión de la velocidad. \textit{Arrive} detecta cuándo está cerca del jugador y comienza a desacelerar progresivamente para detenerse exactamente en su posición, a diferencia de \textit{Seek}, que mantendría su velocidad máxima hasta el final.
+\subsection{Patrullas (req. j)}
+
+\texttt{NPCPatrol.cs} hace que el NPC visite ciclicamente una lista de
+\texttt{Transform} (\texttt{waypointsRojo} o \texttt{waypointsAzul}
+segun su bando). Cada vez que llega al waypoint actual, calcula el
+camino al siguiente con A* y se lo entrega al \texttt{PathFollowing}
+del Bloque 1.
+
+La patrulla se desactiva automaticamente cuando \texttt{PercepcionNPC}
+detecta un enemigo o cuando el estado individual cambia a Ataque o
+Defensa, y se reactiva al volver a Vigilancia sin enemigos a la vista.
+
+\subsection{Spawn y respawn}
+
+\texttt{NPCRespawnSpawner.cs} mantiene un contador de unidades vivas por
+bando con un maximo configurable (\texttt{maxNPCsPorEquipo = 15} por
+defecto). Cuando una unidad muere:
+
+\begin{enumerate}[leftmargin=1.5em]
+    \item Decrementa el contador del bando correspondiente.
+    \item Calcula el waypoint de respawn \emph{mas cercano} al punto de muerte.
+    \item Instancia el prefab del mismo tipo de unidad en ese waypoint.
+    \item Le asigna automaticamente como destino el punto donde cayo, para que regrese a la lucha.
+\end{enumerate}
+
+\subsection{Curacion}
+
+\texttt{Hospital.cs} es un trigger que cura $50$ pv/segundo a las
+unidades de su bando que entren y \emph{necesiten} curacion.
+\texttt{NPCStats.NecesitaCuracion()} devuelve true si la vida cae por
+debajo del 20\,\%, y mantiene un flag interno hasta que la vida vuelve
+al 100\,\% para evitar el "yo-yo" de entrar y salir constantemente del
+hospital.
+
+% =====================================================================
+\section{Condiciones de victoria}
+
+La partida termina cuando uno de los dos castillos es destruido.
+\texttt{CastilloDerrumbado.cs} comprueba en cada \texttt{Update} si la
+referencia a \texttt{CastilloRojo} o \texttt{CastilloAzul} es \texttt{null};
+en ese caso muestra el mensaje de victoria del bando contrario.
+
+Adicionalmente, \texttt{Torre.cs} implementa un sistema de captura de
+torres alternativo: si una unidad enemiga permanece dentro del trigger
+de una torre durante 20 segundos sin recibir daño, la torre cae. El
+contador se resetea si el atacante recibe daño. Las torres caidas
+desactivan el waypoint de respawn asociado, debilitando al bando
+perdedor con el tiempo.
+
+% =====================================================================
+\section{Interfaz de usuario y mapa de teclas}
+
+La interfaz prima la informacion de depuracion accesible. Al pulsar
+\texttt{F1} se abre la pantalla de ayuda con todas las teclas
+(\texttt{HelpScreen.cs}). En todo momento se muestra abajo a la
+izquierda el indicador \texttt{F1: ayuda de teclas}.
+
+\subsection{Mapa completo de teclas}
+
+\begin{table}[H]
+\centering
+\caption{Mapa de teclas y raton del proyecto}
+\label{tab:teclas}
+\begin{tabular}{l l}
+\toprule
+\textbf{Tecla / accion} & \textbf{Funcionalidad} \\
+\midrule
+\multicolumn{2}{l}{\textit{Camara (RTS)}} \\
+\quad W A S D                & Mover camara \\
+\quad Shift                  & Movimiento rapido de camara \\
+\quad Rueda del raton        & Zoom in / out \\
+\midrule
+\multicolumn{2}{l}{\textit{Seleccion y control de unidad}} \\
+\quad Click izquierdo (sobre unidad) & Seleccionar / deseleccionar \\
+\quad Click izquierdo (sobre suelo)  & Mover ahi (manual, con unidad seleccionada) \\
+\quad J / K                  & Debug daño / curacion a la unidad seleccionada \\
+\midrule
+\multicolumn{2}{l}{\textit{Estrategia de bando}} \\
+\quad 1 / 2                  & Bando ROJO Defensivo / Ofensivo \\
+\quad 3 / 4                  & Bando AZUL Defensivo / Ofensivo \\
+\quad T                      & Toggle GUERRA TOTAL (ambos bandos) \\
+\midrule
+\multicolumn{2}{l}{\textit{Mapa tactico y depuracion}} \\
+\quad M                      & Toggle minimapa de influencia \\
+\quad I                      & Toggle componente tactico del A* \\
+\quad G                      & Toggle visualizacion del grid \\
+\quad C                      & Toggle gizmos de percepcion / rutas \\
+\midrule
+\multicolumn{2}{l}{\textit{Ayuda}} \\
+\quad F1                     & Mostrar / ocultar panel de ayuda \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Indicadores en pantalla (OnGUI)}
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \textbf{Esquina superior derecha}: modo estrategico actual de cada bando, o cartel de Guerra Total en rojo.
+    \item \textbf{Esquina superior izquierda} (cuando el minimapa esta activo): heatmap de influencia con un marco titulado "MAPA DE INFLUENCIA".
+    \item \textbf{Esquina inferior izquierda}: recordatorio "F1: ayuda de teclas".
+    \item \textbf{Sobre cada NPC}: barra de vida (\texttt{NPCHealthBar.cs}) e icono del estado individual (cubo rojo = Ataque, esfera azul = Defensa, piramide amarilla = Vigilancia).
 \end{itemize}
 
-\textbf{Controles e Interacción:}
-\begin{itemize}
-    \item \textbf{WASD / Flechas:} Permiten mover al \texttt{AgentPlayer} por el escenario para observar cómo los NPCs reaccionan y cambian sus trayectorias en tiempo real según los movimientos del usuario.
+% =====================================================================
+\section{Diagramas}
+
+% Espacio reservado para diagramas. Anadir capturas en doc/img/ y referenciarlas
+% con \includegraphics. Diagramas sugeridos:
+%   1) Flujo de decision de PercepcionNPC (cura -> enemigo -> persecucion / ataque / vagar).
+%   2) Maquina de estados individual: Vigilancia <-> Ataque <-> Defensa.
+%   3) Modos estrategicos del bando y su interaccion con los estados individuales.
+%   4) Esquema visual del calculo de daño FAD * FTA / FTD.
+
+\textit{En esta seccion conviene incluir capturas o esquemas hechos a
+mano / con \texttt{draw.io} colocados en \texttt{doc/img/} y
+referenciados aqui con \texttt{\textbackslash includegraphics}. Se
+recomiendan al menos:}
+
+\begin{itemize}[leftmargin=1.5em]
+    \item Flujo de decision de \texttt{PercepcionNPC} en cada Update.
+    \item Maquina de los tres estados individuales (Vigilancia, Ataque, Defensa) y sus transiciones.
+    \item Esquema visual del calculo de daño FAD $\cdot$ FTA / FTD.
+    \item Captura del minimapa de influencia y del cartel de Guerra Total.
 \end{itemize}
 
-\subsection{Align-AntiAlign.unity (Manual)}
+% =====================================================================
+\newpage
+\section{Conclusion}
 
-En esta escena se presentan dos NPCs y un jugador para demostrar los comportamientos de orientación. El funcionamiento se centra exclusivamente en el ajuste del ángulo del agente respecto al objetivo:
+El Bloque 2 ha permitido integrar varios niveles de IA en un mismo
+escenario: combate por matchups (FAD/FTA/FTD), influencia espacial,
+estrategia de bando y tacticas particularizadas por tipo de unidad. La
+arquitectura por componentes de Unity ha facilitado mantener cada
+concepto en su propio script (\texttt{SistemaCombate},
+\texttt{MapaInfluencia}, \texttt{EstrategiaBando},
+\texttt{TacticasPorTipo}, \texttt{PercepcionNPC}), de modo que añadir
+un nuevo modo o un nuevo tipo de unidad supone modificar como mucho
+dos ficheros.
 
-\begin{itemize}
-    \item \textbf{NPC Align:} Su única función es observar la orientación del jugador y alinear su propio ángulo con el de este. El NPC rotará sobre su eje hasta que su frente coincida exactamente con la dirección hacia la que mira el jugador.
-    \item \textbf{NPC Anti-Align:} Como su nombre indica, realiza el comportamiento opuesto. Este agente detecta la orientación del jugador y se orienta en la dirección contraria, manteniendo siempre su espalda hacia el frente del jugador.
+La principal dificultad encontrada ha sido evitar que la informacion
+tactica acabara duplicada o desincronizada (estado individual vs.\
+modo de bando vs.\ perfil de tipo). La solucion ha sido centralizar
+las consultas en \texttt{PercepcionNPC.Update}: cada frame se leen las
+tres fuentes y se combinan, sin que ningun NPC almacene copias.
+
+Tambien ha sido importante exponer toggles de depuracion (tecla
+\texttt{I} para activar/desactivar el componente tactico, \texttt{M}
+para el minimapa, \texttt{F1} para la ayuda) que permiten al
+evaluador comprobar la diferencia con y sin informacion tactica en
+directo, tal como pide el requisito (k).
+
+\paragraph{Trabajo en equipo y workflow.}
+Para evitar la fricción de los conflictos clasicos de Unity en Git, se
+han preparado scripts compartidos (\texttt{push.bat}, \texttt{pull.bat},
+\texttt{reset-unity.bat}) y un \texttt{.gitignore} alineado con la
+plantilla oficial de Unity, junto con instrucciones de setup en
+\texttt{scripts-equipo/SETUP\_UNITY.md}. Esto ha eliminado la
+necesidad de re-clonar el repositorio en cada sincronizacion.
+
+% =====================================================================
+\newpage
+\section{Referencias}
+
+\begin{itemize}[leftmargin=1.5em]
+    \item Apuntes y diapositivas semanales de la asignatura.
+    \item Enunciado de la practica curso 2023-2024 (v1.5, febrero de 2024). \emph{Anexo II} como base del sistema de combate.
+    \item Documentacion oficial de Unity 2021.3 LTS (\url{https://docs.unity3d.com/2021.3/Documentation/Manual/index.html}).
+    \item Apoyo puntual en \textit{ChatGPT} y \textit{Claude} para revision de codigo, estructura de la memoria y depuracion.
 \end{itemize}
 
-\textbf{Controles e Interacción:}
-\begin{itemize}
-    \item \textbf{WASD / Flechas:} Se utilizan para mover y, sobre todo, para rotar al personaje del jugador. Al girar al \texttt{AgentPlayer}, se puede observar cómo ambos NPCs calculan la rotación más corta para ajustarse a sus respectivas consignas de alineación.
+% =====================================================================
+\newpage
+\appendix
+\section{Anexo: Listado de scripts}
+
+\subsection*{Scripts nuevos del Bloque 2}
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \texttt{Assets/scripts/AI/SistemaCombate.cs} — tablas FAD/FTA/FTD y formula del daño.
+    \item \texttt{Assets/scripts/AI/MapaInfluencia.cs} — calculo del mapa de influencia por bando.
+    \item \texttt{Assets/scripts/AI/MinimapaInfluencia.cs} — heatmap rojo/azul en pantalla.
+    \item \texttt{Assets/scripts/AI/EstrategiaBando.cs} — modos Defensivo/Ofensivo/GuerraTotal.
+    \item \texttt{Assets/scripts/AI/TacticasPorTipo.cs} — perfil tactico por tipo de unidad.
+    \item \texttt{Assets/scripts/AI/HelpScreen.cs} — pantalla de ayuda con todas las teclas.
 \end{itemize}
 
-\subsection{PathFollowing+Face+Wander.unity (Automático)}
+\subsection*{Scripts existentes modificados}
 
-Esta escena funciona de manera autónoma e independiente de cualquier entrada por parte del usuario. En ella interactúan dos agentes para demostrar la combinación de comportamientos delegados:
-
-\begin{itemize}
-    \item \textbf{NPC PathFollower + Face:} Este agente se encarga de recorrer en bucle un camino trazado por una serie de marcas en el suelo (\textit{Path Following}). Mientras navega por el circuito, mantiene su orientación (\textit{Face}) fijada en el segundo NPC, demostrando que puede moverse en una dirección mientras mira hacia otra distinta.
-    \item \textbf{NPC Wander:} Su comportamiento principal es deambular por el escenario de manera aleatoria. Para evitar que la aleatoriedad lo saque del area o provoque colisiones evitables, este agente funciones de detecion de colisiones para todo posible obstáculo gracias a \textit{WallAvoidance}.
+\begin{itemize}[leftmargin=1.5em]
+    \item \texttt{Assets/scripts/AI/NPCStats.cs} — evento \texttt{OnAtacado(atacante)} y \texttt{RecibirAtaqueDe()}.
+    \item \texttt{Assets/scripts/AI/PercepcionNPC.cs} — integracion completa: combate, influencia, estrategia, tacticas por tipo, estado individual; bug-fix de persecucion con distancia 0; lookup del hospital via WayPoints.
+    \item \texttt{Assets/scripts/AI/estadoNPC.cs} — implementacion de los TODOs de Ataque y Defensa, helpers \texttt{EsAgresivo / EsDefensivo / EsVigilante} y \texttt{SetEstado}.
+    \item \texttt{Assets/scripts/AI/Hospital.cs} — warning si la layer "Unidad" no existe; fallback degradado si no esta definida.
+    \item \texttt{Assets/scripts/AI/NPCRespawnSpawner.cs} — eliminacion de codigo muerto.
+    \item \texttt{Assets/scripts/GridTransitable/Aestrella.cs} — lectura del \texttt{MapaInfluencia} segun bando del NPC; toggle \texttt{I}.
+    \item \texttt{Assets/scripts/GridTransitable/GridManager.cs} — getters publicos \texttt{GetNode(x,y)}, \texttt{GridSizeX}, \texttt{GridSizeY}.
 \end{itemize}
 
-El objetivo de esta escena es mostrar cómo los algoritmos de movimiento autónomo pueden convivir en un mismo lugar sin colisionar y manteniendo comportamientos secundarios (como el encaramiento) de forma fluida.
+\subsection*{Scripts de workflow}
 
-\subsection{PathFollowing+Jumping.unity (Automático)}
-
-En esta escena, al igual que en las anteriores de seguimiento de rutas, se presenta un circuito formado por una serie de puntos que definen el camino. Sin embargo, el escenario incluye una pared o valla en mitad del trayecto, posicionada de tal manera que corta el paso directo del agente.
-
-\begin{itemize}
-    \item \textbf{Lógica del Salto:} Cuando el NPC detecta que el siguiente punto de su ruta está bloqueado por este obstáculo y alcanza una zona de salto predefinida, activa el comportamiento de \textit{Jumping}. Este script calcula la parábola necesaria para superar la altura del objeto sin detener su avance lateral.
-    \item \textbf{Conjunto de Comportamientos:} El comportamiento demuestra la transición entre la navegación por suelo y el movimiento vertical. Una vez que el agente supera la barrera y vuelve a tocar suelo, el sistema retoma el control del \textit{Path Following} para continuar con el circuito de manera fluida.
+\begin{itemize}[leftmargin=1.5em]
+    \item \texttt{scripts-equipo/pull.bat / pull.sh}.
+    \item \texttt{scripts-equipo/push.bat / push.sh}.
+    \item \texttt{scripts-equipo/reset-unity.bat}.
+    \item \texttt{scripts-equipo/README.md} y \texttt{SETUP\_UNITY.md}.
 \end{itemize}
-
-
-\subsection{LeaderFollowing.unity (Manual)}
-
-Esta escena requiere la intervención activa del usuario para crear y gestionar formaciones de combate. En ella aparecen \textbf{9 NPCs} (denominados \textit{Soldado (1)} a \textit{Soldado (9)}) distribuidos en un escenario cerrado con obstáculos como pilares y muros interiores que pueden bloquear celdas de la formación. El jugador debe seleccionar un grupo de soldados, asignar un líder y ordenar la formación, pudiendo después moverla a cualquier punto del mapa.
-
-\textbf{Selección de NPCs:}
-\begin{itemize}
-    \item \textbf{Clic izquierdo} sobre un NPC: selecciona un NPC (reemplaza cualquier selección anterior). El NPC seleccionado es informado en el debug.
-    \item \textbf{Shift + Clic izquierdo} sobre un NPC: lo añade a la selección existente sin deseleccionar los anteriores. Así se puede construir un grupo de varios soldados.
-    \item \textbf{Shift + Clic izquierdo} sobre un NPC ya seleccionado: lo elimina de la selección.
-    \item \textbf{ESC}: deselecciona todos los NPCs a la vez.
-\end{itemize}
-
-\textbf{Asignación del líder:}\\
-El \textbf{primer NPC seleccionado} en la lista de selección actúa automáticamente como líder de la formación al pulsar \texttt{F}. El resto de agentes seleccionados se asignan como seguidores. Por este motivo, el orden de selección es importante: si se quiere cambiar de líder basta con deseleccionar todos con \texttt{ESC} y volver a seleccionar primero al soldado deseado.
-
-\textbf{Formación y movimiento:}
-\begin{itemize}
-    \item \textbf{F}: crea la formación con los NPCs seleccionados. Se requieren \textbf{6 agentes} seleccionados. El primer seleccionado se convierte en líder y ocupa su celda dentro del patrón (\textit{Ataque} o \textit{Defensa}, configurable en el inspector del \texttt{FormationController}). El sistema verifica automáticamente si alguna celda destino está bloqueada por un obstáculo y reasigna a los soldados afectados a celdas libres alternativas.
-    \item \textbf{Clic derecho} en el suelo con formación activa: mueve la formación completa al punto señalado. El líder se desplaza hacia ese destino y los seguidores lo siguen con el criterio de \textit{LeaderFollowing}. Una vez llegan al destino se construye la formación.
-    \item \textbf{Clic derecho} en el suelo sin formación: los NPCs seleccionados se dirigen al punto indicado distribuyéndose en anillos concéntricos alrededor de él. El primer NPC ocupa el centro y los demás se colocan en coronas hexagonales sucesivas, de forma que cuantos más agentes haya seleccionados, mayor es el radio del círculo resultante.
-    \item \textbf{Clic derecho} con selección mixta (algún NPC dentro de la formación y alguno fuera): la formación se rompe automáticamente y todos los agentes seleccionados se desplazan al punto indicado distribuyéndose en círculo, como en el caso anterior.
-    \item \textbf{G}: disuelve la formación actual, liberando a todos los agentes de sus slots y devolviendo el control individual a cada NPC.
-\end{itemize}
-
-\textbf{Ciclo Wander automático:}\\
-Tras llegar al destino, el líder entra en un bucle de \textit{Wander}: deambula por el escenario durante unos segundos, lo que hace que el resto de la formación lo siga. Al terminar el bucle se realiza nuevamente la formación.
-\begin{itemize}
-    \item \textbf{W}: detiene el bucle Wander del líder en cualquier momento, dejando la formación estática en su posición actual.
-\end{itemize}
-
-\subsection{Roles.unity (Manual)}
-
-Esta escena compara directamente el rendimiento de varios NPCs desplazándose hacia sus objetivos, todos colocados a la misma distancia inicial. Al mantener la distancia de partida constante, la diferencia en tiempos de llegada depende del tipo de NPC y de su adaptación al terreno.
-
-En esta prueba se han configurado tres perfiles principales, cada uno con un rol distinto:
-
-\begin{itemize}
-    \item \textbf{zombi}: perfil intermedio y equilibrado. Presenta valores medios (\texttt{Mass = 2}, \texttt{MaxSpeed = 6}, \texttt{MaxRotation = 20}, \texttt{MaxAcceleration = 10}, \texttt{MaxAngularAcc = 40}), por lo que su comportamiento es estable y consistente, sin ser el más rápido ni el más lento.
-    \item \textbf{esqueleto\_marino}: perfil más lento y pesado en este contexto de terreno. Tiene menor capacidad de avance y giro (\texttt{MaxSpeed = 3}, \texttt{MaxRotation = 10}, \texttt{MaxAcceleration = 8}, \texttt{MaxAngularAcc = 20}), por lo que tarda más en alcanzar el objetivo y muestra una respuesta más suave.
-    \item \textbf{esqueleto\_terrestre}: perfil más rápido y reactivo para esta escena. Sus parámetros favorecen desplazamientos ágiles (\texttt{MaxSpeed = 8}, \texttt{MaxRotation = 30}, \texttt{MaxAcceleration = 10}, \texttt{MaxAngularAcc = 60}), lo que le permite corregir trayectoria antes y llegar primero al destino.
-\end{itemize}
-
-Como resultado, con la misma distancia inicial para todos, se aprecia claramente la diferencia de rendimiento: \textbf{esqueleto\_terrestre} es el más rápido, \textbf{zombi} queda en un término medio y \textbf{esqueleto\_marino} es el más lento debido a su peor adaptación al terreno de la prueba.
-
-
-\section{Conclusión}
 
 \end{document}
