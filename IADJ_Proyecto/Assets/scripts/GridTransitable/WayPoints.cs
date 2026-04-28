@@ -78,6 +78,30 @@ public class WayPoints : MonoBehaviour
         else { return baseAzul.position; }
     }
 
+    /// <summary>
+    /// Devuelve la posición del objetivo (Base o Torre/Spawn) enemigo más cercano a miPos.
+    /// </summary>
+    public Vector3 GetObjetivoMasCercano(Bando bandoEnemigo, Vector3 miPos)
+    {
+        List<Transform> torres = (bandoEnemigo == Bando.Rojo) ? spawnRojo : spawnAzul;
+        Transform baseFinal = (bandoEnemigo == Bando.Rojo) ? baseRojo : baseAzul;
+
+        Transform mejor = baseFinal;
+        float minDist = (baseFinal != null) ? Vector3.Distance(miPos, baseFinal.position) : float.MaxValue;
+
+        foreach (Transform t in torres)
+        {
+            if (t == null) continue;
+            float d = Vector3.Distance(miPos, t.position);
+            if (d < minDist)
+            {
+                minDist = d;
+                mejor = t;
+            }
+        }
+        return (mejor != null) ? mejor.position : transform.position;
+    }
+
     public void DesactivarPuntoSpawn(Bando bando, GameObject puntoObj)
     {
         List<Transform> lista;

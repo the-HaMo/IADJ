@@ -73,10 +73,22 @@ public class PercepcionNPC : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.C)) mostrarGizmosGlobal = !mostrarGizmosGlobal;
 
-        // --- LECTURA DE CONTEXTO ---
-        ModoEstrategico modo = (EstrategiaBando.Instance != null)
+        // --- LECTURA DE CONTEXTO Y SINCRONIZACIÓN ---
+        ModoEstrategico modoGlobal = (EstrategiaBando.Instance != null)
             ? EstrategiaBando.Instance.GetModo(stats.miBando)
             : ModoEstrategico.Defensivo;
+
+        // El NPC sincroniza su estado individual con la estrategia del bando
+        if (modoGlobal == ModoEstrategico.Ofensivo || modoGlobal == ModoEstrategico.GuerraTotal)
+        {
+            if (estado != null && estado.GetEstadoActual() != EstadoNPC.Ataque)
+                estado.SetEstado(EstadoNPC.Ataque);
+        }
+        else if (modoGlobal == ModoEstrategico.Defensivo)
+        {
+            if (estado != null && estado.GetEstadoActual() == EstadoNPC.Ataque)
+                estado.SetEstado(EstadoNPC.Vigilancia);
+        }
 
         EstadoNPC estadoIndividual = (estado != null) ? estado.GetEstadoActual() : EstadoNPC.Vigilancia;
 
@@ -90,7 +102,7 @@ public class PercepcionNPC : MonoBehaviour
         }
 
         // 2. Calcular radio de percepcion segun perfil + estado + modo
-        float radio = CalcularRadioPercepcion(modo, estadoIndividual);
+        float radio = CalcularRadioPercepcion(modoGlobal, estadoIndividual);
 
         // 3. Busqueda de enemigos (cada intervalo)
         if (Time.time >= nextTick)
@@ -122,7 +134,7 @@ public class PercepcionNPC : MonoBehaviour
         }
         else
         {
-            GestionarSinEnemigos(modo, estadoIndividual);
+            GestionarSinEnemigos(modoGlobal, estadoIndividual);
         }
     }
 
@@ -196,10 +208,10 @@ public class PercepcionNPC : MonoBehaviour
             return;
         }
 
-        // Estado individual ATAQUE: avanzar hacia base enemiga aunque el bando este Defensivo
+        // Estado individual ATAQUE: avanzar hacia el objetivo enemigo más cercano
         if (estadoInd == EstadoNPC.Ataque)
         {
-            IrABaseEnemiga();
+            IrAObjetivoEnemigo();
             return;
         }
 
@@ -212,18 +224,18 @@ public class PercepcionNPC : MonoBehaviour
 
             case ModoEstrategico.Ofensivo:
             case ModoEstrategico.GuerraTotal:
-                IrABaseEnemiga();
+                IrAObjetivoEnemigo();
                 break;
         }
     }
 
-    private void IrABaseEnemiga()
+    private void IrAObjetivoEnemigo()
     {
         if (waypoints == null) { GestionarVigilancia(); return; }
 
         Bando enemigo = (stats.miBando == Bando.Rojo) ? Bando.Azul : Bando.Rojo;
-        Vector3 baseEnemiga = waypoints.GetBase(enemigo);
-        ActualizarRuta(baseEnemiga, 3f);
+        Vector3 objetivo = waypoints.GetObjetivoMasCercano(enemigo, transform.position);
+        ActualizarRuta(objetivo, 3f);
         if (patrol != null && patrol.enabled) { patrol.enabled = false; patrol.DetenerPatrulla(); }
     }
 
