@@ -2,8 +2,6 @@ using UnityEngine;
 
 // Pinta el mapa de influencia como un heatmap rojo/azul en una esquina de la
 // pantalla. Cumple el requisito (e) del Bloque 2.
-//
-// Tecla M: toggle visibilidad
 public class MinimapaInfluencia : MonoBehaviour
 {
     [Header("Posicion y tamano")]
@@ -18,8 +16,6 @@ public class MinimapaInfluencia : MonoBehaviour
     public float intensidadMax = 8f;
     public bool dibujarUnidades = true;
 
-    [Header("Tecla de toggle")]
-    public KeyCode teclaToggle = KeyCode.M;
     public bool visible = true;
 
     private MapaInfluencia mapa;
@@ -35,10 +31,9 @@ public class MinimapaInfluencia : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(teclaToggle)) visible = !visible;
         if (!visible) return;
 
-        if (Time.time >= nextUpdate)
+        if (EstadoTacticoGlobal.EsMapaInfluenciaActivo() && Time.time >= nextUpdate)
         {
             ActualizarTextura();
             nextUpdate = Time.time + intervaloRefresco;
@@ -112,7 +107,17 @@ public class MinimapaInfluencia : MonoBehaviour
 
     void OnGUI()
     {
-        if (!visible || textura == null) return;
+        if (!visible) return;
+
+        if (!EstadoTacticoGlobal.EsMapaInfluenciaActivo())
+        {
+            GUI.Box(new Rect(posicion.x - 4, posicion.y - 4, tamano.x + 8, tamano.y + 28), "MAPA TACTICO");
+            GUI.Label(new Rect(posicion.x, posicion.y + 18, tamano.x, 24), $"MODO ACTUAL: {EstadoTacticoGlobal.ObtenerTextoMapaActual()}");
+            GUI.Label(new Rect(posicion.x, posicion.y + 42, tamano.x, 16), "La vista aun no esta implementada.");
+            return;
+        }
+
+        if (textura == null) return;
 
         // Marco
         GUI.Box(new Rect(posicion.x - 4, posicion.y - 4, tamano.x + 8, tamano.y + 28), "MAPA DE INFLUENCIA");

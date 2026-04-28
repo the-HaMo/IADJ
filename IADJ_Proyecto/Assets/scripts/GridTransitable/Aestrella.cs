@@ -84,10 +84,11 @@ public class Pathfinding : MonoBehaviour
             {
                 if (!neighbor.isWalkable || closedSet.Contains(neighbor)) continue;
                 int penalizacionTerreno = (statsUnidad != null) ? statsUnidad.ObtenerCosteTerreno(neighbor.bioma) : 1;
+                int penalizacionTactica = EstadoTacticoGlobal.PathfindingTacticoActivo ? Mathf.Max(0, neighbor.influenceValue) : 0;
 
                 int costToNeighbor = GetStepCost(currentNode, neighbor);
 
-                int newMovementCostToNeighbor = currentNode.gCost + costToNeighbor + penalizacionTerreno;
+                int newMovementCostToNeighbor = currentNode.gCost + costToNeighbor + penalizacionTerreno + penalizacionTactica;
                 
                 if (newMovementCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
                 {

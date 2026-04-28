@@ -55,8 +55,8 @@ public class MainCameraController : MonoBehaviour
         float h = 0f;
         float v = 0f;
 
-        if (Input.GetKey(KeyCode.A)) h -= 1f;
-        if (Input.GetKey(KeyCode.D)) h += 1f;
+        if (Input.GetKey(KeyCode.LeftArrow)) h -= 1f;
+        if (Input.GetKey(KeyCode.RightArrow)) h += 1f;
         if (Input.GetKey(KeyCode.S)) v -= 1f;
         if (Input.GetKey(KeyCode.W)) v += 1f;
 

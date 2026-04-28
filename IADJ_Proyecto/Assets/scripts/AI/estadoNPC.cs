@@ -30,6 +30,11 @@ public class estadoNPC : MonoBehaviour
 
     private void Start()
     {
+        if (EstadoTacticoGlobal.ModoCombateActual == EstadoNPC.Ataque || EstadoTacticoGlobal.ModoCombateActual == EstadoNPC.Defensa)
+        {
+            estadoActual = EstadoTacticoGlobal.ModoCombateActual;
+        }
+
         CrearIconoEstado();
         AplicarComportamientoDeEstado();
     }
