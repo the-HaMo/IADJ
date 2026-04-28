@@ -2773,7 +2773,7 @@ MonoBehaviour:
   spawnRojo:
   - {fileID: 1523079472}
   - {fileID: 100065550}
-  - {fileID: 1503435931}
+  - {fileID: 1290262035}
   spawnAzul:
   - {fileID: 300445125}
   - {fileID: 597954101}
@@ -4288,9 +4288,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ba7ecec0634f8d14694dde0f08d27039, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1190793253}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ba7ecec0634f8d14694dde0f08d27039, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1190793252}
   m_SourcePrefab: {fileID: 100100000, guid: ba7ecec0634f8d14694dde0f08d27039, type: 3}
 --- !u!1001 &230913390
 PrefabInstance:
@@ -5855,6 +5852,10 @@ PrefabInstance:
     - target: {fileID: 961614647817374387, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
       propertyPath: m_Name
       value: Tanque
+      objectReference: {fileID: 0}
+    - target: {fileID: 961614647817374387, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1090984687882915185, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
       propertyPath: miBando
@@ -9464,6 +9465,10 @@ PrefabInstance:
     - target: {fileID: 961614647817374387, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
       propertyPath: m_Name
       value: Tanque (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 961614647817374387, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1090984687882915185, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
       propertyPath: miBando
@@ -15535,6 +15540,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Arquero
       objectReference: {fileID: 0}
+    - target: {fileID: 3664783347460375435, guid: 3327ede9bca67ae4b892a25815046519, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -17402,6 +17411,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Lancero (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 6986243360470267362, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -18258,32 +18271,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 8.928214, y: 25.88116, z: 8.928204}
   m_Center: {x: -0.0000011920928, y: 12.94058, z: -0.00000500679}
---- !u!114 &820313442
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 820313436}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb3bcfb1ff14a394e801a6a65ded2729, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  wayPoints: {fileID: 150097332}
-  prefabCaballero: {fileID: 7439606074143703248, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
-  prefabArquero: {fileID: 7439606074143703248, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
-  prefabLancero: {fileID: 6986243360470267362, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-  prefabTanque: {fileID: 961614647817374387, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
-  prefabExplorador: {fileID: 3563285655907377835, guid: 9731d6b00c403f44cab356d723046421, type: 3}
-  tipoUnidadDefault: 0
-  numeroNPCsRojo: 3
-  numeroNPCsAzul: 3
-  spawnAlIniciar: 1
-  usarWaypointSiguienteParaRespawn: 1
-  alturaRespawn: 2.3
-  irAPuntoMuerteTrasRespawn: 1
-  maxNPCsPorEquipo: 15
 --- !u!1 &824391639
 GameObject:
   m_ObjectHideFlags: 0
@@ -24121,9 +24108,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ba7ecec0634f8d14694dde0f08d27039, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1754205391}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ba7ecec0634f8d14694dde0f08d27039, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1754205390}
   m_SourcePrefab: {fileID: 100100000, guid: ba7ecec0634f8d14694dde0f08d27039, type: 3}
 --- !u!1 &1031182504
 GameObject:
@@ -25135,6 +25119,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Explorador (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 3563285655907377835, guid: 9731d6b00c403f44cab356d723046421, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5821688143771638782, guid: 9731d6b00c403f44cab356d723046421, type: 3}
       propertyPath: miBando
       value: 0
@@ -25199,6 +25187,10 @@ PrefabInstance:
     - target: {fileID: 7439606074143703248, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
       propertyPath: m_Name
       value: Caballero
+      objectReference: {fileID: 0}
+    - target: {fileID: 7439606074143703248, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -25671,7 +25663,7 @@ Transform:
   - {fileID: 518072639}
   - {fileID: 1523079472}
   - {fileID: 100065550}
-  - {fileID: 1503435931}
+  - {fileID: 1290262035}
   - {fileID: 677390193}
   - {fileID: 1126510159}
   - {fileID: 140859116}
@@ -28790,6 +28782,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Arquero (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 3664783347460375435, guid: 3327ede9bca67ae4b892a25815046519, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -28805,32 +28801,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ba7ecec0634f8d14694dde0f08d27039, type: 3}
   m_PrefabInstance: {fileID: 229059735}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1190793252
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1190793250}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb3bcfb1ff14a394e801a6a65ded2729, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  wayPoints: {fileID: 150097332}
-  prefabCaballero: {fileID: 7439606074143703248, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
-  prefabArquero: {fileID: 7439606074143703248, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
-  prefabLancero: {fileID: 6986243360470267362, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-  prefabTanque: {fileID: 961614647817374387, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
-  prefabExplorador: {fileID: 3563285655907377835, guid: 9731d6b00c403f44cab356d723046421, type: 3}
-  tipoUnidadDefault: 0
-  numeroNPCsRojo: 3
-  numeroNPCsAzul: 3
-  spawnAlIniciar: 1
-  usarWaypointSiguienteParaRespawn: 1
-  alturaRespawn: 2.3
-  irAPuntoMuerteTrasRespawn: 1
-  maxNPCsPorEquipo: 15
 --- !u!65 &1190793253
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -31495,6 +31465,37 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 10.000001, y: 2.220446e-16, z: 10.000001}
   m_Center: {x: 0.000011444092, y: 0, z: 0}
+--- !u!1 &1290262034
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1290262035}
+  m_Layer: 0
+  m_Name: R-Spawn (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1290262035
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1290262034}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.9, y: 0, z: 1.89}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1071609423}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1291269094
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -31669,26 +31670,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5143725211294651663, guid: 3b7df681e7d489940a8ff8fdc524c1b0, type: 3}
   m_PrefabInstance: {fileID: 5626314357223145438}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1294030582
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1294030576}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4060521a8162a8a468c647a5f3a0272c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  modoRojo: 0
-  modoAzul: 0
-  guerraTotal: 0
-  teclaRojoDef: 49
-  teclaRojoOfe: 50
-  teclaAzulDef: 51
-  teclaAzulOfe: 52
-  teclaGuerraTotal: 116
 --- !u!114 &1294030583
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31734,30 +31715,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 1294030576}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: da2a48b2b5075e04c8a049f2a4f524d3, type: 3}
+  m_Script: {fileID: 11500000, guid: cb3bcfb1ff14a394e801a6a65ded2729, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  teclaToggle: 282
-  visibleAlInicio: 0
---- !u!114 &1294030586
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1294030576}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d57246dda044a5418f095d2fe8e9ad1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  posicion: {x: 20, y: 20}
-  tamano: {x: 220, y: 220}
-  intervaloRefresco: 0.5
-  intensidadMax: 8
-  dibujarUnidades: 1
-  teclaToggle: 109
-  visible: 1
+  wayPoints: {fileID: 150097332}
+  prefabCaballero: {fileID: 7439606074143703248, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
+  prefabArquero: {fileID: 3664783347460375435, guid: 3327ede9bca67ae4b892a25815046519, type: 3}
+  prefabLancero: {fileID: 6986243360470267362, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
+  prefabTanque: {fileID: 961614647817374387, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
+  prefabExplorador: {fileID: 3563285655907377835, guid: 9731d6b00c403f44cab356d723046421, type: 3}
+  tipoUnidadDefault: 0
+  numeroNPCsPorBando: 15
+  usarWaypointSiguienteParaRespawn: 1
+  alturaRespawn: 2.3
+  irAPuntoMuerteTrasRespawn: 1
 --- !u!1001 &1294501871
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -36659,37 +36630,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4411623015b32704da0f15323c1f3c82, type: 3}
   m_PrefabInstance: {fileID: 1497358555}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1503435930
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1503435931}
-  m_Layer: 0
-  m_Name: R-Spawn (2)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1503435931
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1503435930}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1071609423}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1510255863
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -41401,32 +41341,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ba7ecec0634f8d14694dde0f08d27039, type: 3}
   m_PrefabInstance: {fileID: 1029195550}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1754205390
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1754205388}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb3bcfb1ff14a394e801a6a65ded2729, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  wayPoints: {fileID: 150097332}
-  prefabCaballero: {fileID: 7439606074143703248, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
-  prefabArquero: {fileID: 7439606074143703248, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
-  prefabLancero: {fileID: 6986243360470267362, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
-  prefabTanque: {fileID: 961614647817374387, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
-  prefabExplorador: {fileID: 3563285655907377835, guid: 9731d6b00c403f44cab356d723046421, type: 3}
-  tipoUnidadDefault: 0
-  numeroNPCsRojo: 3
-  numeroNPCsAzul: 3
-  spawnAlIniciar: 1
-  usarWaypointSiguienteParaRespawn: 1
-  alturaRespawn: 2.3
-  irAPuntoMuerteTrasRespawn: 1
-  maxNPCsPorEquipo: 15
 --- !u!65 &1754205391
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -44236,9 +44150,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ba7ecec0634f8d14694dde0f08d27039, type: 3}
       insertIndex: -1
       addedObject: {fileID: 820313439}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ba7ecec0634f8d14694dde0f08d27039, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 820313442}
   m_SourcePrefab: {fileID: 100100000, guid: ba7ecec0634f8d14694dde0f08d27039, type: 3}
 --- !u!1001 &1855344254
 PrefabInstance:
@@ -46932,6 +46843,10 @@ PrefabInstance:
     - target: {fileID: 6986243360470267362, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
       propertyPath: m_Name
       value: Lancero
+      objectReference: {fileID: 0}
+    - target: {fileID: 6986243360470267362, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -51953,6 +51868,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Explorador
       objectReference: {fileID: 0}
+    - target: {fileID: 3563285655907377835, guid: 9731d6b00c403f44cab356d723046421, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5821688143771638782, guid: 9731d6b00c403f44cab356d723046421, type: 3}
       propertyPath: miBando
       value: 1
@@ -52328,19 +52247,13 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5143725211294651663, guid: 3b7df681e7d489940a8ff8fdc524c1b0, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1294030586}
-    - targetCorrespondingSourceObject: {fileID: 5143725211294651663, guid: 3b7df681e7d489940a8ff8fdc524c1b0, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1294030585}
-    - targetCorrespondingSourceObject: {fileID: 5143725211294651663, guid: 3b7df681e7d489940a8ff8fdc524c1b0, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 1294030584}
     - targetCorrespondingSourceObject: {fileID: 5143725211294651663, guid: 3b7df681e7d489940a8ff8fdc524c1b0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1294030583}
     - targetCorrespondingSourceObject: {fileID: 5143725211294651663, guid: 3b7df681e7d489940a8ff8fdc524c1b0, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1294030582}
+      addedObject: {fileID: 1294030585}
   m_SourcePrefab: {fileID: 100100000, guid: 3b7df681e7d489940a8ff8fdc524c1b0, type: 3}
 --- !u!1001 &5670979341943383029
 PrefabInstance:

@@ -15,17 +15,13 @@ public class NPCRespawnSpawner : MonoBehaviour
     public TipoUnidad tipoUnidadDefault = TipoUnidad.Caballero;
 
     [Header("Cantidad Inicial")]
-    public int numeroNPCsRojo = 3;
-    public int numeroNPCsAzul = 3;
+    public int numeroNPCsPorBando = 10;
 
     [Header("Opciones")]
-    public bool spawnAlIniciar = false;
+    private bool spawnAlIniciar = true;
     public bool usarWaypointSiguienteParaRespawn = true;
     public float alturaRespawn = 2.3f;
     public bool irAPuntoMuerteTrasRespawn = true;
-
-    [Header("Limites")]
-    public int maxNPCsPorEquipo = 15;
 
     private int indexRespawnRojo;
     private int indexRespawnAzul;
@@ -49,13 +45,37 @@ public class NPCRespawnSpawner : MonoBehaviour
 
     public void SpawnInicial()
     {
-        SpawnBando(Bando.Rojo, numeroNPCsRojo);
-        SpawnBando(Bando.Azul, numeroNPCsAzul);
+        SpawnBandoEquilibrado(Bando.Rojo, numeroNPCsPorBando);
+        SpawnBandoEquilibrado(Bando.Azul, numeroNPCsPorBando);
     }
 
-    public GameObject SpawnNPC(Bando bando)
+    private void SpawnBandoEquilibrado(Bando bando, int total)
     {
-        return SpawnNPCEnPosicion(tipoUnidadDefault, bando, ObtenerPosicionReaparicion(bando));
+        TipoUnidad[] todosLosTipos = (TipoUnidad[])System.Enum.GetValues(typeof(TipoUnidad));
+        int cantidadPorTipo = total / todosLosTipos.Length;
+        int resto = total % todosLosTipos.Length;
+
+        int asignadosVigilancia = 0;
+
+        foreach (TipoUnidad tipo in todosLosTipos)
+        {
+            int cantidadASpawnear = cantidadPorTipo + (resto > 0 ? 1 : 0);
+            if (resto > 0) resto--;
+
+            for (int i = 0; i < cantidadASpawnear; i++)
+            {
+                GameObject npc = SpawnNPCEnPosicion(tipo, bando, ObtenerPosicionReaparicion(bando));
+                if (npc != null)
+                {
+                    estadoNPC estado = npc.GetComponent<estadoNPC>();
+                    if (estado != null)
+                    {
+                        estado.SetEstado(asignadosVigilancia < 2 ? EstadoNPC.Vigilancia : EstadoNPC.Defensa);
+                        asignadosVigilancia++;
+                    }
+                }
+            }
+        }
     }
 
     public GameObject SpawnNPCEnPosicion(TipoUnidad tipoUnidad, Bando bando, Vector3 posicion)
@@ -72,7 +92,7 @@ public class NPCRespawnSpawner : MonoBehaviour
         }
 
         int vivosDelBando = ObtenerVivos(bando);
-        if (vivosDelBando >= maxNPCsPorEquipo + cupoExtraTemporal)
+        if (vivosDelBando >= numeroNPCsPorBando + cupoExtraTemporal)
         {
             return null;
         }
@@ -100,13 +120,7 @@ public class NPCRespawnSpawner : MonoBehaviour
         return npc;
     }
 
-    public void SpawnBando(Bando bando, int cantidad)
-    {
-        for (int i = 0; i < cantidad; i++)
-        {
-            SpawnNPC(bando);
-        }
-    }
+
 
     public void RespawnNPC(GameObject npc)
     {
@@ -222,6 +236,10 @@ public class NPCRespawnSpawner : MonoBehaviour
         {
             posicion = wayPoints.GetWaypointReaparicion(bando, 0);
         }
+
+        // Add a small random offset so if multiple units spawn at the exact same waypoint, they don't perfectly overlap
+        posicion.x += Random.Range(-1.5f, 1.5f);
+        posicion.z += Random.Range(-1.5f, 1.5f);
 
         return posicion;
     }

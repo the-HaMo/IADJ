@@ -16,7 +16,6 @@ GameObject:
   - component: {fileID: 5821688143771638782}
   - component: {fileID: 4353101277672490273}
   - component: {fileID: 6408537163207704848}
-  - component: {fileID: 6947185544897450899}
   - component: {fileID: 3095394653058332028}
   - component: {fileID: 6041598302636238708}
   - component: {fileID: 676718473658459537}
@@ -209,22 +208,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weight: 100
   timeToTarget: 0.1
---- !u!114 &6947185544897450899
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3563285655907377835}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 116118930bc1dd343a1a55b2b8a6cbc2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  estadoActual: 0
-  alturaIcono: 2.5
-  offsetIcono: {x: 0, y: 0, z: 0}
-  escalaIcono: 1
 --- !u!114 &3095394653058332028
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -240,9 +223,11 @@ MonoBehaviour:
   capaNPC:
     serializedVersion: 2
     m_Bits: 8
+  intervaloBusqueda: 0.2
   hospitalRojo: {x: 20.2, y: 0, z: -138}
   hospitalAzul: {x: -21.8, y: 0, z: 102.4}
-  intervaloBusqueda: 0.2
+  umbralInfluenciaEnemiga: 3
+  multRadioEstadoAtaque: 1.6
 --- !u!114 &6041598302636238708
 MonoBehaviour:
   m_ObjectHideFlags: 0

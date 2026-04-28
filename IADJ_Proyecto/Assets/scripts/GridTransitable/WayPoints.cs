@@ -25,7 +25,7 @@ public class WayPoints : MonoBehaviour
             Transform t = lista[Random.Range(0, lista.Count)];
             return t.position;
         }
-        return transform.position;
+        return GetBase(bando);
     }
 
     public Vector3 GetWaypointReaparicion(Bando bando, int index)
@@ -39,7 +39,7 @@ public class WayPoints : MonoBehaviour
             Transform t = lista[index % lista.Count];
             return t.position;
         }
-        return transform.position;
+        return GetBase(bando);
     }
 
     public Vector3 GetWaypointReaparicionMasCercano(Bando bando, Vector3 posMuerte)
@@ -48,7 +48,7 @@ public class WayPoints : MonoBehaviour
         if (bando == Bando.Rojo) { lista = spawnRojo; }
         else { lista = spawnAzul; }
 
-        if (lista.Count == 0) return transform.position;
+        if (lista.Count == 0) return GetBase(bando);
 
         Transform mejor = lista[0];
         float minDist = Vector3.Distance(posMuerte, mejor.position);

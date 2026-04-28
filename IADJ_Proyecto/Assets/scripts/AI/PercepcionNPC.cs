@@ -13,12 +13,8 @@ public class PercepcionNPC : MonoBehaviour
     [Header("Decisiones tacticas (mapa de influencia)")]
     [Tooltip("Influencia enemiga minima para considerar la zona insegura.")]
     public float umbralInfluenciaEnemiga = 3f;
-    [Tooltip("En modo GUERRA TOTAL multiplica el radio de percepcion.")]
-    public float multRadioGuerraTotal = 2.5f;
     [Tooltip("En estado individual ATAQUE, multiplica el radio de percepcion.")]
     public float multRadioEstadoAtaque = 1.6f;
-    [Tooltip("En estado individual DEFENSA, distancia maxima a la base antes de volver.")]
-    public float distanciaMaxAlAnclaDefensa = 12f;
 
     private NPCStats stats;
     private PathFollowing path;
@@ -29,11 +25,8 @@ public class PercepcionNPC : MonoBehaviour
     private MapaInfluencia mapa;
     private WayPoints waypoints;
 
-    private TacticasPorTipo.PerfilTactico perfil;
-
     private Transform enemigoActual;
     private Vector3 lastDest;
-    private Vector3 anclaDefensa; // posicion inicial al entrar en estado Defensa
     private float nextTick;
     private float nextAtaque;
 
@@ -53,9 +46,6 @@ public class PercepcionNPC : MonoBehaviour
 
     void Start()
     {
-        // Cargar el perfil tactico del tipo de unidad (req. a)
-        perfil = TacticasPorTipo.GetPerfil(stats.tipoUnidad);
-        anclaDefensa = transform.position;
     }
 
     void OnEnable()
@@ -73,23 +63,6 @@ public class PercepcionNPC : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.C)) mostrarGizmosGlobal = !mostrarGizmosGlobal;
 
-        // --- LECTURA DE CONTEXTO Y SINCRONIZACIÓN ---
-        ModoEstrategico modoGlobal = (EstrategiaBando.Instance != null)
-            ? EstrategiaBando.Instance.GetModo(stats.miBando)
-            : ModoEstrategico.Defensivo;
-
-        // El NPC sincroniza su estado individual con la estrategia del bando
-        if (modoGlobal == ModoEstrategico.Ofensivo || modoGlobal == ModoEstrategico.GuerraTotal)
-        {
-            if (estado != null && estado.GetEstadoActual() != EstadoNPC.Ataque)
-                estado.SetEstado(EstadoNPC.Ataque);
-        }
-        else if (modoGlobal == ModoEstrategico.Defensivo)
-        {
-            if (estado != null && estado.GetEstadoActual() == EstadoNPC.Ataque)
-                estado.SetEstado(EstadoNPC.Vigilancia);
-        }
-
         EstadoNPC estadoIndividual = (estado != null) ? estado.GetEstadoActual() : EstadoNPC.Vigilancia;
 
         // 1. Curacion (PRIORIDAD MAXIMA)
@@ -101,8 +74,8 @@ public class PercepcionNPC : MonoBehaviour
             return;
         }
 
-        // 2. Calcular radio de percepcion segun perfil + estado + modo
-        float radio = CalcularRadioPercepcion(modoGlobal, estadoIndividual);
+        // 2. Calcular radio de percepcion segun perfil + estado
+        float radio = CalcularRadioPercepcion(estadoIndividual);
 
         // 3. Busqueda de enemigos (cada intervalo)
         if (Time.time >= nextTick)
@@ -117,8 +90,8 @@ public class PercepcionNPC : MonoBehaviour
             if (patrol != null && patrol.enabled) { patrol.enabled = false; patrol.DetenerPatrulla(); }
 
             float dist = Vector3.Distance(transform.position, enemigoActual.position);
-            // Distancia preferida segun el tipo (arquero/explorador kitean, melee se planta)
-            float distPref = stats.rangoAtaque * perfil.distanciaCombatePref;
+            // Distancia preferida segun el tipo (por ahora usa el rango de ataque)
+            float distPref = stats.rangoAtaque;
 
             // Si esta dentro de la "zona buena" (entre rangoAtaque y distPref), parar y atacar
             if (dist <= stats.rangoAtaque)
@@ -134,26 +107,16 @@ public class PercepcionNPC : MonoBehaviour
         }
         else
         {
-            GestionarSinEnemigos(modoGlobal, estadoIndividual);
+            GestionarSinEnemigos(estadoIndividual);
         }
     }
 
-    // El radio de percepcion depende de:
-    //  - Modo del bando (GuerraTotal x2.5)
-    //  - Estado individual (Ataque x1.6, Defensa estandar)
-    //  - Perfil del tipo (bonus si esta en su bioma preferido)
-    private float CalcularRadioPercepcion(ModoEstrategico modo, EstadoNPC estadoInd)
+    private float CalcularRadioPercepcion(EstadoNPC estadoInd)
     {
         float radio = stats.radioPercepcion;
 
-        if (modo == ModoEstrategico.GuerraTotal)
-            radio *= multRadioGuerraTotal;
-        else if (estadoInd == EstadoNPC.Ataque)
+        if (estadoInd == EstadoNPC.Ataque)
             radio *= multRadioEstadoAtaque;
-
-        // Bonus por terreno preferido
-        if (stats.ObtenerBiomaActual() == perfil.biomaPreferido)
-            radio *= perfil.bonusAgresividadEnPreferido;
 
         return radio;
     }
@@ -172,13 +135,10 @@ public class PercepcionNPC : MonoBehaviour
         return enemigoActual.position + dir * distanciaPref;
     }
 
-    // Si vida % bajo el umbral del tipo Y la zona tiene mucha influencia enemiga -> huir.
-    // Los tanques no huyen por influencia (perfil.aguantaInfluenciaEnemiga).
     private bool DebeHuirPorInfluencia()
     {
         if (mapa == null) return false;
-        if (perfil.aguantaInfluenciaEnemiga) return false;
-        if (stats.VidaPorcentaje > perfil.vidaCriticaPct) return false;
+        if (stats.VidaPorcentaje > 0.3f) return false;
 
         float infEnem = mapa.GetInfluenciaEnemigaEnMundo(stats.miBando, transform.position);
         return infEnem >= umbralInfluenciaEnemiga;
@@ -190,53 +150,24 @@ public class PercepcionNPC : MonoBehaviour
         return (stats.miBando == Bando.Rojo) ? hospitalRojo : hospitalAzul;
     }
 
-    private void GestionarSinEnemigos(ModoEstrategico modo, EstadoNPC estadoInd)
+    private void GestionarSinEnemigos(EstadoNPC estadoInd)
     {
-        // Estado individual DEFENSA tiene prioridad sobre modo del bando:
-        // si el NPC fue puesto en Defensa, se queda anclado a su zona.
         if (estadoInd == EstadoNPC.Defensa)
         {
-            float distAncla = Vector3.Distance(transform.position, anclaDefensa);
-            if (distAncla > distanciaMaxAlAnclaDefensa)
-            {
-                ActualizarRuta(anclaDefensa, 1f);
-            }
-            else
-            {
-                Parar();
-            }
+            // Vaciado por ahora
             return;
         }
 
-        // Estado individual ATAQUE: avanzar hacia el objetivo enemigo más cercano
         if (estadoInd == EstadoNPC.Ataque)
         {
-            IrAObjetivoEnemigo();
+            // Vaciado por ahora
             return;
         }
 
-        // Estado Vigilancia: depende del modo del bando
-        switch (modo)
+        if (estadoInd == EstadoNPC.Vigilancia)
         {
-            case ModoEstrategico.Defensivo:
-                GestionarVigilancia();
-                break;
-
-            case ModoEstrategico.Ofensivo:
-            case ModoEstrategico.GuerraTotal:
-                IrAObjetivoEnemigo();
-                break;
+            GestionarVigilancia();
         }
-    }
-
-    private void IrAObjetivoEnemigo()
-    {
-        if (waypoints == null) { GestionarVigilancia(); return; }
-
-        Bando enemigo = (stats.miBando == Bando.Rojo) ? Bando.Azul : Bando.Rojo;
-        Vector3 objetivo = waypoints.GetObjetivoMasCercano(enemigo, transform.position);
-        ActualizarRuta(objetivo, 3f);
-        if (patrol != null && patrol.enabled) { patrol.enabled = false; patrol.DetenerPatrulla(); }
     }
 
     private void EjecutarAtaque()
@@ -283,12 +214,6 @@ public class PercepcionNPC : MonoBehaviour
         float ratioObjActual = SistemaCombate.CalcularFA(objStats, objStats.ObtenerBiomaActual(), stats)
                              / Mathf.Max(1f, SistemaCombate.CalcularFD(stats, terrenoYo));
 
-        // Bonus si el atacante es objetivo preferido de mi tipo (ej: lancero prioriza tanques)
-        if (TacticasPorTipo.EsObjetivoPreferido(perfil, atacante.tipoUnidad))
-            ratioAtacante *= 1.3f;
-        if (TacticasPorTipo.EsObjetivoPreferido(perfil, objStats.tipoUnidad))
-            ratioObjActual *= 1.3f;
-
         if (ratioAtacante > ratioObjActual)
         {
             enemigoActual = atacante.transform;
@@ -322,8 +247,7 @@ public class PercepcionNPC : MonoBehaviour
             if (ts == null || ts.miBando == stats.miBando || ts.miBando == Bando.Default) continue;
 
             float d = Vector3.Distance(transform.position, hit.transform.position);
-            // Score: distancia / (1 si normal, 2.0 si objetivo preferido) -> menor score = mejor
-            float score = TacticasPorTipo.EsObjetivoPreferido(perfil, ts.tipoUnidad) ? d / 2.0f : d;
+            float score = d;
             if (score < mejorScore) { mejorScore = score; mejor = hit.transform; }
         }
         return mejor;
