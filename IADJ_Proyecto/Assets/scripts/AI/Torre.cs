@@ -101,7 +101,8 @@ public class Torre : MonoBehaviour
             atacanteActual.OnDanioRecibido -= MarcarDanio;
         }
         
-        Debug.Log("<color=green>¡TORRE CONQUISTADA!</color>");
+        Bando bandoConquistador = (bandoPropietario == Bando.Rojo) ? Bando.Azul : Bando.Rojo;
+        Debug.Log($"<color=green>¡TORRE CONQUISTADA! El bando {bandoConquistador} ha tomado el control de {gameObject.name}.</color>");
 
         WayPoints wp = FindFirstObjectByType<WayPoints>();
         if (wp != null)

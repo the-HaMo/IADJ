@@ -22536,7 +22536,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 89.90538
+  field of view: 90
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -22563,7 +22563,7 @@ Transform:
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
   m_LocalRotation: {x: 0.021317745, y: -0.9617538, z: 0.2616023, w: 0.07835527}
-  m_LocalPosition: {x: -11.3, y: 115.7, z: 250.7}
+  m_LocalPosition: {x: -8, y: 94.4, z: 179.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -23533,7 +23533,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bandoPropietario: 1
-  tiempoParaConquistar: 20
+  tiempoParaConquistar: 5
 --- !u!135 &1014157872
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -29041,7 +29041,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bandoPropietario: 1
-  tiempoParaConquistar: 20
+  tiempoParaConquistar: 5
 --- !u!135 &1200225040
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -29159,8 +29159,8 @@ Canvas:
   m_GameObject: {fileID: 1200428278}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_RenderMode: 1
+  m_Camera: {fileID: 963194227}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -31992,6 +31992,9 @@ MonoBehaviour:
   prefabTanque: {fileID: 961614647817374387, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
   prefabExplorador: {fileID: 3563285655907377835, guid: 9731d6b00c403f44cab356d723046421, type: 3}
   tipoUnidadDefault: 0
+  numVigilantes: 3
+  numAtaque: 8
+  numDefensa: 4
   numeroNPCsPorBando: 15
   usarWaypointSiguienteParaRespawn: 1
   alturaRespawn: 2.3
@@ -33720,7 +33723,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bandoPropietario: 1
-  tiempoParaConquistar: 20
+  tiempoParaConquistar: 5
 --- !u!135 &1351000038
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -39851,7 +39854,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bandoPropietario: 0
-  tiempoParaConquistar: 20
+  tiempoParaConquistar: 5
 --- !u!135 &1672346127
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -45504,7 +45507,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bandoPropietario: 0
-  tiempoParaConquistar: 20
+  tiempoParaConquistar: 5
 --- !u!135 &1913885368
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -51470,7 +51473,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bandoPropietario: 0
-  tiempoParaConquistar: 20
+  tiempoParaConquistar: 5
 --- !u!135 &2128771842
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -52887,6 +52890,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 963194228}
+  - {fileID: 1200428282}
   - {fileID: 705507995}
   - {fileID: 589430636}
   - {fileID: 313182075}
@@ -52902,4 +52906,3 @@ SceneRoots:
   - {fileID: 150097333}
   - {fileID: 1071609423}
   - {fileID: 687586069}
-  - {fileID: 1200428282}

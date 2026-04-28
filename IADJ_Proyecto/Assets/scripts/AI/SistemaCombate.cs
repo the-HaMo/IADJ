@@ -88,6 +88,19 @@ public static class SistemaCombate
             if (perc != null && !perc.TieneAliadosCerca()) poderAtacante *= 1.25f;
         }
 
+        if (est != null && est.GetEstadoActual() == EstadoNPC.Ataque)
+        {
+            if (atacante.tipoUnidad == TipoUnidad.Caballero)
+            {
+                if (atacante.VidaActual < (atacante.VidaMax * 0.5f)) poderAtacante *= 1.20f;
+            }
+            else if (atacante.tipoUnidad == TipoUnidad.Lancero)
+            {
+                PercepcionNPC perc = atacante.GetComponent<PercepcionNPC>();
+                if (perc != null && perc.TieneAliadosCerca()) poderAtacante *= 1.20f;
+            }
+        }
+
         return poderAtacante
              * ObtenerFAD(atacante.tipoUnidad, defensor.tipoUnidad)
              * ObtenerFTA(terrenoAtacante, atacante.tipoUnidad);

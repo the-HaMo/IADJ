@@ -14,7 +14,12 @@ public class NPCRespawnSpawner : MonoBehaviour
     [Header("Tipo por Defecto (si llamas SpawnNPC por bando)")]
     public TipoUnidad tipoUnidadDefault = TipoUnidad.Caballero;
 
-    [Header("Cantidad Inicial")]
+    [Header("Composición del Bando")]
+    public int numVigilantes = 2;
+    public int numAtaque = 4;
+    public int numDefensa = 4;
+
+    [Header("Cantidad Inicial (Calculada)")]
     public int numeroNPCsPorBando = 10;
 
     [Header("Opciones")]
@@ -32,6 +37,8 @@ public class NPCRespawnSpawner : MonoBehaviour
     private void Awake()
     {
         pathfinding = FindFirstObjectByType<Pathfinding>();
+        // Calculamos el total basado en la composición deseada
+        numeroNPCsPorBando = numVigilantes + numAtaque + numDefensa;
         RecontarVivosIniciales();
     }
 
@@ -45,35 +52,46 @@ public class NPCRespawnSpawner : MonoBehaviour
 
     public void SpawnInicial()
     {
-        SpawnBandoEquilibrado(Bando.Rojo, numeroNPCsPorBando);
-        SpawnBandoEquilibrado(Bando.Azul, numeroNPCsPorBando);
+        SpawnBandoConComposicion(Bando.Rojo);
+        SpawnBandoConComposicion(Bando.Azul);
     }
 
-    private void SpawnBandoEquilibrado(Bando bando, int total)
+    private void SpawnBandoConComposicion(Bando bando)
     {
         TipoUnidad[] todosLosTipos = (TipoUnidad[])System.Enum.GetValues(typeof(TipoUnidad));
-        int cantidadPorTipo = total / todosLosTipos.Length;
-        int resto = total % todosLosTipos.Length;
+        int unitTypeIndex = 0;
 
-        int asignadosVigilancia = 0;
-
-        foreach (TipoUnidad tipo in todosLosTipos)
+        // 1. Vigilantes
+        for (int i = 0; i < numVigilantes; i++)
         {
-            int cantidadASpawnear = cantidadPorTipo + (resto > 0 ? 1 : 0);
-            if (resto > 0) resto--;
+            SpawnUnidadConEstado(todosLosTipos[unitTypeIndex], bando, EstadoNPC.Vigilancia);
+            unitTypeIndex = (unitTypeIndex + 1) % todosLosTipos.Length;
+        }
 
-            for (int i = 0; i < cantidadASpawnear; i++)
+        // 2. Ataque
+        for (int i = 0; i < numAtaque; i++)
+        {
+            SpawnUnidadConEstado(todosLosTipos[unitTypeIndex], bando, EstadoNPC.Ataque);
+            unitTypeIndex = (unitTypeIndex + 1) % todosLosTipos.Length;
+        }
+
+        // 3. Defensa
+        for (int i = 0; i < numDefensa; i++)
+        {
+            SpawnUnidadConEstado(todosLosTipos[unitTypeIndex], bando, EstadoNPC.Defensa);
+            unitTypeIndex = (unitTypeIndex + 1) % todosLosTipos.Length;
+        }
+    }
+
+    private void SpawnUnidadConEstado(TipoUnidad tipo, Bando bando, EstadoNPC estadoObj)
+    {
+        GameObject npc = SpawnNPCEnPosicion(tipo, bando, ObtenerPosicionReaparicion(bando));
+        if (npc != null)
+        {
+            estadoNPC scriptEstado = npc.GetComponent<estadoNPC>();
+            if (scriptEstado != null)
             {
-                GameObject npc = SpawnNPCEnPosicion(tipo, bando, ObtenerPosicionReaparicion(bando));
-                if (npc != null)
-                {
-                    estadoNPC estado = npc.GetComponent<estadoNPC>();
-                    if (estado != null)
-                    {
-                        estado.SetEstado(asignadosVigilancia < 2 ? EstadoNPC.Vigilancia : EstadoNPC.Defensa);
-                        asignadosVigilancia++;
-                    }
-                }
+                scriptEstado.SetEstado(estadoObj);
             }
         }
     }
@@ -159,6 +177,13 @@ public class NPCRespawnSpawner : MonoBehaviour
     public void RegistrarMuerteYRespawn(TipoUnidad tipoUnidad, Bando bando, Vector3 posicionMuerte)
     {
         DecrementarVivos(bando);
+        StartCoroutine(RutinaRespawn(tipoUnidad, bando, posicionMuerte));
+    }
+
+    private System.Collections.IEnumerator RutinaRespawn(TipoUnidad tipoUnidad, Bando bando, Vector3 posicionMuerte)
+    {
+        // Esperamos 30 segundos antes de reaparecer
+        yield return new WaitForSeconds(30f);
         RespawnNPCEnPuntoMasCercano(tipoUnidad, bando, posicionMuerte);
     }
 

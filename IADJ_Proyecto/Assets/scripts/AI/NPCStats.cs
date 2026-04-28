@@ -35,6 +35,7 @@ public class NPCStats : MonoBehaviour
 
     private float vidaActual;
     private bool estaEnTratamiento = false;
+    private bool estaMuerto = false; // Flag para evitar múltiples muertes en el mismo frame
     private NPCRespawnSpawner respawnSpawner;
     private GridManager gridManager;
 
@@ -76,12 +77,17 @@ public class NPCStats : MonoBehaviour
 
     public void RecibirDanio(float d, NPCStats atacante = null)
     {
+        if (estaMuerto) return; // Si ya ha muerto en este frame, ignoramos el daño extra
+
         vidaActual -= d;
         NotificarVida(true);
         OnDanioRecibido?.Invoke();      // Evento sin atacante (Torre, etc.)
         OnAtacado?.Invoke(atacante);    // Evento con atacante (PercepcionNPC)
+        
         if (vidaActual <= 0)
         {
+            estaMuerto = true; // Marcamos como muerto para que otros ataques en este mismo frame no activen el código
+
             if (respawnSpawner == null)
             {
                 respawnSpawner = FindFirstObjectByType<NPCRespawnSpawner>();

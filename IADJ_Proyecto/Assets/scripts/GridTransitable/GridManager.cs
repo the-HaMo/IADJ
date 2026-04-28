@@ -151,6 +151,7 @@ public class GridManager : MonoBehaviour
 
     public Node NodeFromWorldPoint(Vector3 worldPosition)
     {
+        if (grid == null) return null;
         GetGridPosition(worldPosition, out int fila, out int columna);
         return grid[columna, fila];
     }

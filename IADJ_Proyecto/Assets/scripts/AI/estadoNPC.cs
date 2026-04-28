@@ -30,14 +30,27 @@ public class estadoNPC : MonoBehaviour
 
     private void Start()
     {
-        if (EstadoTacticoGlobal.ModoCombateActual == EstadoNPC.Ataque || EstadoTacticoGlobal.ModoCombateActual == EstadoNPC.Defensa)
-        {
-            estadoActual = EstadoTacticoGlobal.ModoCombateActual;
-        }
-
+        // Se respeta el estado inicial asignado por el spawner (Vigilancia, Ataque, Defensa).
+        // Ya no sobrescribimos con el EstadoTacticoGlobal al nacer.
         CrearIconoEstado();
         AplicarComportamientoDeEstado();
     }
+
+    private void OnEnable()
+    {
+        EstadoTacticoGlobal.OnEstadoCambiado += AlCambiarEstadoGlobal;
+    }
+
+    private void OnDisable()
+    {
+        EstadoTacticoGlobal.OnEstadoCambiado -= AlCambiarEstadoGlobal;
+    }
+
+    private void AlCambiarEstadoGlobal()
+    {
+        SetEstado(EstadoTacticoGlobal.ModoCombateActual);
+    }
+
 
     private void LateUpdate()
     {

@@ -66,7 +66,10 @@ public class PercepcionNPC : MonoBehaviour
         EstadoNPC estadoIndividual = (estado != null) ? estado.GetEstadoActual() : EstadoNPC.Vigilancia;
 
         // 1. Curacion (PRIORIDAD MAXIMA)
-        if (stats.NecesitaCuracion())
+        // EXCEPCIÓN: Los tanques en modo Ataque son unidades de asedio suicida, no retroceden a curarse.
+        bool esTanqueAtacando = (stats.tipoUnidad == TipoUnidad.Tanque && estadoIndividual == EstadoNPC.Ataque);
+
+        if (stats.NecesitaCuracion() && !esTanqueAtacando)
         {
             enemigoActual = null;
             ActualizarRuta(ObtenerPosicionHospital(), 1f);
@@ -129,16 +132,34 @@ public class PercepcionNPC : MonoBehaviour
             }
 
             // Flujo normal de ataque
-            float distPref = stats.rangoAtaque;
-            if (dist <= stats.rangoAtaque)
+            // Le sumamos 1.0f al rango de ataque como "tolerancia" por el radio físico de los colliders (0.5 + 0.5).
+            // Así evitamos que dos personajes se queden empujándose sin poder atacarse si su rangoAtaque en el inspector es muy pequeño.
+            float rangoEfectivo = stats.rangoAtaque + 1.0f;
+
+            if (dist <= rangoEfectivo)
             {
                 Parar();
                 EjecutarAtaque();
             }
             else
             {
-                Vector3 destino = CalcularPosicionPersecucion(distPref);
-                ActualizarRuta(destino, 1f);
+                // ANTI-BLOQUEO: Si nuestro objetivo está lejos, pero estamos chocando con OTRO enemigo,
+                // le atacamos a él en lugar de quedarnos atascados empujando a la montonera.
+                Transform enemigoBloqueando = BuscarEnemigoCercano(rangoEfectivo);
+                if (enemigoBloqueando != null && enemigoBloqueando != enemigoActual)
+                {
+                    enemigoActual = enemigoBloqueando;
+                    Parar();
+                    EjecutarAtaque();
+                }
+                else
+                {
+                    // Intentar ir a una posición ligeramente más cercana que el rango máximo 
+                    // para asegurar que entra en rango incluso si hay aliados empujando.
+                    float distPref = Mathf.Max(0.5f, stats.rangoAtaque * 0.75f);
+                    Vector3 destino = CalcularPosicionPersecucion(distPref);
+                    ActualizarRuta(destino, 1f);
+                }
             }
         }
         else
@@ -189,7 +210,7 @@ public class PercepcionNPC : MonoBehaviour
 
         if (estadoInd == EstadoNPC.Ataque)
         {
-            // Vaciado por ahora
+            GestionarAtaque();
             return;
         }
 
@@ -269,14 +290,26 @@ public class PercepcionNPC : MonoBehaviour
         Transform mejor = null;
         float mejorScore = float.MaxValue;
 
+        bool esAtaque = (estado != null && estado.GetEstadoActual() == EstadoNPC.Ataque);
+
         foreach (var hit in hits)
         {
             if (hit.transform == transform) continue;
             NPCStats ts = hit.GetComponent<NPCStats>();
             if (ts == null || ts.miBando == stats.miBando || ts.miBando == Bando.Default) continue;
 
-            float d = Vector3.Distance(transform.position, hit.transform.position);
-            float score = d;
+            float score;
+            if (esAtaque && stats.tipoUnidad == TipoUnidad.Explorador)
+            {
+                // Explorador: busca enemigo con poca vida
+                score = ts.VidaActual;
+            }
+            else
+            {
+                // Por defecto: busca por distancia
+                score = Vector3.Distance(transform.position, hit.transform.position);
+            }
+
             if (score < mejorScore) { mejorScore = score; mejor = hit.transform; }
         }
         return mejor;
@@ -369,6 +402,7 @@ public class PercepcionNPC : MonoBehaviour
     }
 
     private float nextDefenseUpdate;
+    private float nextAttackUpdate;
 
     private void GestionarDefensa()
     {
@@ -419,6 +453,87 @@ public class PercepcionNPC : MonoBehaviour
                 mejorPos = rnd;
             }
         }
+        return mejorPos;
+    }
+
+    private void GestionarAtaque()
+    {
+        if (patrol != null && patrol.enabled) { patrol.enabled = false; patrol.DetenerPatrulla(); }
+
+        if (Time.time >= nextAttackUpdate)
+        {
+            nextAttackUpdate = Time.time + 2.0f; 
+            Vector3 destino = CalcularDestinoAtaque();
+            ActualizarRuta(destino, 2.5f);
+        }
+    }
+
+    private Vector3 CalcularDestinoAtaque()
+    {
+        if (waypoints == null || mapa == null) return transform.position;
+
+        Bando enemigo = (stats.miBando == Bando.Rojo) ? Bando.Azul : Bando.Rojo;
+        
+        // Comportamiento estratégico individual en ataque:
+        switch (stats.tipoUnidad)
+        {
+            case TipoUnidad.Tanque:
+                // Va directo a torres enemigas (spawns u objetivos)
+                return waypoints.GetObjetivoMasCercano(enemigo, transform.position);
+
+            case TipoUnidad.Arquero:
+                // Busca baja influencia enemiga para atacar seguro
+                return BuscarDestinoPorInfluencia(enemigo, buscarBaja: true);
+
+            default:
+                // Exploradores, Caballeros, Lanceros: Estrategia Ofensiva General
+                // Buscar donde hay enemigos en el mapa de influencia (Alta influencia enemiga)
+                return BuscarDestinoPorInfluencia(enemigo, buscarBaja: false);
+        }
+    }
+
+    private Vector3 BuscarDestinoPorInfluencia(Bando bandoEnemigo, bool buscarBaja)
+    {
+        Vector3 mejorPos = transform.position;
+        float mejorScore = buscarBaja ? float.MaxValue : float.MinValue;
+        float radioBusqueda = 25f; // Ampliamos un poco el radio de visión estratégica
+        bool hayCombateCerca = false;
+
+        for (int i = 0; i < 20; i++)
+        {
+            Vector3 rnd = transform.position + Random.insideUnitSphere * radioBusqueda;
+            rnd.y = transform.position.y;
+            
+            float infEnemiga = mapa.GetInfluenciaEnemigaEnMundo(stats.miBando, rnd);
+            float infPropia = mapa.GetInfluenciaPropiaEnMundo(stats.miBando, rnd);
+
+            if (buscarBaja)
+            {
+                // Arqueros: Buscan baja influencia enemiga pero alta propia (zonas seguras rodeadas de aliados)
+                float score = infEnemiga - infPropia;
+                if (score < mejorScore) { mejorScore = score; mejorPos = rnd; }
+                if (infEnemiga > 0.1f) hayCombateCerca = true; // Solo si hay presencia enemiga
+            }
+            else
+            {
+                // Resto (Vanguardia): Buscan la mayor concentración enemiga.
+                // Restamos un poco la influencia propia para que NO se queden cómodos atrás
+                // en la retaguardia con sus aliados. Esto les obliga a empujar la primera línea.
+                float score = infEnemiga - (infPropia * 0.2f); 
+                if (score > mejorScore) { mejorScore = score; mejorPos = rnd; }
+                if (infEnemiga > 0.1f) hayCombateCerca = true; // Solo si hay presencia enemiga
+            }
+        }
+
+        // EL CAMBIO CLAVE:
+        // Si han nacido en base y no hay influencia de combate en su radio de 25m, 
+        // en lugar de moverse aleatoriamente, avanzan rectos hacia las torres enemigas
+        // hasta que encuentren a "los otros".
+        if (!hayCombateCerca && waypoints != null)
+        {
+            return waypoints.GetObjetivoMasCercano(bandoEnemigo, transform.position);
+        }
+
         return mejorPos;
     }
 
