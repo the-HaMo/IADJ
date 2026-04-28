@@ -16,11 +16,18 @@ public class CastilloDerrumbado : MonoBehaviour
         {
             Debug.Log("<color=red>¡El equipo ROJO ha ganado el juego!</color>");
             juegoTerminado = true;
+            TerminarJuego();
         }
         else if (CastilloRojo == null)
         {
             Debug.Log("<color=blue>¡El equipo AZUL ha ganado el juego!</color>");
             juegoTerminado = true;
+            TerminarJuego();
         }
+    }
+
+    private void TerminarJuego()
+    {
+        Time.timeScale = 0f;
     }
 }

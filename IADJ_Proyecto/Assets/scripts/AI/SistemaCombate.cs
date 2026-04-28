@@ -78,18 +78,47 @@ public static class SistemaCombate
     public static float ObtenerFTD(Bioma bioma, TipoUnidad tipo)
         => FTD[(int)bioma, (int)tipo];
 
-    // FA = Calidad * FAD * FTA
     public static float CalcularFA(NPCStats atacante, Bioma terrenoAtacante, NPCStats defensor)
     {
-        return atacante.poder
+        float poderAtacante = atacante.poder;
+        estadoNPC est = atacante.GetComponent<estadoNPC>();
+        if (est != null && est.GetEstadoActual() == EstadoNPC.Defensa && atacante.tipoUnidad == TipoUnidad.Tanque)
+        {
+            PercepcionNPC perc = atacante.GetComponent<PercepcionNPC>();
+            if (perc != null && !perc.TieneAliadosCerca()) poderAtacante *= 1.25f;
+        }
+
+        return poderAtacante
              * ObtenerFAD(atacante.tipoUnidad, defensor.tipoUnidad)
              * ObtenerFTA(terrenoAtacante, atacante.tipoUnidad);
     }
 
-    // FD = Calidad * FTD
     public static float CalcularFD(NPCStats defensor, Bioma terrenoDefensor)
     {
-        return defensor.poder * ObtenerFTD(terrenoDefensor, defensor.tipoUnidad);
+        float poderDefensor = defensor.poder;
+        estadoNPC est = defensor.GetComponent<estadoNPC>();
+        
+        if (est != null && est.GetEstadoActual() == EstadoNPC.Defensa)
+        {
+            if (defensor.tipoUnidad == TipoUnidad.Tanque)
+            {
+                PercepcionNPC perc = defensor.GetComponent<PercepcionNPC>();
+                if (perc != null && !perc.TieneAliadosCerca()) poderDefensor *= 1.25f;
+            }
+        }
+
+        float fd = poderDefensor * ObtenerFTD(terrenoDefensor, defensor.tipoUnidad);
+
+        if (est != null && est.GetEstadoActual() == EstadoNPC.Defensa && defensor.tipoUnidad == TipoUnidad.Lancero)
+        {
+            AgentNPC agent = defensor.GetComponent<AgentNPC>();
+            if (agent != null && agent.Velocity.sqrMagnitude < 0.1f)
+            {
+                fd *= 1.25f; // Aumentar defensa 25% equivale a reducir daño un 20%
+            }
+        }
+
+        return fd;
     }
 
     public struct ResultadoAtaque

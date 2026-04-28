@@ -137,7 +137,7 @@ MonoBehaviour:
   materialAzul: {fileID: 2100000, guid: 6f23b8422e87717448d03aecc1b44d91, type: 2}
   crearBarraVida: 1
   vidaMax: 900
-  poder: 100
+  poder: 75
   rangoAtaque: 4
   velAtaque: 2
   radioPercepcion: 15
@@ -223,9 +223,11 @@ MonoBehaviour:
   capaNPC:
     serializedVersion: 2
     m_Bits: 8
+  intervaloBusqueda: 0.2
   hospitalRojo: {x: 20.2, y: 0, z: -138}
   hospitalAzul: {x: -21.8, y: 0, z: 102.4}
-  intervaloBusqueda: 0.2
+  umbralInfluenciaEnemiga: 3
+  multRadioEstadoAtaque: 1.6
 --- !u!114 &8514808714539312220
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -66,8 +66,7 @@ public class PercepcionNPC : MonoBehaviour
         EstadoNPC estadoIndividual = (estado != null) ? estado.GetEstadoActual() : EstadoNPC.Vigilancia;
 
         // 1. Curacion (PRIORIDAD MAXIMA)
-        bool huirPorInfluencia = DebeHuirPorInfluencia();
-        if (stats.NecesitaCuracion() || huirPorInfluencia)
+        if (stats.NecesitaCuracion())
         {
             enemigoActual = null;
             ActualizarRuta(ObtenerPosicionHospital(), 1f);
@@ -90,10 +89,47 @@ public class PercepcionNPC : MonoBehaviour
             if (patrol != null && patrol.enabled) { patrol.enabled = false; patrol.DetenerPatrulla(); }
 
             float dist = Vector3.Distance(transform.position, enemigoActual.position);
-            // Distancia preferida segun el tipo (por ahora usa el rango de ataque)
-            float distPref = stats.rangoAtaque;
 
-            // Si esta dentro de la "zona buena" (entre rangoAtaque y distPref), parar y atacar
+            // --- Modificadores de Combate en Defensa ---
+            if (estadoIndividual == EstadoNPC.Defensa)
+            {
+                if (stats.tipoUnidad == TipoUnidad.Arquero)
+                {
+                    // Mantenerse a distancia maxima (Kite)
+                    if (dist < stats.rangoAtaque * 0.9f)
+                    {
+                        Vector3 huida = transform.position + (transform.position - enemigoActual.position).normalized * 3f;
+                        ActualizarRuta(huida, 0.5f);
+                        return; // Huye, no ataca
+                    }
+                }
+                else if (stats.tipoUnidad == TipoUnidad.Explorador)
+                {
+                    // Huye al bioma Pradera (donde recibe menos daño) si no está en él
+                    if (stats.ObtenerBiomaActual() != Bioma.Pradera)
+                    {
+                        Vector3 destinoPradera = BuscarBiomaCercano(Bioma.Pradera);
+                        if (Vector3.Distance(transform.position, destinoPradera) > 1f)
+                        {
+                            ActualizarRuta(destinoPradera, 1f);
+                            return; // Se mueve al bioma en vez de combatir directamente
+                        }
+                    }
+                }
+                else if (stats.tipoUnidad == TipoUnidad.Caballero)
+                {
+                    // Buscar aliados mediante mapa de influencias
+                    Vector3 destinoAliados = BuscarMayorInfluenciaAliada();
+                    if (Vector3.Distance(transform.position, destinoAliados) > 2f)
+                    {
+                        ActualizarRuta(destinoAliados, 1f);
+                        return; // Se repliega hacia aliados
+                    }
+                }
+            }
+
+            // Flujo normal de ataque
+            float distPref = stats.rangoAtaque;
             if (dist <= stats.rangoAtaque)
             {
                 Parar();
@@ -135,14 +171,7 @@ public class PercepcionNPC : MonoBehaviour
         return enemigoActual.position + dir * distanciaPref;
     }
 
-    private bool DebeHuirPorInfluencia()
-    {
-        if (mapa == null) return false;
-        if (stats.VidaPorcentaje > 0.3f) return false;
 
-        float infEnem = mapa.GetInfluenciaEnemigaEnMundo(stats.miBando, transform.position);
-        return infEnem >= umbralInfluenciaEnemiga;
-    }
 
     private Vector3 ObtenerPosicionHospital()
     {
@@ -154,7 +183,7 @@ public class PercepcionNPC : MonoBehaviour
     {
         if (estadoInd == EstadoNPC.Defensa)
         {
-            // Vaciado por ahora
+            GestionarDefensa();
             return;
         }
 
@@ -270,6 +299,111 @@ public class PercepcionNPC : MonoBehaviour
             path.FinalizarMovimiento(agent);
             lastDest = Vector3.zero;
         }
+    }
+
+    // --- Utilidades Defensivas ---
+    public bool TieneAliadosCerca()
+    {
+        Collider[] hits = Physics.OverlapSphere(transform.position, stats.radioPercepcion, capaNPC);
+        foreach (var hit in hits)
+        {
+            if (hit.transform == transform) continue;
+            NPCStats ts = hit.GetComponent<NPCStats>();
+            if (ts != null && ts.miBando == stats.miBando) return true;
+        }
+        return false;
+    }
+
+    private Vector3 BuscarBiomaCercano(Bioma biomaBuscado)
+    {
+        GridManager gm = FindFirstObjectByType<GridManager>();
+        if (gm == null) return transform.position;
+
+        Vector3 mejorPos = transform.position;
+        float minDist = float.MaxValue;
+
+        for (int i = 0; i < 15; i++)
+        {
+            Vector3 rnd = transform.position + Random.insideUnitSphere * stats.radioPercepcion;
+            rnd.y = transform.position.y;
+            Node n = gm.NodeFromWorldPoint(rnd);
+            if (n != null && n.bioma == biomaBuscado)
+            {
+                float d = Vector3.Distance(transform.position, rnd);
+                if (d < minDist) { minDist = d; mejorPos = rnd; }
+            }
+        }
+        return mejorPos;
+    }
+
+    private Vector3 BuscarMayorInfluenciaAliada()
+    {
+        if (mapa == null) return transform.position;
+        Vector3 mejorPos = transform.position;
+        float maxInf = mapa.GetInfluenciaPropiaEnMundo(stats.miBando, transform.position);
+
+        for (int i = 0; i < 15; i++)
+        {
+            Vector3 rnd = transform.position + Random.insideUnitSphere * stats.radioPercepcion;
+            rnd.y = transform.position.y;
+            float inf = mapa.GetInfluenciaPropiaEnMundo(stats.miBando, rnd);
+            if (inf > maxInf) { maxInf = inf; mejorPos = rnd; }
+        }
+        return mejorPos;
+    }
+
+    private float nextDefenseUpdate;
+
+    private void GestionarDefensa()
+    {
+        if (patrol != null && patrol.enabled) { patrol.enabled = false; patrol.DetenerPatrulla(); }
+
+        if (Time.time >= nextDefenseUpdate)
+        {
+            nextDefenseUpdate = Time.time + 1.5f; // Actualizar destino defensivo cada 1.5s
+            Vector3 destino = CalcularDestinoDefensa();
+            ActualizarRuta(destino, 2f);
+        }
+    }
+
+    private Vector3 CalcularDestinoDefensa()
+    {
+        if (mapa == null) return transform.position;
+
+        Vector3 mejorPos = transform.position;
+        float mejorScore = float.MinValue;
+        float radioBusqueda = 15f; 
+
+        for (int i = 0; i < 20; i++)
+        {
+            Vector3 rnd = transform.position + Random.insideUnitSphere * radioBusqueda;
+            rnd.y = transform.position.y;
+            
+            float infPropia = mapa.GetInfluenciaPropiaEnMundo(stats.miBando, rnd);
+            float infEnemiga = mapa.GetInfluenciaEnemigaEnMundo(stats.miBando, rnd);
+            float score = 0;
+
+            if (stats.tipoUnidad == TipoUnidad.Arquero || stats.tipoUnidad == TipoUnidad.Explorador)
+            {
+                // Buscan sitios vacíos del mapa
+                score = -(infPropia + infEnemiga);
+            }
+            else
+            {
+                // Caballero, Tanque, Lancero: en frente cerca de la frontera con el otro bando
+                if (infEnemiga > 0.1f && infPropia > 0.1f)
+                    score = (infPropia + infEnemiga) - Mathf.Abs(infPropia - infEnemiga);
+                else
+                    score = infEnemiga - infPropia; // Si no hay choque claro, busca acercarse a la influencia enemiga
+            }
+
+            if (score > mejorScore)
+            {
+                mejorScore = score;
+                mejorPos = rnd;
+            }
+        }
+        return mejorPos;
     }
 
     private void OnDrawGizmos()

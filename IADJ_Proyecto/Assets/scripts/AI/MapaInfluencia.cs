@@ -24,12 +24,6 @@ public class MapaInfluencia : MonoBehaviour
     [Tooltip("Multiplicador del poder del NPC al traducir a influencia bruta.")]
     public float pesoPoder = 0.3f;
 
-    [Tooltip("Si esta activo, el A* sumara la influencia enemiga al coste de paso.")]
-    public bool pathfindingTacticoActivo = true;
-
-    [Tooltip("Cuanto pesa la influencia enemiga en el coste del A* (0 desactiva).")]
-    public float pesoCostePathfinding = 1.5f;
-
     private GridManager gridManager;
     private float[,] infRojo;
     private float[,] infAzul;
@@ -147,14 +141,7 @@ public class MapaInfluencia : MonoBehaviour
         return GetInfluencia(miBando, x, y);
     }
 
-    // Devuelve coste de paso para pathfinding tactico. El NPC del bando "miBando"
-    // pagara mas por atravesar zonas con mucha influencia enemiga.
-    public int GetCosteInfluencia(Bando miBando, int x, int y)
-    {
-        if (!pathfindingTacticoActivo) return 0;
-        float enem = GetInfluenciaEnemiga(miBando, x, y);
-        return Mathf.RoundToInt(enem * pesoCostePathfinding);
-    }
+
 
     // En posicion del mundo: util para PercepcionNPC.
     public float GetInfluenciaEnemigaEnMundo(Bando miBando, Vector3 worldPos)
