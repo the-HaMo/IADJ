@@ -1488,7 +1488,7 @@ Transform:
   m_GameObject: {fileID: 100065549}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 89.93, y: 0, z: 20.799995}
+  m_LocalPosition: {x: 90.6, y: 0, z: 17.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -31992,9 +31992,9 @@ MonoBehaviour:
   prefabTanque: {fileID: 961614647817374387, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
   prefabExplorador: {fileID: 3563285655907377835, guid: 9731d6b00c403f44cab356d723046421, type: 3}
   tipoUnidadDefault: 0
-  numVigilantes: 3
+  numVigilantes: 2
   numAtaque: 8
-  numDefensa: 4
+  numDefensa: 5
   numeroNPCsPorBando: 15
   usarWaypointSiguienteParaRespawn: 1
   alturaRespawn: 2.3

@@ -30,6 +30,9 @@ public class PercepcionNPC : MonoBehaviour
     private float nextTick;
     private float nextAtaque;
 
+    private bool tieneOrdenManual = false;
+    private Vector3 destinoManual;
+
     private static bool mostrarGizmosGlobal = false;
 
     void Awake()
@@ -62,6 +65,18 @@ public class PercepcionNPC : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.C)) mostrarGizmosGlobal = !mostrarGizmosGlobal;
+
+        if (tieneOrdenManual)
+        {
+            if (Vector3.Distance(transform.position, destinoManual) <= 1.5f || (path != null && !path.enabled))
+            {
+                tieneOrdenManual = false;
+            }
+            else
+            {
+                return;
+            }
+        }
 
         EstadoNPC estadoIndividual = (estado != null) ? estado.GetEstadoActual() : EstadoNPC.Vigilancia;
 
@@ -331,6 +346,27 @@ public class PercepcionNPC : MonoBehaviour
         {
             path.FinalizarMovimiento(agent);
             lastDest = Vector3.zero;
+        }
+    }
+
+    public void AsignarOrdenManual(Vector3 destino)
+    {
+        tieneOrdenManual = true;
+        destinoManual = destino;
+        
+        if (patrol != null && patrol.enabled) { patrol.enabled = false; patrol.DetenerPatrulla(); }
+        enemigoActual = null;
+
+        var camino = pathfinder.FindPath(transform.position, destino, stats);
+        if (camino != null && camino.Count > 0)
+        {
+            path.SetPath(camino);
+            path.enabled = true;
+            if (agent != null) agent.Velocity = Vector3.zero;
+        }
+        else
+        {
+            tieneOrdenManual = false;
         }
     }
 

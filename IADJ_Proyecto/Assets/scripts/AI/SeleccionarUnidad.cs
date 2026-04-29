@@ -119,6 +119,14 @@ public class SeleccionarUnidad : MonoBehaviour
     {
         if (unidadSeleccionada == null) return;
         
+        PercepcionNPC percepcion = unidadSeleccionada.GetComponent<PercepcionNPC>();
+        if (percepcion != null)
+        {
+            percepcion.AsignarOrdenManual(destino);
+            return;
+        }
+
+        // Fallback
         if (buscadorCaminos == null)
         {
             Debug.LogError("¡No se ha encontrado el componente Pathfinding (A*) en la escena!");

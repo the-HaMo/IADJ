@@ -153,10 +153,13 @@ public class NPCRespawnSpawner : MonoBehaviour
             return;
         }
 
-        RespawnNPCEnPuntoMasCercano(stats.tipoUnidad, stats.miBando, npc.transform.position);
+        estadoNPC estado = npc.GetComponent<estadoNPC>();
+        EstadoNPC estadoActual = estado != null ? estado.GetEstadoActual() : EstadoNPC.Vigilancia;
+
+        RespawnNPCEnPuntoMasCercano(stats.tipoUnidad, stats.miBando, estadoActual, npc.transform.position);
     }
 
-    public void RespawnNPCEnPuntoMasCercano(TipoUnidad tipoUnidad, Bando bando, Vector3 posicionMuerte)
+    public void RespawnNPCEnPuntoMasCercano(TipoUnidad tipoUnidad, Bando bando, EstadoNPC estadoActual, Vector3 posicionMuerte)
     {
         if (wayPoints == null)
         {
@@ -167,6 +170,15 @@ public class NPCRespawnSpawner : MonoBehaviour
         Vector3 posicion = wayPoints.GetWaypointReaparicionMasCercano(bando, posicionMuerte);
         // El NPC muerto puede seguir contado en este frame; cupoExtraTemporal=1 evita bloquear su reemplazo.
         GameObject npcRespawneado = SpawnNPCEnPosicion(tipoUnidad, bando, posicion, 1);
+        
+        if (npcRespawneado != null)
+        {
+            estadoNPC scriptEstado = npcRespawneado.GetComponent<estadoNPC>();
+            if (scriptEstado != null)
+            {
+                scriptEstado.SetEstado(estadoActual);
+            }
+        }
 
         if (irAPuntoMuerteTrasRespawn)
         {
@@ -174,17 +186,17 @@ public class NPCRespawnSpawner : MonoBehaviour
         }
     }
 
-    public void RegistrarMuerteYRespawn(TipoUnidad tipoUnidad, Bando bando, Vector3 posicionMuerte)
+    public void RegistrarMuerteYRespawn(TipoUnidad tipoUnidad, Bando bando, EstadoNPC estadoActual, Vector3 posicionMuerte)
     {
         DecrementarVivos(bando);
-        StartCoroutine(RutinaRespawn(tipoUnidad, bando, posicionMuerte));
+        StartCoroutine(RutinaRespawn(tipoUnidad, bando, estadoActual, posicionMuerte));
     }
 
-    private System.Collections.IEnumerator RutinaRespawn(TipoUnidad tipoUnidad, Bando bando, Vector3 posicionMuerte)
+    private System.Collections.IEnumerator RutinaRespawn(TipoUnidad tipoUnidad, Bando bando, EstadoNPC estadoActual, Vector3 posicionMuerte)
     {
         // Esperamos 30 segundos antes de reaparecer
         yield return new WaitForSeconds(30f);
-        RespawnNPCEnPuntoMasCercano(tipoUnidad, bando, posicionMuerte);
+        RespawnNPCEnPuntoMasCercano(tipoUnidad, bando, estadoActual, posicionMuerte);
     }
 
     private void EnviarNPCAlPuntoMuerte(GameObject npc, Vector3 posicionMuerte)

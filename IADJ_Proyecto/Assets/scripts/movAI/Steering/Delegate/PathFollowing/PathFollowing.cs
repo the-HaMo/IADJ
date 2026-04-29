@@ -139,15 +139,24 @@ public class PathFollowing : SteeringBehaviour
     {
         if (!mostrarGizmosGlobal || waypoints == null || waypoints.Count == 0) return;
 
+        bool esPatrulla = false;
+        NPCPatrol patrol = GetComponent<NPCPatrol>();
+        if (patrol != null && patrol.enabled) esPatrulla = true;
+
+        Color colorActual = esPatrulla ? Color.black : Color.yellow;
+        Color colorCamino = esPatrulla ? Color.black : Color.cyan;
+        Color colorPuntoNormal = esPatrulla ? Color.black : Color.blue;
+        Color colorPuntoDestino = esPatrulla ? Color.black : Color.green;
+
         // Línea desde el NPC al waypoint actual
         if (currentWaypointIndex < waypoints.Count && waypoints[currentWaypointIndex] != null)
         {
-            Gizmos.color = Color.yellow;
+            Gizmos.color = colorActual;
             Gizmos.DrawLine(transform.position, waypoints[currentWaypointIndex].position);
         }
 
         // Líneas del camino completo
-        Gizmos.color = Color.cyan;
+        Gizmos.color = colorCamino;
         for (int i = 0; i < waypoints.Count - 1; i++)
         {
             if (waypoints[i] != null && waypoints[i + 1] != null)
@@ -158,7 +167,7 @@ public class PathFollowing : SteeringBehaviour
         for (int i = 0; i < waypoints.Count; i++)
         {
             if (waypoints[i] == null) continue;
-            Gizmos.color = (i == currentWaypointIndex) ? Color.green : Color.blue;
+            Gizmos.color = (i == currentWaypointIndex) ? colorPuntoDestino : colorPuntoNormal;
             Gizmos.DrawWireSphere(waypoints[i].position, 0.3f);
         }
     }
