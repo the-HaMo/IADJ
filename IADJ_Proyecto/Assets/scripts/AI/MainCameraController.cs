@@ -55,18 +55,16 @@ public class MainCameraController : MonoBehaviour
         float h = 0f;
         float v = 0f;
 
-        if (Input.GetKey(KeyCode.LeftArrow)) h -= 1f;
-        if (Input.GetKey(KeyCode.RightArrow)) h += 1f;
-        if (Input.GetKey(KeyCode.S)) v -= 1f;
-        if (Input.GetKey(KeyCode.W)) v += 1f;
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) h -= 1f;
+        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) h += 1f;
+        if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) v -= 1f;
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) v += 1f;
 
-        Vector3 forward = transform.forward;
-        forward.y = 0f;
-        if (forward.sqrMagnitude > 0.0001f) forward.Normalize();
-
-        Vector3 right = transform.right;
-        right.y = 0f;
-        if (right.sqrMagnitude > 0.0001f) right.Normalize();
+        // Utilizamos la rotación en el eje Y de la cámara para que el movimiento
+        // siempre se corresponda con hacia dónde mira la cámara, independientemente del pitch
+        Quaternion yRotation = Quaternion.Euler(0, transform.eulerAngles.y, 0);
+        Vector3 forward = yRotation * Vector3.forward;
+        Vector3 right = yRotation * Vector3.right;
 
         Vector3 moveDir = (right * h + forward * v);
         if (moveDir.sqrMagnitude > 1f) moveDir.Normalize();

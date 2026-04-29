@@ -170,7 +170,7 @@ MonoBehaviour:
   vidaMax: 600
   poder: 120
   rangoAtaque: 15
-  velAtaque: 1.2
+  velAtaque: 1
   radioPercepcion: 20
   costeCamino: 30
   costeBosque: 10

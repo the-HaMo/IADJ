@@ -340,7 +340,7 @@ MonoBehaviour:
   vidaMax: 1200
   poder: 100
   rangoAtaque: 1.5
-  velAtaque: 1
+  velAtaque: 0.8
   radioPercepcion: 15
   costeCamino: 10
   costeBosque: 40
@@ -392,9 +392,11 @@ MonoBehaviour:
   capaNPC:
     serializedVersion: 2
     m_Bits: 8
+  intervaloBusqueda: 0.2
   hospitalRojo: {x: 20.2, y: 0, z: -138}
   hospitalAzul: {x: -21.8, y: 0, z: 102.4}
-  intervaloBusqueda: 0.2
+  umbralInfluenciaEnemiga: 3
+  multRadioEstadoAtaque: 1.6
 --- !u!114 &6884050793689910115
 MonoBehaviour:
   m_ObjectHideFlags: 0
