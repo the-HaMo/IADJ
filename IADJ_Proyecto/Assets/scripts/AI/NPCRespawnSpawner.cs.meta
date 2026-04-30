@@ -1,2 +1,17 @@
 fileFormatVersion: 2
 guid: cb3bcfb1ff14a394e801a6a65ded2729
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - wayPoints: {instanceID: 0}
+  - prefabCaballero: {fileID: 7439606074143703248, guid: f0787c899e9c42a4199663fdddfe1fbd, type: 3}
+  - prefabArquero: {fileID: 3664783347460375435, guid: 3327ede9bca67ae4b892a25815046519, type: 3}
+  - prefabLancero: {fileID: 6986243360470267362, guid: 2558c438f96eb564892565c2c66e0bfd, type: 3}
+  - prefabTanque: {fileID: 961614647817374387, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
+  - prefabExplorador: {fileID: 3563285655907377835, guid: 9731d6b00c403f44cab356d723046421, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

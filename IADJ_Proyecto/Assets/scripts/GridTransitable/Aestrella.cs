@@ -84,7 +84,14 @@ public class Pathfinding : MonoBehaviour
             {
                 if (!neighbor.isWalkable || closedSet.Contains(neighbor)) continue;
                 int penalizacionTerreno = (statsUnidad != null) ? statsUnidad.ObtenerCosteTerreno(neighbor.bioma) : 1;
-                int penalizacionTactica = EstadoTacticoGlobal.PathfindingTacticoActivo ? Mathf.Max(0, neighbor.influenceValue) : 0;
+                
+                int penalizacionTactica = 0;
+                if (EstadoTacticoGlobal.PathfindingTacticoActivo && mapaInfluencia != null && statsUnidad != null)
+                {
+                    // Evitamos específicamente la influencia enemiga para que el comportamiento sea táctico
+                    float infEnemiga = mapaInfluencia.GetInfluenciaEnemiga(statsUnidad.miBando, neighbor.gridX, neighbor.gridY);
+                    penalizacionTactica = Mathf.RoundToInt(infEnemiga * 2.5f); // Multiplicador para hacer el desvío muy evidente
+                }
 
                 int costToNeighbor = GetStepCost(currentNode, neighbor);
 

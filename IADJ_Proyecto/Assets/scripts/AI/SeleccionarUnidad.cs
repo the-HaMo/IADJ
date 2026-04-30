@@ -34,15 +34,6 @@ public class SeleccionarUnidad : MonoBehaviour
             ProcesarClick();
         }
 
-        // Tecla C para activar/desactivar visualización global de caminos
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            if (buscadorCaminos != null)
-            {
-                buscadorCaminos.mostrarCaminosEnEscena = !buscadorCaminos.mostrarCaminosEnEscena;
-                Debug.Log("Visualización de rutas: " + (buscadorCaminos.mostrarCaminosEnEscena ? "ACTIVADA" : "DESACTIVADA"));
-            }
-        }
 
         if (debugVidaSeleccion && unidadSeleccionada != null)
         {

@@ -50,10 +50,10 @@ public static class SistemaCombate
     private static readonly float[,] FTA = new float[4, 5]
     {
         //              Cab    Arq    Lan    Tan    Exp
-        /* Pradera */ { 1.50f, 1.00f, 1.00f, 1.00f, 1.00f },
+        /* Pradera */ { 1.50f, 1.00f, 1.00f, 1.25f, 1.00f },
         /* Camino  */ { 1.25f, 1.00f, 1.00f, 0.75f, 0.75f },
-        /* Bosque  */ { 0.75f, 1.50f, 0.75f, 0.50f, 1.25f },
-        /* Urbano  */ { 0.50f, 0.75f, 1.25f, 1.50f, 1.25f }
+        /* Bosque  */ { 0.75f, 1.25f, 0.75f, 0.50f, 1.25f },
+        /* Urbano  */ { 0.50f, 0.75f, 1.25f, 1.50f, 1.00f }
     };
 
     // ----------------------------------------------------------------------
@@ -63,10 +63,10 @@ public static class SistemaCombate
     private static readonly float[,] FTD = new float[4, 5]
     {
         //              Cab    Arq    Lan    Tan    Exp
-        /* Pradera */ { 0.75f, 1.00f, 1.00f, 1.00f, 1.00f },
-        /* Camino  */ { 1.25f, 1.00f, 1.00f, 0.75f, 0.75f },
-        /* Bosque  */ { 1.25f, 0.50f, 1.25f, 1.50f, 0.75f },
-        /* Urbano  */ { 1.50f, 1.25f, 0.75f, 0.50f, 0.75f }
+        /* Pradera */ { 0.75f, 1.00f, 1.00f, 1.00f, 1.25f },
+        /* Camino  */ { 1.25f, 1.00f, 1.00f, 1.00f, 0.75f },
+        /* Bosque  */ { 1.25f, 0.75f, 1.25f, 1.25f, 1.00f },
+        /* Urbano  */ { 1.50f, 1.25f, 0.75f, 0.75f, 0.75f }
     };
 
     public static float ObtenerFAD(TipoUnidad atacante, TipoUnidad defensor)

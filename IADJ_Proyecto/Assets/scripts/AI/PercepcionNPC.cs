@@ -54,11 +54,25 @@ public class PercepcionNPC : MonoBehaviour
     {
         if (stats == null) stats = GetComponent<NPCStats>();
         if (stats != null) stats.OnAtacado += AlSerAtacado;
+        EstadoTacticoGlobal.OnEstadoCambiado += ForzarRecalculoRuta;
     }
 
     void OnDisable()
     {
         if (stats != null) stats.OnAtacado -= AlSerAtacado;
+        EstadoTacticoGlobal.OnEstadoCambiado -= ForzarRecalculoRuta;
+    }
+
+    private void ForzarRecalculoRuta()
+    {
+        // Al resetear lastDest, el siguiente Update detectará que "ha cambiado" y pedirá un nuevo A*
+        lastDest = Vector3.zero;
+
+        // Si la unidad tiene una orden manual del jugador, forzamos que pida el nuevo camino A* táctico
+        if (tieneOrdenManual)
+        {
+            AsignarOrdenManual(destinoManual);
+        }
     }
 
     void Update()

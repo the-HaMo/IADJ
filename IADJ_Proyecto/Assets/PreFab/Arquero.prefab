@@ -167,11 +167,11 @@ MonoBehaviour:
   materialRojo: {fileID: 2100000, guid: 815931dfaebdcb941a703d6f2e7abced, type: 2}
   materialAzul: {fileID: 2100000, guid: 6f23b8422e87717448d03aecc1b44d91, type: 2}
   crearBarraVida: 1
-  vidaMax: 600
-  poder: 120
-  rangoAtaque: 15
-  velAtaque: 1
-  radioPercepcion: 20
+  vidaMax: 550
+  poder: 150
+  rangoAtaque: 20
+  velAtaque: 1.5
+  radioPercepcion: 25
   costeCamino: 30
   costeBosque: 10
   costePradera: 10
