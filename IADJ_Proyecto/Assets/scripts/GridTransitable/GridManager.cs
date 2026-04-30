@@ -203,68 +203,59 @@ public class GridManager : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        if (!debugGrid) return;
+        bool mostrarGrid  = debugGrid;
+        bool mostrarCalor = EstadoTacticoGlobal.DebugActivo;
+        if (!mostrarGrid && !mostrarCalor) return;
 
         NormalizeSettings();
         UpdateOrigin();
 
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireCube(transform.position, new Vector3(gridSizeX * tamCelda, obstacleDetectionHeight, gridSizeY * tamCelda));
-
-        Gizmos.color = Color.white;
-        for (int fila = 0; fila <= gridSizeY; fila++)
+        // --- Grid de Biomas (tecla G) ---
+        if (mostrarGrid)
         {
-            Vector3 inicio = GetWorldPosition(fila, 0);
-            Vector3 fin = GetWorldPosition(fila, gridSizeX);
-            Gizmos.DrawLine(inicio, fin);
-        }
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireCube(transform.position, new Vector3(gridSizeX * tamCelda, obstacleDetectionHeight, gridSizeY * tamCelda));
 
-        for (int columna = 0; columna <= gridSizeX; columna++)
-        {
-            Vector3 inicio = GetWorldPosition(0, columna);
-            Vector3 fin = GetWorldPosition(gridSizeY, columna);
-            Gizmos.DrawLine(inicio, fin);
-        }
+            Gizmos.color = Color.white;
+            for (int fila = 0; fila <= gridSizeY; fila++)
+                Gizmos.DrawLine(GetWorldPosition(fila, 0), GetWorldPosition(fila, gridSizeX));
+            for (int columna = 0; columna <= gridSizeX; columna++)
+                Gizmos.DrawLine(GetWorldPosition(0, columna), GetWorldPosition(gridSizeY, columna));
 
-        if (biomasAreas != null)
-        {
-            foreach (var area in biomasAreas)
+            if (biomasAreas != null)
             {
-                Gizmos.color = new Color(0f, 1f, 1f, 0.2f);
-                Gizmos.DrawCube(new Vector3(area.centro.x, transform.position.y, area.centro.y), new Vector3(area.tamano.x, 0.1f, area.tamano.y));
-                Gizmos.color = Color.cyan;
-                Gizmos.DrawWireCube(new Vector3(area.centro.x, transform.position.y, area.centro.y), new Vector3(area.tamano.x, 0.1f, area.tamano.y));
+                foreach (var area in biomasAreas)
+                {
+                    Gizmos.color = new Color(0f, 1f, 1f, 0.2f);
+                    Gizmos.DrawCube(new Vector3(area.centro.x, transform.position.y, area.centro.y), new Vector3(area.tamano.x, 0.1f, area.tamano.y));
+                    Gizmos.color = Color.cyan;
+                    Gizmos.DrawWireCube(new Vector3(area.centro.x, transform.position.y, area.centro.y), new Vector3(area.tamano.x, 0.1f, area.tamano.y));
+                }
+            }
+
+            if (grid != null)
+            {
+                foreach (Node n in grid)
+                {
+                    Gizmos.color = !n.isWalkable      ? new Color(1f, 0f, 0f, 0.5f) :
+                        n.bioma == Bioma.Camino        ? new Color(0.6f, 0.3f, 0.1f, 0.5f) :
+                        n.bioma == Bioma.Bosque        ? new Color(0.1f, 0.4f, 0.1f, 0.5f) :
+                        n.bioma == Bioma.Urbano        ? new Color(1f, 0.5f, 0f, 0.5f) :
+                                                         new Color(0.5f, 1f, 0.5f, 0.3f);
+                    Gizmos.DrawCube(n.worldPosition, Vector3.one * (tamCelda - 0.1f));
+                }
             }
         }
 
-        if (grid != null)
+        // --- Mapa de Calor de Influencia (tecla B) --- verde=seguro, rojo=peligroso
+        if (mostrarCalor && grid != null)
         {
             foreach (Node n in grid)
             {
-                if (!n.isWalkable)
-                {
-                    Gizmos.color = new Color(1f, 0f, 0f, 0.5f);
-                }
-                else
-                {
-                    switch (n.bioma)
-                    {
-                        case Bioma.Camino:
-                            Gizmos.color = new Color(0.6f, 0.3f, 0.1f, 0.5f);
-                            break;
-                        case Bioma.Bosque:
-                            Gizmos.color = new Color(0.1f, 0.4f, 0.1f, 0.5f);
-                            break;
-                        case Bioma.Urbano:
-                            Gizmos.color = new Color(1f, 0.5f, 0f, 0.5f);
-                            break;
-                        default:
-                            Gizmos.color = new Color(0.5f, 1f, 0.5f, 0.3f);
-                            break;
-                    }
-                }
-
-                Gizmos.DrawCube(n.worldPosition, Vector3.one * (tamCelda - 0.1f));
+                if (!n.isWalkable || n.influenceValue == 0) continue;
+                float t = Mathf.InverseLerp(0, 20, n.influenceValue);
+                Gizmos.color = new Color(t, 1f - t, 0f, 0.4f);
+                Gizmos.DrawCube(n.worldPosition, Vector3.one * (tamCelda - 0.2f));
             }
         }
     }

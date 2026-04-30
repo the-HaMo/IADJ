@@ -96,8 +96,8 @@ public class NPCStats : MonoBehaviour
             if (respawnSpawner != null)
             {
                 estadoNPC estado = GetComponent<estadoNPC>();
-                EstadoNPC estadoActual = estado != null ? estado.GetEstadoActual() : EstadoNPC.Vigilancia;
-                respawnSpawner.RegistrarMuerteYRespawn(tipoUnidad, miBando, estadoActual, transform.position);
+                EstadoNPC estadoRespawn = estado != null ? estado.GetEstadoRespawn() : EstadoNPC.Vigilancia;
+                respawnSpawner.RegistrarMuerteYRespawn(tipoUnidad, miBando, estadoRespawn, transform.position);
             }
 
             Destroy(gameObject);

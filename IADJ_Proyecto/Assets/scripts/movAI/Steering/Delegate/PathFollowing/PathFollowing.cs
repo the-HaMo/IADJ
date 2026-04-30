@@ -8,7 +8,7 @@ public class PathFollowing : SteeringBehaviour
     public bool loop = false; // Permite patrullas cíclicas
     public bool autoDestroyWaypoints = true; // Si es true, destruye los waypoints al finalizar (útil para A*)
 
-    private static bool mostrarGizmosGlobal = false;
+    // El debug de caminos se controla desde EstadoTacticoGlobal (tecla B)
     private int currentWaypointIndex = 0;
     private Agent virtualTarget;
     private Arrive arriveBehaviour;
@@ -25,7 +25,7 @@ public class PathFollowing : SteeringBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.C)) mostrarGizmosGlobal = !mostrarGizmosGlobal;
+        // Debug controlado globalmente por la tecla B (TacticalCanvasController -> EstadoTacticoGlobal)
     }
 
     public override Steering GetSteering(AgentNPC agent)
@@ -137,7 +137,7 @@ public class PathFollowing : SteeringBehaviour
 
     private void OnDrawGizmos()
     {
-        if (!mostrarGizmosGlobal || waypoints == null || waypoints.Count == 0) return;
+        if (!EstadoTacticoGlobal.DebugActivo || waypoints == null || waypoints.Count == 0) return;
 
         bool esPatrulla = false;
         NPCPatrol patrol = GetComponent<NPCPatrol>();

@@ -9,75 +9,70 @@ public class Torre : MonoBehaviour
     private bool conquistada = false;
     private float progresoCaptura = 0f;
     private bool recibioDanioAlguien = false;
-    private float tiempoUltimaVezVisto = 0f;
-    private NPCStats atacanteActual = null;
     private float tiempoSiguienteLog = 0f;
 
-    private void OnTriggerStay(Collider other)
+    private System.Collections.Generic.HashSet<NPCStats> atacantesEnZona = new System.Collections.Generic.HashSet<NPCStats>();
+
+    private void OnTriggerEnter(Collider other)
     {
-        if (conquistada)
-        {
-            return;
-        }
+        if (conquistada) return;
 
         NPCStats stats = other.GetComponentInParent<NPCStats>();
-        if (stats != null)
+        if (stats != null && stats.miBando != bandoPropietario)
         {
-            if (stats.miBando != bandoPropietario)
+            if (atacantesEnZona.Add(stats))
             {
-                tiempoUltimaVezVisto = Time.time;
-                
-                if (atacanteActual != stats)
-                {
-                    if (atacanteActual != null)
-                    {
-                        atacanteActual.OnDanioRecibido -= MarcarDanio;
-                    }
-                    atacanteActual = stats;
-                    atacanteActual.OnDanioRecibido += MarcarDanio;
-                    Debug.Log("Captura iniciada por: " + stats.name);
-                }
+                stats.OnDanioRecibido += MarcarDanio;
             }
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (conquistada) return;
+
+        NPCStats stats = other.GetComponentInParent<NPCStats>();
+        if (stats != null && atacantesEnZona.Contains(stats))
+        {
+            atacantesEnZona.Remove(stats);
+            stats.OnDanioRecibido -= MarcarDanio;
         }
     }
 
     void Update()
     {
-        if (conquistada)
-        {
-            return;
-        }
+        if (conquistada) return;
 
-        // Si en 0.2s no vemos a nadie, reseteamos progreso
-        if (Time.time - tiempoUltimaVezVisto > 0.2f)
+        // Limpiar atacantes que hayan muerto (destruidos)
+        atacantesEnZona.RemoveWhere(s => s == null);
+
+        // Si no hay nadie capturando, resetear
+        if (atacantesEnZona.Count == 0)
         {
             if (progresoCaptura > 0)
             {
                 progresoCaptura = 0f;
-                if (atacanteActual != null)
-                {
-                    atacanteActual.OnDanioRecibido -= MarcarDanio;
-                }
-                atacanteActual = null;
-                Debug.Log("Zona vacia. Progreso reseteado.");
+                Debug.Log($"Zona {name} vacia. Progreso reseteado.");
             }
             return;
         }
 
+        // Si alguien recibio daño, se interrumpe la captura
         if (recibioDanioAlguien)
         {
             progresoCaptura = 0f;
             recibioDanioAlguien = false;
-            Debug.Log("¡Reset por daño!");
+            Debug.Log($"¡Captura de {name} interrumpida por daño!");
             return;
         }
 
+        // Progresar captura
         progresoCaptura += Time.deltaTime;
 
         if (Time.time >= tiempoSiguienteLog)
         {
             int pct = Mathf.RoundToInt((progresoCaptura / tiempoParaConquistar) * 100);
-            Debug.Log("Capturando Torre... " + pct + "%");
+            Debug.Log($"Capturando {name}... {pct}%");
             tiempoSiguienteLog = Time.time + 1f;
         }
 
@@ -96,10 +91,11 @@ public class Torre : MonoBehaviour
     {
         conquistada = true;
         
-        if (atacanteActual != null)
+        foreach (var atacante in atacantesEnZona)
         {
-            atacanteActual.OnDanioRecibido -= MarcarDanio;
+            if (atacante != null) atacante.OnDanioRecibido -= MarcarDanio;
         }
+        atacantesEnZona.Clear();
         
         Bando bandoConquistador = (bandoPropietario == Bando.Rojo) ? Bando.Azul : Bando.Rojo;
         Debug.Log($"<color=green>¡TORRE CONQUISTADA! El bando {bandoConquistador} ha tomado el control de {gameObject.name}.</color>");

@@ -33,7 +33,6 @@ public class PercepcionNPC : MonoBehaviour
     private bool tieneOrdenManual = false;
     private Vector3 destinoManual;
 
-    private static bool mostrarGizmosGlobal = false;
 
     void Awake()
     {
@@ -64,7 +63,7 @@ public class PercepcionNPC : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.C)) mostrarGizmosGlobal = !mostrarGizmosGlobal;
+        // Debug controlado globalmente por la tecla B
 
         if (tieneOrdenManual)
         {
@@ -123,14 +122,14 @@ public class PercepcionNPC : MonoBehaviour
                 }
                 else if (stats.tipoUnidad == TipoUnidad.Explorador)
                 {
-                    // Huye al bioma Pradera (donde recibe menos daño) si no está en él
-                    if (stats.ObtenerBiomaActual() != Bioma.Pradera)
+                    // REFUGIO EN BIOMA: Huye al Bosque donde recibe menos daño (FTD Bosque/Explorador = 0.75)
+                    if (stats.ObtenerBiomaActual() != Bioma.Bosque)
                     {
-                        Vector3 destinoPradera = BuscarBiomaCercano(Bioma.Pradera);
-                        if (Vector3.Distance(transform.position, destinoPradera) > 1f)
+                        Vector3 destinoBosque = BuscarBiomaCercano(Bioma.Bosque);
+                        if (Vector3.Distance(transform.position, destinoBosque) > 1f)
                         {
-                            ActualizarRuta(destinoPradera, 1f);
-                            return; // Se mueve al bioma en vez de combatir directamente
+                            ActualizarRuta(destinoBosque, 1f);
+                            return; // Se mueve al Bosque en vez de combatir directamente
                         }
                     }
                 }
@@ -454,41 +453,64 @@ public class PercepcionNPC : MonoBehaviour
 
     private Vector3 CalcularDestinoDefensa()
     {
-        if (mapa == null) return transform.position;
+        if (mapa == null || waypoints == null) return transform.position;
 
+        Bando bandoPropio = stats.miBando;
         Vector3 mejorPos = transform.position;
         float mejorScore = float.MinValue;
-        float radioBusqueda = 15f; 
+        float radio = 20f;
+
+        Vector3 torrePropia = waypoints.GetObjetivoMasCercano(bandoPropio, transform.position);
+        // Failsafe: si está muy lejos de su área defensiva, vuelve
+        if (Vector3.Distance(transform.position, torrePropia) > 35f)
+            return torrePropia;
 
         for (int i = 0; i < 20; i++)
         {
-            Vector3 rnd = transform.position + Random.insideUnitSphere * radioBusqueda;
+            Vector3 rnd = transform.position + Random.insideUnitSphere * radio;
             rnd.y = transform.position.y;
-            
-            float infPropia = mapa.GetInfluenciaPropiaEnMundo(stats.miBando, rnd);
-            float infEnemiga = mapa.GetInfluenciaEnemigaEnMundo(stats.miBando, rnd);
-            float score = 0;
 
-            if (stats.tipoUnidad == TipoUnidad.Arquero || stats.tipoUnidad == TipoUnidad.Explorador)
+            float infPropia  = mapa.GetInfluenciaPropiaEnMundo(bandoPropio, rnd);
+            float infEnemiga = mapa.GetInfluenciaEnemigaEnMundo(bandoPropio, rnd);
+            float distTorre  = Vector3.Distance(rnd, torrePropia);
+            float score;
+
+            switch (stats.tipoUnidad)
             {
-                // Buscan sitios vacíos del mapa
-                score = -(infPropia + infEnemiga);
-            }
-            else
-            {
-                // Caballero, Tanque, Lancero: en frente cerca de la frontera con el otro bando
-                if (infEnemiga > 0.1f && infPropia > 0.1f)
-                    score = (infPropia + infEnemiga) - Mathf.Abs(infPropia - infEnemiga);
-                else
-                    score = infEnemiga - infPropia; // Si no hay choque claro, busca acercarse a la influencia enemiga
+                case TipoUnidad.Caballero:
+                    // Busca la FRONTERA: donde hay influencia propia Y enemiga (línea de contacto)
+                    // Se mueve hacia donde están los dos bandos, actuando como primer escudo
+                    score = (infPropia + infEnemiga) - Mathf.Abs(infPropia - infEnemiga) * 2f;
+                    break;
+
+                case TipoUnidad.Lancero:
+                    // Busca alta influencia propia: se agrupa donde están los aliados (formación)
+                    score = infPropia * 3f - infEnemiga;
+                    break;
+
+                case TipoUnidad.Tanque:
+                    // Avanza donde más enemigos hay pero dentro de su zona (influencia enemiga alta)
+                    score = infEnemiga * 2f - (distTorre * 0.3f);
+                    break;
+
+                case TipoUnidad.Arquero:
+                    // Zona despejada con visibilidad: baja densidad aliada, algo de presencia enemiga visible
+                    score = infEnemiga * 1.5f - infPropia * 2f;
+                    break;
+
+                case TipoUnidad.Explorador:
+                    // Reconocimiento: busca zona con poca influencia de ambos (terreno sin explorar / flancos)
+                    score = -(infPropia + infEnemiga);
+                    break;
+
+                default:
+                    score = infPropia - infEnemiga;
+                    break;
             }
 
-            if (score > mejorScore)
-            {
-                mejorScore = score;
-                mejorPos = rnd;
-            }
+            if (score > mejorScore) { mejorScore = score; mejorPos = rnd; }
         }
+
         return mejorPos;
     }
 
@@ -575,7 +597,7 @@ public class PercepcionNPC : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (!mostrarGizmosGlobal || stats == null) return;
+        if (!EstadoTacticoGlobal.DebugActivo || stats == null) return;
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, stats.radioPercepcion);
         Gizmos.color = Color.yellow;

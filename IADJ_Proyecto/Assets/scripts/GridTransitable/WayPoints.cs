@@ -15,9 +15,8 @@ public class WayPoints : MonoBehaviour
     // Getters basicos para el Spawner
     public Vector3 GetRandomReaparicion(Bando bando)
     {
-        List<Transform> lista;
-        if (bando == Bando.Rojo) { lista = spawnRojo; }
-        else { lista = spawnAzul; }
+        List<Transform> lista = (bando == Bando.Rojo) ? spawnRojo : spawnAzul;
+        lista.RemoveAll(t => t == null);
 
         if (lista.Count > 0)
         {
@@ -29,9 +28,8 @@ public class WayPoints : MonoBehaviour
 
     public Vector3 GetWaypointReaparicion(Bando bando, int index)
     {
-        List<Transform> lista;
-        if (bando == Bando.Rojo) { lista = spawnRojo; }
-        else { lista = spawnAzul; }
+        List<Transform> lista = (bando == Bando.Rojo) ? spawnRojo : spawnAzul;
+        lista.RemoveAll(t => t == null);
 
         if (lista.Count > 0)
         {
@@ -43,9 +41,8 @@ public class WayPoints : MonoBehaviour
 
     public Vector3 GetWaypointReaparicionMasCercano(Bando bando, Vector3 posMuerte)
     {
-        List<Transform> lista;
-        if (bando == Bando.Rojo) { lista = spawnRojo; }
-        else { lista = spawnAzul; }
+        List<Transform> lista = (bando == Bando.Rojo) ? spawnRojo : spawnAzul;
+        lista.RemoveAll(t => t == null);
 
         if (lista.Count == 0) return GetBase(bando);
 
@@ -67,14 +64,14 @@ public class WayPoints : MonoBehaviour
     // Getters para Hospital y Base
     public Vector3 GetCuracion(Bando bando)
     {
-        if (bando == Bando.Rojo) { return hospitalRojo.position; }
-        else { return hospitalAzul.position; }
+        Transform h = (bando == Bando.Rojo) ? hospitalRojo : hospitalAzul;
+        return (h != null) ? h.position : GetBase(bando);
     }
 
     public Vector3 GetBase(Bando bando)
     {
-        if (bando == Bando.Rojo) { return baseRojo.position; }
-        else { return baseAzul.position; }
+        Transform b = (bando == Bando.Rojo) ? baseRojo : baseAzul;
+        return (b != null) ? b.position : Vector3.zero;
     }
 
     /// <summary>
@@ -103,10 +100,65 @@ public class WayPoints : MonoBehaviour
 
     public void DesactivarPuntoSpawn(Bando bando, GameObject puntoObj)
     {
-        List<Transform> lista;
-        if (bando == Bando.Rojo) { lista = spawnRojo; }
-        else { lista = spawnAzul; }
-
+        List<Transform> lista = (bando == Bando.Rojo) ? spawnRojo : spawnAzul;
         lista.RemoveAll(t => t == null || Vector3.Distance(t.position, puntoObj.transform.position) < 3f);
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (!EstadoTacticoGlobal.DebugActivo) return;
+
+        // --- Spawns Rojo (esferas + líneas) ---
+        DibujarListaPuntos(spawnRojo, Color.red, "S");
+        // --- Spawns Azul ---
+        DibujarListaPuntos(spawnAzul, Color.blue, "S");
+
+        // --- Hospitales ---
+        DibujarPunto(hospitalRojo, Color.red, 0.8f);
+        DibujarPunto(hospitalAzul, Color.blue, 0.8f);
+
+        // --- Bases ---
+        DibujarPunto(baseRojo, new Color(1f, 0.4f, 0f), 1.2f);
+        DibujarPunto(baseAzul, new Color(0f, 0.4f, 1f), 1.2f);
+
+        // Líneas: Spawn Rojo -> Hospital Rojo -> Base Roja
+        DibujarCadena(spawnRojo, hospitalRojo, baseRojo, Color.red);
+        // Líneas: Spawn Azul -> Hospital Azul -> Base Azul
+        DibujarCadena(spawnAzul, hospitalAzul, baseAzul, Color.blue);
+    }
+
+    private void DibujarListaPuntos(List<Transform> lista, Color color, string prefijo)
+    {
+        if (lista == null) return;
+        Gizmos.color = color;
+        for (int i = 0; i < lista.Count; i++)
+        {
+            if (lista[i] == null) continue;
+            Gizmos.DrawWireSphere(lista[i].position, 0.5f);
+            // Línea entre spawns consecutivos
+            if (i + 1 < lista.Count && lista[i + 1] != null)
+                Gizmos.DrawLine(lista[i].position, lista[i + 1].position);
+        }
+    }
+
+    private void DibujarPunto(Transform t, Color color, float radio)
+    {
+        if (t == null) return;
+        Gizmos.color = color;
+        Gizmos.DrawWireSphere(t.position, radio);
+    }
+
+    private void DibujarCadena(List<Transform> spawns, Transform hospital, Transform baseT, Color color)
+    {
+        Gizmos.color = new Color(color.r, color.g, color.b, 0.5f);
+        if (hospital != null && baseT != null)
+            Gizmos.DrawLine(hospital.position, baseT.position);
+
+        if (spawns == null) return;
+        foreach (var s in spawns)
+        {
+            if (s == null) continue;
+            if (hospital != null) Gizmos.DrawLine(s.position, hospital.position);
+        }
     }
 }

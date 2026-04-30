@@ -32,6 +32,14 @@ public class estadoNPC : MonoBehaviour
     {
         // Se respeta el estado inicial asignado por el spawner (Vigilancia, Ataque, Defensa).
         // Ya no sobrescribimos con el EstadoTacticoGlobal al nacer.
+        
+        if (EstadoTacticoGlobal.GuerraTotalActiva)
+        {
+            estadoPrevioGuerraTotal = estadoActual;
+            estadoActual = EstadoNPC.Ataque;
+            enGuerraTotal = true;
+        }
+
         CrearIconoEstado();
         AplicarComportamientoDeEstado();
     }
@@ -46,9 +54,34 @@ public class estadoNPC : MonoBehaviour
         EstadoTacticoGlobal.OnEstadoCambiado -= AlCambiarEstadoGlobal;
     }
 
+    private EstadoNPC estadoPrevioGuerraTotal;
+    private bool enGuerraTotal = false;
+
     private void AlCambiarEstadoGlobal()
     {
-        SetEstado(EstadoTacticoGlobal.ModoCombateActual);
+        if (EstadoTacticoGlobal.GuerraTotalActiva)
+        {
+            if (!enGuerraTotal)
+            {
+                estadoPrevioGuerraTotal = estadoActual;
+                enGuerraTotal = true;
+                
+                if (estadoActual != EstadoNPC.Ataque)
+                {
+                    estadoActual = EstadoNPC.Ataque;
+                    CrearIconoEstado();
+                    AplicarComportamientoDeEstado();
+                }
+            }
+        }
+        else
+        {
+            if (enGuerraTotal)
+            {
+                enGuerraTotal = false;
+                SetEstado(estadoPrevioGuerraTotal);
+            }
+        }
     }
 
 
@@ -179,13 +212,19 @@ public class estadoNPC : MonoBehaviour
         }
     }
 
-    public EstadoNPC GetEstadoActual()
-    {
-        return estadoActual;
-    }
+    public EstadoNPC GetEstadoActual() => estadoActual;
+
+    /// <summary>Devuelve el estado que debe usarse para el respawn (ignora el override de Guerra Total).</summary>
+    public EstadoNPC GetEstadoRespawn() => enGuerraTotal ? estadoPrevioGuerraTotal : estadoActual;
 
     public void SetEstado(EstadoNPC nuevo)
     {
+        if (enGuerraTotal)
+        {
+            estadoPrevioGuerraTotal = nuevo;
+            return;
+        }
+
         if (estadoActual == nuevo) return;
         estadoActual = nuevo;
         CrearIconoEstado();
