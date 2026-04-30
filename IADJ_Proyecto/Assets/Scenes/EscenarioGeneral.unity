@@ -20604,16 +20604,16 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 903508512}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.92222, y: 0.92222, z: 0.92222}
+  m_LocalPosition: {x: 0, y: 0, z: -9}
+  m_LocalScale: {x: 0.17267726, y: 0.17267726, z: 0.17267726}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1200428282}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 520, y: 42}
-  m_SizeDelta: {x: 739.85, y: 428.5431}
+  m_AnchoredPosition: {x: 294, y: 157}
+  m_SizeDelta: {x: 1548.264, y: 843.959}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &903508514
 MonoBehaviour:
@@ -20637,7 +20637,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 25
+    m_FontSize: 120
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 0
@@ -31612,7 +31612,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   posicion: {x: 20, y: 20}
-  tamano: {x: 160, y: 160}
+  tamano: {x: 400, y: 400}
   intervaloRefresco: 0.5
   intensidadMax: 8
   dibujarUnidades: 1
@@ -31636,9 +31636,9 @@ MonoBehaviour:
   prefabTanque: {fileID: 961614647817374387, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
   prefabExplorador: {fileID: 3563285655907377835, guid: 9731d6b00c403f44cab356d723046421, type: 3}
   tipoUnidadDefault: 0
-  numVigilantes: 2
+  numVigilantes: 5
   numAtaque: 8
-  numDefensa: 5
+  numDefensa: 2
   numeroNPCsPorBando: 15
   usarWaypointSiguienteParaRespawn: 1
   alturaRespawn: 2.3

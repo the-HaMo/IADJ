@@ -21,6 +21,8 @@ public class SeleccionarUnidad : MonoBehaviour
     private GameObject instanciaCirculo;
     private Pathfinding buscadorCaminos;
 
+    public static AgentNPC UnidadSeleccionadaActual { get; private set; }
+
     void Awake()
     {
         // Buscamos el buscador de caminos en la escena
@@ -93,6 +95,8 @@ public class SeleccionarUnidad : MonoBehaviour
     void Seleccionar(AgentNPC unidad)
     {
         unidadSeleccionada = unidad;
+        UnidadSeleccionadaActual = unidadSeleccionada;
+
         if (prefabCirculoSeleccion != null)
         {
             if (instanciaCirculo == null) instanciaCirculo = Instantiate(prefabCirculoSeleccion);
@@ -103,6 +107,7 @@ public class SeleccionarUnidad : MonoBehaviour
     void Deseleccionar()
     {
         unidadSeleccionada = null;
+        UnidadSeleccionadaActual = null;
         if (instanciaCirculo != null) instanciaCirculo.SetActive(false);
     }
 

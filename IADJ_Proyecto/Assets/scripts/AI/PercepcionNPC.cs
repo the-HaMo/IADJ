@@ -68,6 +68,22 @@ public class PercepcionNPC : MonoBehaviour
         // Al resetear lastDest, el siguiente Update detectará que "ha cambiado" y pedirá un nuevo A*
         lastDest = Vector3.zero;
 
+        // Si ya hay una ruta activa, la recalculamos hacia el mismo destino final para que
+        // el cambio de modo tactico se vea inmediatamente.
+        if (pathfinder != null && path != null && path.enabled && path.waypoints != null && path.waypoints.Count > 0)
+        {
+            Transform ultimo = path.waypoints[path.waypoints.Count - 1];
+            if (ultimo != null)
+            {
+                var camino = pathfinder.FindPath(transform.position, ultimo.position, stats);
+                if (camino != null && camino.Count > 0)
+                {
+                    path.SetPath(camino);
+                    lastDest = ultimo.position;
+                }
+            }
+        }
+
         // Si la unidad tiene una orden manual del jugador, forzamos que pida el nuevo camino A* táctico
         if (tieneOrdenManual)
         {

@@ -6,7 +6,7 @@ public class MinimapaInfluencia : MonoBehaviour
 {
     [Header("Posicion y tamano")]
     public Vector2 posicion = new Vector2(20, 20);
-    public Vector2 tamano = new Vector2(220, 220);
+    public Vector2 tamano = new Vector2(400, 400);
 
     [Header("Refresco")]
     public float intervaloRefresco = 0.5f;
@@ -105,28 +105,22 @@ public class MinimapaInfluencia : MonoBehaviour
         }
     }
 
-    void OnGUI()
+  void OnGUI()
     {
         if (!visible) return;
 
         if (!EstadoTacticoGlobal.EsMapaInfluenciaActivo())
         {
-            GUI.Box(new Rect(posicion.x - 4, posicion.y - 4, tamano.x + 8, tamano.y + 28), "MAPA TACTICO");
-            GUI.Label(new Rect(posicion.x, posicion.y + 18, tamano.x, 24), $"MODO ACTUAL: {EstadoTacticoGlobal.ObtenerTextoMapaActual()}");
-            GUI.Label(new Rect(posicion.x, posicion.y + 42, tamano.x, 16), "La vista aun no esta implementada.");
+            GUI.Box(new Rect(posicion.x - 4, posicion.y - 4, tamano.x + 8, tamano.y + 8), "");
             return;
         }
 
         if (textura == null) return;
 
-        // Marco
-        GUI.Box(new Rect(posicion.x - 4, posicion.y - 4, tamano.x + 8, tamano.y + 28), "MAPA DE INFLUENCIA");
+        GUI.Box(new Rect(posicion.x - 4, posicion.y - 4, tamano.x + 8, tamano.y + 8), "");
 
-        // Heatmap (Y invertida porque GUI tiene origen arriba-izq y nuestro grid abajo-izq)
-        Rect r = new Rect(posicion.x, posicion.y + 18, tamano.x, tamano.y);
+        Rect r = new Rect(posicion.x, posicion.y, tamano.x, tamano.y);
         GUI.DrawTextureWithTexCoords(r, textura, new Rect(0, 1, 1, -1));
-
-        // Texto de ayuda
-        GUI.Label(new Rect(posicion.x, posicion.y + tamano.y + 18, tamano.x, 16), $"M: ocultar | Rojo vs Azul");
+        
     }
 }

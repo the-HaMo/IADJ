@@ -7,6 +7,7 @@ public class Torre : MonoBehaviour
     public float tiempoParaConquistar = 20f;
 
     private bool conquistada = false;
+    private bool spawnDesactivado = false;
     private float progresoCaptura = 0f;
     private bool recibioDanioAlguien = false;
     private float tiempoSiguienteLog = 0f;
@@ -100,12 +101,29 @@ public class Torre : MonoBehaviour
         Bando bandoConquistador = (bandoPropietario == Bando.Rojo) ? Bando.Azul : Bando.Rojo;
         Debug.Log($"<color=green>¡TORRE CONQUISTADA! El bando {bandoConquistador} ha tomado el control de {gameObject.name}.</color>");
 
+        DesactivarSpawnAsociado();
+
+        Destroy(gameObject);
+    }
+
+    private void OnDestroy()
+    {
+        DesactivarSpawnAsociado();
+    }
+
+    private void DesactivarSpawnAsociado()
+    {
+        if (spawnDesactivado)
+        {
+            return;
+        }
+
         WayPoints wp = FindFirstObjectByType<WayPoints>();
         if (wp != null)
         {
             wp.DesactivarPuntoSpawn(bandoPropietario, gameObject);
         }
 
-        Destroy(gameObject);
+        spawnDesactivado = true;
     }
 }

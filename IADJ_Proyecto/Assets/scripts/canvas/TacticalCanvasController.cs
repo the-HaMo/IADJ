@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -75,6 +76,10 @@ public class TacticalCanvasController : MonoBehaviour
     private void AplicarModoCombateAUnidades()
     {
         estadoNPC[] unidades = FindObjectsByType<estadoNPC>(FindObjectsSortMode.None);
+
+        List<estadoNPC> rojos = new List<estadoNPC>();
+        List<estadoNPC> azules = new List<estadoNPC>();
+
         foreach (estadoNPC unidad in unidades)
         {
             if (unidad == null)
@@ -82,7 +87,79 @@ public class TacticalCanvasController : MonoBehaviour
                 continue;
             }
 
-            unidad.SetEstado(EstadoTacticoGlobal.ModoCombateActual);
+            NPCStats stats = unidad.GetComponent<NPCStats>();
+            if (stats == null)
+            {
+                continue;
+            }
+
+            if (stats.miBando == Bando.Rojo) rojos.Add(unidad);
+            else if (stats.miBando == Bando.Azul) azules.Add(unidad);
+        }
+
+        if (EstadoTacticoGlobal.ModoCombateActual == EstadoNPC.Ataque)
+        {
+            // Modo ataque: 8 atacan, 5 vigilan, 2 defienden.
+            AplicarDistribucion(rojos, 8, 5, 2, EstadoNPC.Ataque);
+            AplicarDistribucion(azules, 8, 5, 2, EstadoNPC.Ataque);
+        }
+        else
+        {
+            // Modo defensa: 5 atacan, 6 vigilan, 4 defienden.
+            AplicarDistribucion(rojos, 5, 6, 4, EstadoNPC.Defensa);
+            AplicarDistribucion(azules, 5, 6, 4, EstadoNPC.Defensa);
+        }
+    }
+
+    private void AplicarDistribucion(List<estadoNPC> unidades, int cupoAtaque, int cupoVigilancia, int cupoDefensa, EstadoNPC modoPrincipal)
+    {
+        if (unidades == null || unidades.Count == 0)
+        {
+            return;
+        }
+
+        int totalDeseado = cupoAtaque + cupoVigilancia + cupoDefensa;
+        int vivos = unidades.Count;
+
+        if (vivos < totalDeseado)
+        {
+            float ratio = vivos / (float)totalDeseado;
+            cupoAtaque = Mathf.FloorToInt(cupoAtaque * ratio);
+            cupoVigilancia = Mathf.FloorToInt(cupoVigilancia * ratio);
+            cupoDefensa = Mathf.FloorToInt(cupoDefensa * ratio);
+
+            int asignados = cupoAtaque + cupoVigilancia + cupoDefensa;
+            int restantes = vivos - asignados;
+
+            if (restantes > 0)
+            {
+                if (modoPrincipal == EstadoNPC.Ataque) cupoAtaque += restantes;
+                else if (modoPrincipal == EstadoNPC.Defensa) cupoDefensa += restantes;
+                else cupoVigilancia += restantes;
+            }
+        }
+
+        int idx = 0;
+
+        for (int i = 0; i < cupoAtaque && idx < vivos; i++, idx++)
+        {
+            unidades[idx].SetEstado(EstadoNPC.Ataque);
+        }
+
+        for (int i = 0; i < cupoVigilancia && idx < vivos; i++, idx++)
+        {
+            unidades[idx].SetEstado(EstadoNPC.Vigilancia);
+        }
+
+        for (int i = 0; i < cupoDefensa && idx < vivos; i++, idx++)
+        {
+            unidades[idx].SetEstado(EstadoNPC.Defensa);
+        }
+
+        while (idx < vivos)
+        {
+            unidades[idx].SetEstado(modoPrincipal);
+            idx++;
         }
     }
 

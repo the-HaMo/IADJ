@@ -137,16 +137,49 @@ public class PathFollowing : SteeringBehaviour
 
     private void OnDrawGizmos()
     {
-        if (!EstadoTacticoGlobal.DebugActivo || waypoints == null || waypoints.Count == 0) return;
+        if (waypoints == null || waypoints.Count == 0) return;
 
         bool esPatrulla = false;
         NPCPatrol patrol = GetComponent<NPCPatrol>();
         if (patrol != null && patrol.enabled) esPatrulla = true;
 
-        Color colorActual = esPatrulla ? Color.black : Color.yellow;
-        Color colorCamino = esPatrulla ? Color.black : Color.cyan;
-        Color colorPuntoNormal = esPatrulla ? Color.black : Color.blue;
-        Color colorPuntoDestino = esPatrulla ? Color.black : Color.green;
+        bool mostrarPorDebug = EstadoTacticoGlobal.DebugActivo;
+        bool mostrarPorTactico = EstadoTacticoGlobal.PathfindingTacticoActivo && !esPatrulla;
+        if (!mostrarPorDebug && !mostrarPorTactico) return;
+
+        Color colorActual;
+        Color colorCamino;
+        Color colorPuntoNormal;
+        Color colorPuntoDestino;
+
+        if (esPatrulla)
+        {
+            colorActual = Color.black;
+            colorCamino = Color.black;
+            colorPuntoNormal = Color.black;
+            colorPuntoDestino = Color.black;
+        }
+        else if (EsUnidadSeleccionada())
+        {
+            colorActual = Color.yellow;
+            colorCamino = Color.yellow;
+            colorPuntoNormal = Color.yellow;
+            colorPuntoDestino = Color.yellow;
+        }
+        else if (mostrarPorTactico)
+        {
+            colorActual = new Color(1f, 0.35f, 0.35f, 1f);
+            colorCamino = Color.red;
+            colorPuntoNormal = new Color(1f, 0.35f, 0.35f, 1f);
+            colorPuntoDestino = Color.red;
+        }
+        else
+        {
+            colorActual = Color.yellow;
+            colorCamino = Color.cyan;
+            colorPuntoNormal = Color.blue;
+            colorPuntoDestino = Color.green;
+        }
 
         // Línea desde el NPC al waypoint actual
         if (currentWaypointIndex < waypoints.Count && waypoints[currentWaypointIndex] != null)
@@ -160,7 +193,19 @@ public class PathFollowing : SteeringBehaviour
         for (int i = 0; i < waypoints.Count - 1; i++)
         {
             if (waypoints[i] != null && waypoints[i + 1] != null)
-                Gizmos.DrawLine(waypoints[i].position, waypoints[i + 1].position);
+            {
+                Vector3 a = waypoints[i].position;
+                Vector3 b = waypoints[i + 1].position;
+
+                if (mostrarPorTactico)
+                {
+                    DrawThickLine(a, b, 0.12f);
+                }
+                else
+                {
+                    Gizmos.DrawLine(a, b);
+                }
+            }
         }
 
         // Puntos: verde = destino actual, azul = resto
@@ -170,5 +215,24 @@ public class PathFollowing : SteeringBehaviour
             Gizmos.color = (i == currentWaypointIndex) ? colorPuntoDestino : colorPuntoNormal;
             Gizmos.DrawWireSphere(waypoints[i].position, 0.3f);
         }
+    }
+
+    private void DrawThickLine(Vector3 start, Vector3 end, float thickness)
+    {
+        Vector3 dir = (end - start).normalized;
+        Vector3 side = Vector3.Cross(dir, Vector3.up).normalized * thickness;
+        Vector3 up = Vector3.up * (thickness * 0.6f);
+
+        Gizmos.DrawLine(start, end);
+        Gizmos.DrawLine(start + side, end + side);
+        Gizmos.DrawLine(start - side, end - side);
+        Gizmos.DrawLine(start + up, end + up);
+        Gizmos.DrawLine(start - up, end - up);
+    }
+
+    private bool EsUnidadSeleccionada()
+    {
+        AgentNPC seleccionada = SeleccionarUnidad.UnidadSeleccionadaActual;
+        return seleccionada != null && seleccionada.gameObject == gameObject;
     }
 }
