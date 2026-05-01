@@ -4,6 +4,8 @@ public class CastilloDerrumbado : MonoBehaviour
 {
     public Transform CastilloRojo;
     public Transform CastilloAzul;
+    public GameObject AzulVictoria;
+    public GameObject RojoVictoria;
     
     private bool juegoTerminado = false;
 
@@ -14,16 +16,30 @@ public class CastilloDerrumbado : MonoBehaviour
 
         if (CastilloAzul == null)
         {
-            Debug.Log("<color=red>¡El equipo ROJO ha ganado el juego!</color>");
+            ActivarConPadre(RojoVictoria);
+            if (AzulVictoria != null) AzulVictoria.SetActive(false);
             juegoTerminado = true;
             TerminarJuego();
         }
         else if (CastilloRojo == null)
         {
-            Debug.Log("<color=blue>¡El equipo AZUL ha ganado el juego!</color>");
+            ActivarConPadre(AzulVictoria);
+            if (RojoVictoria != null) RojoVictoria.SetActive(false);
             juegoTerminado = true;
             TerminarJuego();
         }
+    }
+
+    private void ActivarConPadre(GameObject objeto)
+    {
+        if (objeto == null) return;
+
+        if (objeto.transform.parent != null)
+        {
+            objeto.transform.parent.gameObject.SetActive(true);
+        }
+
+        objeto.SetActive(true);
     }
 
     private void TerminarJuego()

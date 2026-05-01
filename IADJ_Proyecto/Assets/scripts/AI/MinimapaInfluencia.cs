@@ -209,7 +209,7 @@ public class MinimapaInfluencia : MonoBehaviour
                 alignment = TextAnchor.UpperLeft
             };
             estilo.normal.textColor = Color.white;
-            string txt = "Mapa: " + EstadoTacticoGlobal.ObtenerTextoMapaActual() + "  (M)";
+            string txt = "";
             GUI.Label(new Rect(posicion.x + 6, posicion.y + 2, tamano.x, 22), txt, estilo);
         }
     }
