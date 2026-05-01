@@ -2771,9 +2771,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnRojo:
-  - {fileID: 1523079472}
-  - {fileID: 100065550}
   - {fileID: 1290262035}
+  - {fileID: 100065550}
+  - {fileID: 1523079472}
   spawnAzul:
   - {fileID: 300445125}
   - {fileID: 597954101}
@@ -13208,7 +13208,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bandoPropietario: 1
-  tiempoParaConquistar: 3
+  tiempoParaConquistar: 30
 --- !u!1 &597954100
 GameObject:
   m_ObjectHideFlags: 0
@@ -22351,7 +22351,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.058873262, g: 0.11302212, b: 0.1981132, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -31824,10 +31824,10 @@ MonoBehaviour:
   prefabTanque: {fileID: 961614647817374387, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
   prefabExplorador: {fileID: 3563285655907377835, guid: 9731d6b00c403f44cab356d723046421, type: 3}
   tipoUnidadDefault: 0
-  numVigilantes: 0
-  numAtaque: 1
-  numDefensa: 0
-  numeroNPCsPorBando: 1
+  numVigilantes: 5
+  numAtaque: 7
+  numDefensa: 3
+  numeroNPCsPorBando: 15
   usarWaypointSiguienteParaRespawn: 1
   alturaRespawn: 2.3
   irAPuntoMuerteTrasRespawn: 1
