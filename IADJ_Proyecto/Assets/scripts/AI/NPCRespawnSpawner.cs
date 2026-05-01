@@ -19,6 +19,8 @@ public class NPCRespawnSpawner : MonoBehaviour
     public int numAtaque = 4;
     public int numDefensa = 4;
 
+    public float tiempoRespawn = 5f;
+
     [Header("Cantidad Inicial (Calculada)")]
     public int numeroNPCsPorBando = 10;
 
@@ -195,7 +197,7 @@ public class NPCRespawnSpawner : MonoBehaviour
     private System.Collections.IEnumerator RutinaRespawn(TipoUnidad tipoUnidad, Bando bando, EstadoNPC estadoActual, Vector3 posicionMuerte)
     {
         // Esperamos 30 segundos antes de reaparecer
-        yield return new WaitForSeconds(30f);
+        yield return new WaitForSeconds(tiempoRespawn);
         RespawnNPCEnPuntoMasCercano(tipoUnidad, bando, estadoActual, posicionMuerte);
     }
 
