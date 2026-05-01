@@ -11,7 +11,7 @@ public class MinimapaInfluencia : MonoBehaviour
 {
     [Header("Posicion y tamano")]
     public Vector2 posicion = new Vector2(20, 20);
-    public Vector2 tamano = new Vector2(400, 400);
+    public Vector2 tamano = new Vector2(200, 200);
 
     [Header("Refresco")]
     public float intervaloRefresco = 0.5f;

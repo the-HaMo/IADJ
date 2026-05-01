@@ -9,8 +9,8 @@ public class WayPoints : MonoBehaviour
     [Header("Otros Puntos")]
     public Transform hospitalRojo;
     public Transform hospitalAzul;
-    public Transform baseRojo;
-    public Transform baseAzul;
+    public Transform spawnCastilloRojo;
+    public Transform spawnCastilloAzul;
 
     [Header("Castillos (objetivo de victoria)")]
     [Tooltip("Castillo Rojo: si lo destruye Azul, gana Azul. Asignar el mismo Transform que en CastilloDerrumbado.")]
@@ -29,7 +29,7 @@ public class WayPoints : MonoBehaviour
             Transform t = lista[Random.Range(0, lista.Count)];
             return t.position;
         }
-        return GetBase(bando);
+        return GetSpawnCastillo(bando);
     }
 
     public Vector3 GetWaypointReaparicion(Bando bando, int index)
@@ -42,7 +42,7 @@ public class WayPoints : MonoBehaviour
             Transform t = lista[index % lista.Count];
             return t.position;
         }
-        return GetBase(bando);
+        return GetSpawnCastillo(bando);
     }
 
     public Vector3 GetWaypointReaparicionMasCercano(Bando bando, Vector3 posMuerte)
@@ -50,7 +50,7 @@ public class WayPoints : MonoBehaviour
         List<Transform> lista = (bando == Bando.Rojo) ? spawnRojo : spawnAzul;
         lista.RemoveAll(t => t == null);
 
-        if (lista.Count == 0) return GetBase(bando);
+        if (lista.Count == 0) return GetSpawnCastillo(bando);
 
         Transform mejor = lista[0];
         float minDist = Vector3.Distance(posMuerte, mejor.position);
@@ -71,13 +71,17 @@ public class WayPoints : MonoBehaviour
     public Vector3 GetCuracion(Bando bando)
     {
         Transform h = (bando == Bando.Rojo) ? hospitalRojo : hospitalAzul;
-        return (h != null) ? h.position : GetBase(bando);
+        return (h != null) ? h.position : GetSpawnCastillo(bando);
     }
 
-    public Vector3 GetBase(Bando bando)
+    public Vector3 GetSpawnCastillo(Bando bando)
     {
-        Transform b = (bando == Bando.Rojo) ? baseRojo : baseAzul;
-        return (b != null) ? b.position : Vector3.zero;
+        Transform b = (bando == Bando.Rojo) ? spawnCastilloRojo : spawnCastilloAzul;
+        if (b != null) return b.position;
+
+        // Fallback: Si no hay spawn de castillo asignado, intentamos usar el transform de victoria
+        Transform c = (bando == Bando.Rojo) ? castilloRojo : castilloAzul;
+        return (c != null) ? c.position : Vector3.zero;
     }
 
     /// <summary>
@@ -91,7 +95,7 @@ public class WayPoints : MonoBehaviour
         if (c != null) return c.position;
         // fallback: base enemiga
         Bando enemigo = (miBando == Bando.Rojo) ? Bando.Azul : Bando.Rojo;
-        return GetBase(enemigo);
+        return GetSpawnCastillo(enemigo);
     }
 
     /// <summary>
@@ -101,7 +105,7 @@ public class WayPoints : MonoBehaviour
     {
         Transform c = (miBando == Bando.Rojo) ? castilloRojo : castilloAzul;
         if (c != null) return c.position;
-        return GetBase(miBando);
+        return GetSpawnCastillo(miBando);
     }
 
     /// <summary>
@@ -119,10 +123,14 @@ public class WayPoints : MonoBehaviour
     public Vector3 GetObjetivoMasCercano(Bando bandoEnemigo, Vector3 miPos)
     {
         List<Transform> torres = (bandoEnemigo == Bando.Rojo) ? spawnRojo : spawnAzul;
-        Transform baseFinal = (bandoEnemigo == Bando.Rojo) ? baseRojo : baseAzul;
+        
+        // El objetivo final es el Castillo (si existe), si no, la Base.
+        Transform objetivoFinal = (bandoEnemigo == Bando.Rojo) ? castilloRojo : castilloAzul;
+        if (objetivoFinal == null) 
+            objetivoFinal = (bandoEnemigo == Bando.Rojo) ? spawnCastilloRojo : spawnCastilloAzul;
 
-        Transform mejor = baseFinal;
-        float minDist = (baseFinal != null) ? Vector3.Distance(miPos, baseFinal.position) : float.MaxValue;
+        Transform mejor = objetivoFinal;
+        float minDist = (objetivoFinal != null) ? Vector3.Distance(miPos, objetivoFinal.position) : float.MaxValue;
 
         foreach (Transform t in torres)
         {
@@ -157,13 +165,13 @@ public class WayPoints : MonoBehaviour
         DibujarPunto(hospitalAzul, Color.blue, 0.8f);
 
         // --- Bases ---
-        DibujarPunto(baseRojo, new Color(1f, 0.4f, 0f), 1.2f);
-        DibujarPunto(baseAzul, new Color(0f, 0.4f, 1f), 1.2f);
+        DibujarPunto(spawnCastilloRojo, new Color(1f, 0.4f, 0f), 1.2f);
+        DibujarPunto(spawnCastilloAzul, new Color(0f, 0.4f, 1f), 1.2f);
 
-        // Líneas: Spawn Rojo -> Hospital Rojo -> Base Roja
-        DibujarCadena(spawnRojo, hospitalRojo, baseRojo, Color.red);
-        // Líneas: Spawn Azul -> Hospital Azul -> Base Azul
-        DibujarCadena(spawnAzul, hospitalAzul, baseAzul, Color.blue);
+        // Líneas: Spawn Rojo -> Hospital Rojo -> Spawn Castillo Rojo
+        DibujarCadena(spawnRojo, hospitalRojo, spawnCastilloRojo, Color.red);
+        // Líneas: Spawn Azul -> Hospital Azul -> Spawn Castillo Azul
+        DibujarCadena(spawnAzul, hospitalAzul, spawnCastilloAzul, Color.blue);
     }
 
     private void DibujarListaPuntos(List<Transform> lista, Color color, string prefijo)
