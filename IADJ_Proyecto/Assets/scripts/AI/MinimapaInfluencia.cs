@@ -1,7 +1,12 @@
 using UnityEngine;
 
-// Pinta el mapa de influencia como un heatmap rojo/azul en una esquina de la
-// pantalla. Cumple el requisito (e) del Bloque 2.
+// Pinta el mapa tactico activo en una esquina de la pantalla.
+// Cumple los requisitos (e) del Bloque 2 ampliado a tres mapas:
+//   - Influencia: heatmap rojo / azul (cual bando domina la zona)
+//   - Tension:    cuanto "ruido" total hay (suma de ambas influencias)
+//   - Vulnerabilidad: zonas DISPUTADAS (ambos bandos balanceados)
+//
+// La M cicla entre los tres mapas via EstadoTacticoGlobal.CiclarMapa().
 public class MinimapaInfluencia : MonoBehaviour
 {
     [Header("Posicion y tamano")]
@@ -12,9 +17,15 @@ public class MinimapaInfluencia : MonoBehaviour
     public float intervaloRefresco = 0.5f;
 
     [Header("Visualizacion")]
-    [Tooltip("Intensidad maxima esperada (para normalizar el color).")]
-    public float intensidadMax = 8f;
-    public bool dibujarUnidades = true;
+    [Tooltip("Intensidad maxima esperada para influencia neta.")]
+    public float intensidadMaxInfluencia = 8f;
+    [Tooltip("Intensidad maxima esperada para tension (suele ser mayor que influencia neta).")]
+    public float intensidadMaxTension = 16f;
+    [Tooltip("Intensidad maxima esperada para vulnerabilidad. Como mucho == 2*min, suele ser baja.")]
+    public float intensidadMaxVulnerabilidad = 6f;
+
+    [Tooltip("Mostrar etiqueta con el nombre del mapa actual.")]
+    public bool mostrarEtiqueta = true;
 
     public bool visible = true;
 
@@ -22,6 +33,7 @@ public class MinimapaInfluencia : MonoBehaviour
     private GridManager grid;
     private Texture2D textura;
     private float nextUpdate;
+    private EstadoTacticoGlobal.ModoMapaTactico ultimoModoPintado = (EstadoTacticoGlobal.ModoMapaTactico)(-1);
 
     void Awake()
     {
@@ -29,11 +41,30 @@ public class MinimapaInfluencia : MonoBehaviour
         grid = FindFirstObjectByType<GridManager>();
     }
 
+    void OnEnable()
+    {
+        EstadoTacticoGlobal.OnEstadoCambiado += AlCambiarEstadoGlobal;
+    }
+
+    void OnDisable()
+    {
+        EstadoTacticoGlobal.OnEstadoCambiado -= AlCambiarEstadoGlobal;
+    }
+
+    private void AlCambiarEstadoGlobal()
+    {
+        // Forzar repintado inmediato cuando cambia el modo de mapa
+        if (EstadoTacticoGlobal.MapaActual != ultimoModoPintado)
+        {
+            nextUpdate = 0f;
+        }
+    }
+
     void Update()
     {
         if (!visible) return;
 
-        if (EstadoTacticoGlobal.EsMapaInfluenciaActivo() && Time.time >= nextUpdate)
+        if (Time.time >= nextUpdate)
         {
             ActualizarTextura();
             nextUpdate = Time.time + intervaloRefresco;
@@ -54,6 +85,9 @@ public class MinimapaInfluencia : MonoBehaviour
             textura.wrapMode = TextureWrapMode.Clamp;
         }
 
+        var modo = EstadoTacticoGlobal.MapaActual;
+        ultimoModoPintado = modo;
+
         for (int x = 0; x < sx; x++)
         {
             for (int y = 0; y < sy; y++)
@@ -67,23 +101,20 @@ public class MinimapaInfluencia : MonoBehaviour
                 }
                 else
                 {
-                    float r = mapa.GetInfluencia(Bando.Rojo, x, y);
-                    float a = mapa.GetInfluencia(Bando.Azul, x, y);
-                    float neto = r - a;
-                    float norm = Mathf.Clamp(Mathf.Abs(neto) / Mathf.Max(0.01f, intensidadMax), 0f, 1f);
-
-                    if (Mathf.Abs(neto) < 0.05f)
+                    switch (modo)
                     {
-                        // Sin influencia: gris segun bioma
-                        c = ColorPorBioma(n != null ? n.bioma : Bioma.Pradera);
-                    }
-                    else if (neto > 0)
-                    {
-                        c = Color.Lerp(new Color(1f, 0.6f, 0.6f, 1f), Color.red, norm);
-                    }
-                    else
-                    {
-                        c = Color.Lerp(new Color(0.6f, 0.6f, 1f, 1f), Color.blue, norm);
+                        case EstadoTacticoGlobal.ModoMapaTactico.Influencia:
+                            c = ColorInfluencia(x, y, n);
+                            break;
+                        case EstadoTacticoGlobal.ModoMapaTactico.Tension:
+                            c = ColorTension(x, y, n);
+                            break;
+                        case EstadoTacticoGlobal.ModoMapaTactico.Vulnerabilidad:
+                            c = ColorVulnerabilidad(x, y, n);
+                            break;
+                        default:
+                            c = ColorPorBioma(n != null ? n.bioma : Bioma.Pradera);
+                            break;
                     }
                 }
 
@@ -92,6 +123,57 @@ public class MinimapaInfluencia : MonoBehaviour
         }
 
         textura.Apply();
+    }
+
+    // ------- INFLUENCIA: rojo si gana Rojo, azul si gana Azul ----------
+    private Color ColorInfluencia(int x, int y, Node n)
+    {
+        float neto = mapa.GetInfluenciaNeta(x, y);
+        float norm = Mathf.Clamp(Mathf.Abs(neto) / Mathf.Max(0.01f, intensidadMaxInfluencia), 0f, 1f);
+
+        if (Mathf.Abs(neto) < 0.05f)
+        {
+            return ColorPorBioma(n != null ? n.bioma : Bioma.Pradera);
+        }
+        if (neto > 0)
+        {
+            return Color.Lerp(new Color(1f, 0.6f, 0.6f, 1f), Color.red, norm);
+        }
+        return Color.Lerp(new Color(0.6f, 0.6f, 1f, 1f), Color.blue, norm);
+    }
+
+    // ------- TENSION: gradiente de gris a amarillo / naranja ------------
+    // Mide la suma de ambas influencias: zonas con mucha actividad (de uno o ambos).
+    private Color ColorTension(int x, int y, Node n)
+    {
+        float t = mapa.GetTension(x, y);
+        float norm = Mathf.Clamp(t / Mathf.Max(0.01f, intensidadMaxTension), 0f, 1f);
+
+        if (norm < 0.02f)
+        {
+            return ColorPorBioma(n != null ? n.bioma : Bioma.Pradera);
+        }
+        // 0 -> amarillo claro, 1 -> rojo intenso (zona muy "ruidosa")
+        Color baja = new Color(1f, 0.95f, 0.5f, 1f);  // amarillo
+        Color alta = new Color(0.9f, 0.25f, 0f, 1f);  // naranja-rojo
+        return Color.Lerp(baja, alta, norm);
+    }
+
+    // ------- VULNERABILIDAD: gradiente verde -> magenta -----------------
+    // Picos: zonas donde ambos bandos estan balanceados (frente de batalla).
+    private Color ColorVulnerabilidad(int x, int y, Node n)
+    {
+        float v = mapa.GetVulnerabilidad(x, y);
+        float norm = Mathf.Clamp(v / Mathf.Max(0.01f, intensidadMaxVulnerabilidad), 0f, 1f);
+
+        if (norm < 0.02f)
+        {
+            return ColorPorBioma(n != null ? n.bioma : Bioma.Pradera);
+        }
+        // 0 -> blanco, 1 -> magenta saturado (zona muy disputada)
+        Color baja = new Color(0.95f, 0.95f, 0.95f, 1f);
+        Color alta = new Color(0.9f, 0f, 0.9f, 1f);
+        return Color.Lerp(baja, alta, norm);
     }
 
     private Color ColorPorBioma(Bioma b)
@@ -105,22 +187,30 @@ public class MinimapaInfluencia : MonoBehaviour
         }
     }
 
-  void OnGUI()
+    void OnGUI()
     {
         if (!visible) return;
 
-        if (!EstadoTacticoGlobal.EsMapaInfluenciaActivo())
-        {
-            GUI.Box(new Rect(posicion.x - 4, posicion.y - 4, tamano.x + 8, tamano.y + 8), "");
-            return;
-        }
-
-        if (textura == null) return;
-
+        // Marco
         GUI.Box(new Rect(posicion.x - 4, posicion.y - 4, tamano.x + 8, tamano.y + 8), "");
 
-        Rect r = new Rect(posicion.x, posicion.y, tamano.x, tamano.y);
-        GUI.DrawTextureWithTexCoords(r, textura, new Rect(0, 1, 1, -1));
-        
+        if (textura != null)
+        {
+            Rect r = new Rect(posicion.x, posicion.y, tamano.x, tamano.y);
+            GUI.DrawTextureWithTexCoords(r, textura, new Rect(0, 1, 1, -1));
+        }
+
+        if (mostrarEtiqueta)
+        {
+            GUIStyle estilo = new GUIStyle(GUI.skin.label)
+            {
+                fontSize = 14,
+                fontStyle = FontStyle.Bold,
+                alignment = TextAnchor.UpperLeft
+            };
+            estilo.normal.textColor = Color.white;
+            string txt = "Mapa: " + EstadoTacticoGlobal.ObtenerTextoMapaActual() + "  (M)";
+            GUI.Label(new Rect(posicion.x + 6, posicion.y + 2, tamano.x, 22), txt, estilo);
+        }
     }
 }

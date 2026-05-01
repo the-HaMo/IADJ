@@ -141,7 +141,42 @@ public class MapaInfluencia : MonoBehaviour
         return GetInfluencia(miBando, x, y);
     }
 
+    // ----------------------------------------------------------------------
+    // Mapa de INFLUENCIA neta (Rojo - Azul). Positivo = Rojo dominante,
+    // negativo = Azul dominante.
+    // ----------------------------------------------------------------------
+    public float GetInfluenciaNeta(int x, int y)
+    {
+        if (!EnRango(x, y)) return 0f;
+        return infRojo[x, y] - infAzul[x, y];
+    }
 
+    // ----------------------------------------------------------------------
+    // Mapa de TENSION = Influencia_Propia + Influencia_Oponente
+    //                 = inf_rojo + inf_azul     (siempre >= 0)
+    // Indica donde hay actividad de cualquier bando. Picos = zonas con
+    // muchas unidades (de uno o ambos bandos).
+    // ----------------------------------------------------------------------
+    public float GetTension(int x, int y)
+    {
+        if (!EnRango(x, y)) return 0f;
+        return infRojo[x, y] + infAzul[x, y];
+    }
+
+    // ----------------------------------------------------------------------
+    // Mapa de VULNERABILIDAD = Tension - |Influencia neta|
+    //                        = (rojo + azul) - |rojo - azul|
+    //                        = 2 * min(rojo, azul)
+    // Picos = zonas DISPUTADAS (ambos bandos presentes en cantidades
+    // similares). Valor 0 = uno de los dos bandos no esta presente.
+    // ----------------------------------------------------------------------
+    public float GetVulnerabilidad(int x, int y)
+    {
+        if (!EnRango(x, y)) return 0f;
+        float r = infRojo[x, y];
+        float a = infAzul[x, y];
+        return (r + a) - Mathf.Abs(r - a); // == 2 * min(r, a)
+    }
 
     // En posicion del mundo: util para PercepcionNPC.
     public float GetInfluenciaEnemigaEnMundo(Bando miBando, Vector3 worldPos)

@@ -12,6 +12,12 @@ public class WayPoints : MonoBehaviour
     public Transform baseRojo;
     public Transform baseAzul;
 
+    [Header("Castillos (objetivo de victoria)")]
+    [Tooltip("Castillo Rojo: si lo destruye Azul, gana Azul. Asignar el mismo Transform que en CastilloDerrumbado.")]
+    public Transform castilloRojo;
+    [Tooltip("Castillo Azul: si lo destruye Rojo, gana Rojo. Asignar el mismo Transform que en CastilloDerrumbado.")]
+    public Transform castilloAzul;
+
     // Getters basicos para el Spawner
     public Vector3 GetRandomReaparicion(Bando bando)
     {
@@ -72,6 +78,39 @@ public class WayPoints : MonoBehaviour
     {
         Transform b = (bando == Bando.Rojo) ? baseRojo : baseAzul;
         return (b != null) ? b.position : Vector3.zero;
+    }
+
+    /// <summary>
+    /// Devuelve la posicion del castillo enemigo (objetivo de victoria) para
+    /// "miBando". Si el castillo enemigo ha sido destruido o no esta asignado,
+    /// devuelve la base enemiga como fallback.
+    /// </summary>
+    public Vector3 GetCastilloEnemigo(Bando miBando)
+    {
+        Transform c = (miBando == Bando.Rojo) ? castilloAzul : castilloRojo;
+        if (c != null) return c.position;
+        // fallback: base enemiga
+        Bando enemigo = (miBando == Bando.Rojo) ? Bando.Azul : Bando.Rojo;
+        return GetBase(enemigo);
+    }
+
+    /// <summary>
+    /// Devuelve la posicion del castillo PROPIO (lo que hay que defender).
+    /// </summary>
+    public Vector3 GetCastilloPropio(Bando miBando)
+    {
+        Transform c = (miBando == Bando.Rojo) ? castilloRojo : castilloAzul;
+        if (c != null) return c.position;
+        return GetBase(miBando);
+    }
+
+    /// <summary>
+    /// True si el castillo enemigo sigue en pie. False si ya cayo.
+    /// </summary>
+    public bool CastilloEnemigoVivo(Bando miBando)
+    {
+        Transform c = (miBando == Bando.Rojo) ? castilloAzul : castilloRojo;
+        return c != null;
     }
 
     /// <summary>

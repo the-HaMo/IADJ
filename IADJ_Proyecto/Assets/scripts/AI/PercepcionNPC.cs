@@ -561,8 +561,43 @@ public class PercepcionNPC : MonoBehaviour
         if (waypoints == null || mapa == null) return transform.position;
 
         Bando enemigo = (stats.miBando == Bando.Rojo) ? Bando.Azul : Bando.Rojo;
-        
-        // Comportamiento estratégico individual en ataque:
+
+        // === GUERRA TOTAL: condiciones de victoria + evitar derrota ===
+        // Cada tipo aporta a UNO de los dos objetivos (atacar / defender):
+        //   - Tanque, Caballero, Explorador: van al castillo ENEMIGO (atacan)
+        //   - Arquero: se queda algo retrasado del castillo enemigo (apoyo)
+        //   - Lancero: se queda defendiendo el castillo PROPIO (intercepta atacantes)
+        if (EstadoTacticoGlobal.GuerraTotalActiva)
+        {
+            // Si el castillo enemigo ya cayo, ya hemos ganado, quedarse parado
+            if (!waypoints.CastilloEnemigoVivo(stats.miBando))
+            {
+                return transform.position;
+            }
+
+            switch (stats.tipoUnidad)
+            {
+                case TipoUnidad.Lancero:
+                    // DEFENSORES: se quedan a 4u del castillo propio interceptando
+                    Vector3 castilloPropio = waypoints.GetCastilloPropio(stats.miBando);
+                    Vector3 dirCp = (transform.position - castilloPropio).normalized;
+                    if (dirCp.sqrMagnitude < 0.01f) dirCp = Vector3.forward;
+                    return castilloPropio + dirCp * 4f;
+
+                case TipoUnidad.Arquero:
+                    // APOYO: detras del castillo enemigo, fuera de melee
+                    Vector3 castilloEn = waypoints.GetCastilloEnemigo(stats.miBando);
+                    Vector3 dirCe = (transform.position - castilloEn).normalized;
+                    if (dirCe.sqrMagnitude < 0.01f) dirCe = Vector3.forward;
+                    return castilloEn + dirCe * 8f;
+
+                default:
+                    // ATACANTES: directos al castillo enemigo (Tanque, Caballero, Explorador)
+                    return waypoints.GetCastilloEnemigo(stats.miBando);
+            }
+        }
+
+        // === Modo normal: cada tipo elige destino segun perfil tactico ===
         switch (stats.tipoUnidad)
         {
             case TipoUnidad.Tanque:
