@@ -54,6 +54,8 @@
 \definecolor{malusred}{rgb}{1.0,0.85,0.85}
 \definecolor{neutralgray}{rgb}{0.97,0.97,0.97}
 \definecolor{umumaroon}{rgb}{0.45,0.05,0.18}
+\definecolor{fotoborder}{rgb}{0.55,0.55,0.55}
+\definecolor{fotobg}{rgb}{0.97,0.97,0.94}
 
 % --------------- Estilo de codigo ---------------
 \lstdefinestyle{mystyle}{
@@ -109,6 +111,25 @@
     #1
 }
 
+% --------------- Macro para placeholder de foto ---------------
+\newcommand{\fotoplaceholder}[1]{%
+    \par\medskip\noindent%
+    \begin{center}%
+    \begin{tcolorbox}[
+        colback=fotobg,
+        colframe=fotoborder,
+        boxrule=0.8pt,
+        arc=2pt,
+        width=0.85\textwidth,
+        halign=center,
+        valign=center,
+        height=2.4cm
+    ]
+    \itshape\color{gray} [Foto: #1]
+    \end{tcolorbox}%
+    \end{center}\medskip%
+}
+
 % --------------- Macros para colorear celdas de tablas ---------------
 \newcommand{\bonus}[1]{\cellcolor{bonusgreen}#1}
 \newcommand{\malus}[1]{\cellcolor{malusred}#1}
@@ -161,66 +182,110 @@
 % =====================================================================
 \section{Introduccion}
 
-Esta memoria documenta la implementacion del \textbf{Bloque 2} de la practica
-de Inteligencia Artificial para el Desarrollo de Juegos. El bloque se centra
-en IA \emph{estrategica} (a nivel de bando) y \emph{tactica} (a nivel de cada
-unidad individual) en un escenario de juego de guerra en tiempo real
-construido sobre Unity.
+Esta memoria documenta la implementacion del \textbf{Bloque 2} de la
+practica de Inteligencia Artificial para el Desarrollo de Juegos. El
+bloque se centra en IA \emph{estrategica} (a nivel de bando) y
+\emph{tactica} (a nivel de cada unidad individual) en un escenario de
+juego de guerra en tiempo real construido sobre Unity.
 
-El proyecto enfrenta a dos bandos (\textbf{Rojo} y \textbf{Azul}) en un mapa
-con barrera natural y varios biomas. Cada bando dispone de su base, hospital,
-puntos de respawn y unidades de cinco tipos distintos. La IA combina:
+El proyecto enfrenta a dos bandos (\textbf{Rojo} y \textbf{Azul}) en un
+mapa con barrera natural y varios biomas. Cada bando dispone de su base,
+hospital, puntos de respawn y unidades de cinco tipos distintos. La IA
+combina varios niveles de decision:
 
 \begin{itemize}[leftmargin=1.5em]
-    \item Toma de decisiones individual basada en \emph{estado} y \emph{tipo} de unidad.
-    \item Sistema de combate con \emph{matchups} entre tipos y modificadores por terreno.
-    \item Mapa de influencia que afecta tanto al pathfinding como a la decision de huida.
-    \item Estrategia de bando con modos \emph{defensivo}, \emph{ofensivo} y \emph{guerra total}.
-    \item Pathfinding A* con heuristica seleccionable y coste tactico opcional.
+    \item \textbf{Estado individual} (Vigilancia / Ataque / Defensa) que define el rol que juega cada NPC en el bando.
+    \item \textbf{Tipo de unidad} (Caballero, Arquero, Lancero, Tanque, Explorador), con preferencias de bioma, distancia de combate y matchups propios.
+    \item \textbf{Modo de combate global} del partido (Defensa o Ataque) que distribuye automaticamente los NPCs entre los tres estados individuales.
+    \item \textbf{Modo Guerra Total}, que anula lo anterior y dirige a todos los NPCs hacia las condiciones de victoria.
+    \item \textbf{Mapas tacticos} (Influencia, Tension y Vulnerabilidad) que el A* y la toma de decisiones consultan en tiempo real.
 \end{itemize}
 
-Las decisiones de diseno mas relevantes son:
+\fotoplaceholder{vista cenital del escenario completo con los dos castillos, el rio y los biomas distinguibles}
 
-\paragraph{Deteccion de biomas mixta.}
-Para los biomas con formas irregulares (caminos curvos, manchas de bosque,
-rios) se utilizan \texttt{Collider} con su \texttt{LayerMask}, mientras que
-para zonas rectangulares regulares (urbano, pradera) se definen mediante
-coordenadas de centro y tamano en el inspector de \texttt{GridManager}. Esta
-mezcla evita crear colliders innecesarios para zonas grandes y resulta
-sensiblemente mas eficiente al construir el grid.
+\paragraph{Filosofia de diseno.}
+Toda la informacion de estado global se centraliza en una clase
+estatica (\texttt{EstadoTacticoGlobal}) que dispara eventos cuando algo
+cambia. El controlador del Canvas (\texttt{TacticalCanvasController}) es
+el unico que escucha la entrada de teclado y delega en
+\texttt{EstadoTacticoGlobal}. Cada NPC, mapa, minimapa o gizmo se
+suscribe al evento \texttt{OnEstadoCambiado} y reacciona en consecuencia.
+Esto evita que la informacion tactica acabe duplicada o desincronizada.
 
 \paragraph{Heuristicas escaladas $\times 10$.}
 Como el coste de paso del A* es 10 (ortogonal) o 14 (diagonal) mas las
-penalizaciones de terreno e influencia, las heuristicas devuelven distancias
-multiplicadas por 10 para mantener el mismo orden de magnitud y conservar
-la admisibilidad.
+penalizaciones de terreno e influencia, las heuristicas devuelven
+distancias multiplicadas por 10 para mantener el mismo orden de magnitud
+y conservar la admisibilidad.
 
 \paragraph{Cinco tipos de unidad con afinidades diferenciadas.}
-Cada tipo tiene preferencias propias de movimiento (que afectan al pathfinding)
-y de combate (que afectan a las tablas FTA/FTD del sistema de daño):
-
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Arquero}: prefiere bosque y pradera; evita urbano.
-    \item \textbf{Caballero}: prefiere urbano y camino; evita pradera y bosque.
-    \item \textbf{Explorador}: prefiere urbano y bosque; evita pradera y camino.
-    \item \textbf{Lancero}: evita bosque, el resto le es indiferente.
-    \item \textbf{Tanque}: prefiere urbano; evita camino y bosque.
+    \item \textbf{Arquero}: prefiere bosque y pradera; evita urbano. En combate \emph{kitea} (mantiene distancia).
+    \item \textbf{Caballero}: prefiere urbano y camino; evita pradera y bosque. Bonus de furia con poca vida.
+    \item \textbf{Explorador}: prefiere urbano y bosque; evita pradera y camino. Cazador de heridos.
+    \item \textbf{Lancero}: prefiere urbano; evita bosque. Mejor en formacion y plantando los pies.
+    \item \textbf{Tanque}: prefiere urbano; evita camino y bosque. Aguanta hasta el final.
 \end{itemize}
+
+\fotoplaceholder{grupo de los 5 tipos de unidades distinguibles graficamente, con barra de vida e icono de estado}
 
 % =====================================================================
 \section{Software y hardware utilizado}
 
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Unity 2021.3.16f1 LTS} con la plantilla 3D estandar (no URP/HDRP), tal como exige el enunciado.
+    \item \textbf{Unity 2021.3.16f1 LTS}, plantilla 3D estandar (no URP/HDRP), tal como exige el enunciado.
     \item Lenguaje \textbf{C\# 9.0}.
     \item Editores: Visual Studio 2022 y Visual Studio Code.
     \item Sistemas operativos de desarrollo: Windows 10 y 11.
-    \item Control de versiones: \textbf{Git + GitHub}, con scripts \texttt{.bat} y \texttt{.sh} de equipo (\texttt{push.bat}, \texttt{pull.bat}, \texttt{reset-unity.bat}) para evitar los conflictos clasicos con los ficheros autogenerados por Unity (\texttt{Library/}, \texttt{Temp/}, \texttt{*.csproj}, \texttt{*.sln}, \texttt{.vscode/}).
+    \item Control de versiones: \textbf{Git + GitHub} con scripts compartidos (\texttt{push.bat}, \texttt{pull.bat}, \texttt{reset-unity.bat}) que evitan los conflictos clasicos de los ficheros autogenerados por Unity (\texttt{Library/}, \texttt{Temp/}, \texttt{*.csproj}, \texttt{*.sln}, \texttt{.vscode/}).
 \end{itemize}
 
-\textbf{Hardware} de pruebas: equipos personales de los integrantes del
-grupo (Windows con tarjeta grafica integrada o dedicada). El proyecto se
-ejecuta sin problema en cualquier equipo capaz de mover Unity 2021 LTS.
+\textbf{Hardware} de pruebas: equipos personales del grupo (Windows con
+GPU integrada o dedicada). El proyecto se ejecuta sin problema en
+cualquier equipo capaz de mover Unity 2021 LTS.
+
+% =====================================================================
+\section{Arquitectura general}
+
+El proyecto se organiza en tres bloques de scripts:
+
+\begin{table}[H]
+\centering
+\caption{Componentes principales del Bloque 2}
+\label{tab:arquitectura}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\textwidth}{l X}
+\toprule
+\textbf{Script} & \textbf{Responsabilidad} \\
+\midrule
+\multicolumn{2}{l}{\textit{Estado global y entrada de usuario (\texttt{Assets/scripts/canvas/})}} \\
+\texttt{EstadoTacticoGlobal} & Singleton estatico con el modo de combate global, mapa actual, Guerra Total, debug y pathfinding tactico. Dispara \texttt{OnEstadoCambiado}. \\
+\texttt{TacticalCanvasController} & Lee teclas (Q, E, M, T, B, P) y aplica al \texttt{EstadoTacticoGlobal}. Distribuye los NPCs entre estados al cambiar el modo de combate. Pinta el panel de informacion en pantalla. \\
+\midrule
+\multicolumn{2}{l}{\textit{Combate y NPCs (\texttt{Assets/scripts/AI/})}} \\
+\texttt{NPCStats} & Vida, poder, rangos, bando, tipo. Eventos \texttt{OnAtacado}, \texttt{OnDanioRecibido}, \texttt{OnVidaCambiada}. \\
+\texttt{SistemaCombate} & Tablas FAD/FTA/FTD, formula de daño y critico, bonuses por estado y tipo. \\
+\texttt{PercepcionNPC} & Cerebro del NPC: percibe enemigos, decide perseguir/atacar/huir/defender, gestiona ordenes manuales del jugador. \\
+\texttt{estadoNPC} & Maquina de tres estados (Vigilancia/Ataque/Defensa) con icono visible sobre la unidad. \\
+\texttt{NPCPatrol} & Itinerario de patrulla con waypoints prefijados. \\
+\texttt{NPCRespawnSpawner} & Crea los NPCs iniciales con composicion (vigilantes/ataque/defensa) y los respawnea 30s tras morir. \\
+\texttt{NPCHealthBar} & Barra de vida sobre cada NPC. \\
+\texttt{Hospital} & Trigger que cura 50pv/s a las unidades del bando que la necesitan. \\
+\texttt{Torre} & Captura por permanencia 20s sin recibir daño. \\
+\texttt{CastilloDerrumbado} & Comprueba la condicion de victoria final. \\
+\texttt{MapaInfluencia} & Calcula los tres mapas tacticos (Influencia, Tension, Vulnerabilidad) cada 0.5s. \\
+\texttt{MinimapaInfluencia} & Pinta en pantalla el mapa actualmente seleccionado. \\
+\texttt{SeleccionarUnidad} & Click izquierdo para seleccionar / mover unidades a mano. \\
+\texttt{MainCameraController} & Camara estilo RTS con WASD + zoom de raton. \\
+\midrule
+\multicolumn{2}{l}{\textit{Pathfinding y grid (\texttt{Assets/scripts/GridTransitable/})}} \\
+\texttt{GridManager} & Construye el grid 105x105 detectando obstaculos y biomas. \\
+\texttt{Aestrella} & A* con tres heuristicas y coste tactico opcional. \\
+\texttt{Node} & Celda del grid: posicion, walkable, bioma, influencia. \\
+\texttt{WayPoints} & Lista global de spawns, hospitales, bases y castillos. \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 % =====================================================================
 \section{Elementos implementados}
@@ -228,26 +293,29 @@ ejecuta sin problema en cualquier equipo capaz de mover Unity 2021 LTS.
 \subsection{Obligatorios (Bloque 2)}
 
 \begin{enumerate}[label=(\alph*),leftmargin=1.5em]
-    \item Comportamiento tactico diferenciado por tipo de unidad — \texttt{TacticasPorTipo.cs} + \texttt{PercepcionNPC.cs}.
-    \item Comportamiento estrategico ofensivo / defensivo a nivel de bando — \texttt{EstrategiaBando.cs}.
+    \item Comportamiento tactico diferenciado por tipo de unidad — \texttt{PercepcionNPC.cs} con switch por tipo en \texttt{CalcularDestinoAtaque} y \texttt{CalcularDestinoDefensa}; bonuses por tipo en \texttt{SistemaCombate.cs}.
+    \item Comportamiento estrategico ofensivo / defensivo a nivel de bando — \texttt{TacticalCanvasController.cs} (teclas \texttt{Q} y \texttt{E}) + \texttt{EstadoTacticoGlobal.cs}.
     \item Sistema de combate cuerpo a cuerpo y a distancia con tablas FAD/FTA/FTD y criticos — \texttt{SistemaCombate.cs} + \texttt{NPCStats.cs}.
-    \item Mapa tactico de influencia — \texttt{MapaInfluencia.cs}.
-    \item Minimapa con areas de influencia (heatmap rojo/azul) — \texttt{MinimapaInfluencia.cs}.
-    \item Uso de la informacion del mapa de influencia en el comportamiento tactico (decision de huida y reorientacion) — \texttt{PercepcionNPC.cs}.
-    \item Modo Guerra Total — \texttt{EstrategiaBando.cs}, tecla \texttt{T}.
-    \item Algoritmo de pathfinding A* — \texttt{Aestrella.cs}.
-    \item Pathfinding tactico individual sumando influencia enemiga al coste — \texttt{Aestrella.cs} consultando a \texttt{MapaInfluencia.cs}.
-    \item Patrullas con itinerario prefijado, que reaccionan ante enemigos — \texttt{NPCPatrol.cs}.
-    \item Modo depuracion: pantalla de ayuda \texttt{F1}, gizmos togglables (\texttt{C}, \texttt{G}), toggle del componente tactico del A* (\texttt{I}), debug de daño/curacion (\texttt{J}, \texttt{K}).
+    \item Mapas tacticos: \emph{Influencia}, \emph{Tension} y \emph{Vulnerabilidad} — \texttt{MapaInfluencia.cs}.
+    \item Minimapa con areas de influencia (cicla los tres mapas con \texttt{M}) — \texttt{MinimapaInfluencia.cs}.
+    \item Uso de la informacion de los mapas en el comportamiento tactico (eleccion de destino defensivo/ofensivo segun tipo, decision de huida) — \texttt{PercepcionNPC.cs}.
+    \item Modo Guerra Total que persigue las condiciones de victoria — tecla \texttt{T}, dirige a los NPCs al castillo enemigo (atacantes) y al castillo propio (defensores).
+    \item Algoritmo A* — \texttt{Aestrella.cs}.
+    \item Pathfinding tactico individual sumando influencia enemiga al coste, togglable con \texttt{P} — \texttt{Aestrella.cs} + \texttt{MapaInfluencia.cs}.
+    \item Patrullas con itinerario prefijado que reaccionan ante enemigos — \texttt{NPCPatrol.cs}.
+    \item Modo depuracion: tecla \texttt{B} activa todos los gizmos (waypoints de patrulla, camino A* del NPC, posicion del grid, areas defendidas, etc.). El componente tactico del A* se puede activar/desactivar en caliente con \texttt{P}.
 \end{enumerate}
 
 \subsection{Opcionales}
 
 \begin{itemize}[leftmargin=1.5em]
-    \item Sistema de captura de torres con condicion de victoria propia (\texttt{Torre.cs} + \texttt{CastilloDerrumbado.cs}).
+    \item Tres mapas tacticos en lugar de uno (Influencia + Tension + Vulnerabilidad).
+    \item Sistema de captura de torres con condicion de victoria propia (20s sin recibir daño).
     \item Heuristicas multiples seleccionables (Manhattan, Euclidea, Chebyshev) en el A*.
-    \item Spawner que respawnea al NPC en el waypoint mas cercano a su muerte y le envia automaticamente al punto donde cayo.
-    \item Indicadores en pantalla del modo estrategico actual y barras de vida sobre cada NPC.
+    \item Spawner que respawnea cada NPC en el waypoint mas cercano a su muerte y le envia automaticamente al lugar donde cayo, manteniendo su estado original.
+    \item Bonuses de combate por estado y tipo (Tanque resistente sin aliados, Caballero \emph{enraged} con poca vida, Lancero con bonus en formacion).
+    \item Comportamientos defensivos especializados (Arquero kite, Explorador refugio en bosque, Caballero busca aliados via mapa de influencia).
+    \item Indicador en pantalla del estado tactico global (modo, mapa, Guerra Total, debug, pathfinding).
 \end{itemize}
 
 % =====================================================================
@@ -256,47 +324,51 @@ ejecuta sin problema en cualquier equipo capaz de mover Unity 2021 LTS.
 El escenario \texttt{EscenarioGeneral.unity} contiene:
 
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Dos paises} separados por una barrera natural (un rio) con un puente como zona de paso. Esto crea cuellos de botella interesantes para la IA tactica y para la fase de Guerra Total.
-    \item \textbf{Cuatro biomas} (Pradera, Camino, Bosque, Urbano), cada uno con coste de movimiento por tipo de unidad y modificadores propios para el combate (FTA y FTD).
-    \item \textbf{Una base por bando} (CastilloRojo y CastilloAzul) que conviene defender; su destruccion decide la partida.
-    \item \textbf{Hospitales}, donde las unidades recuperan vida si entran en su trigger y son del mismo bando.
+    \item \textbf{Dos paises} separados por una barrera natural (un rio) con un puente como zona de paso. Esto crea cuellos de botella interesantes para la IA tactica.
+    \item \textbf{Cuatro biomas} (Pradera, Camino, Bosque, Urbano) con coste de movimiento por tipo de unidad y modificadores de combate (FTA y FTD) propios.
+    \item \textbf{Una base por bando} con un \textbf{castillo} (\texttt{CastilloRojo} y \texttt{CastilloAzul}). Su destruccion decide la partida.
+    \item \textbf{Hospitales}, donde las unidades del mismo bando se curan al entrar en el trigger.
     \item \textbf{Puntos de respawn} (\texttt{WayPoints}) por bando.
     \item \textbf{Torres conquistables} a lo largo del mapa.
 \end{itemize}
 
+\fotoplaceholder{plano del mapa con biomas senalizados (pradera, camino, bosque, urbano), el rio y el puente}
+
 \subsection{Construccion del grid}
 
-El grid (\texttt{GridManager.cs}) es de $105 \times 105$ celdas de 3 unidades
-de lado, lo que cubre el mapa completo. Para cada celda:
+El grid (\texttt{GridManager.cs}) es de $105 \times 105$ celdas de 3
+unidades de lado, lo que cubre el mapa completo. Para cada celda:
 
 \begin{enumerate}[leftmargin=1.5em]
     \item Se comprueba si es transitable mediante \texttt{Physics.CheckBox} sobre la \texttt{unwalkableMask}.
     \item Se asigna un bioma siguiendo este orden de prioridad:
     \begin{itemize}
-        \item Si un \texttt{Collider} de bioma cubre la celda, se usa ese bioma.
-        \item Si no, si la celda cae dentro de un area rectangular declarada en el inspector (\texttt{biomasAreas}), se usa ese bioma.
+        \item Si un \texttt{Collider} de bioma cubre la celda, se usa ese bioma. Lo usamos para formas irregulares (caminos curvos, manchas de bosque, rios).
+        \item Si no, si la celda cae dentro de un \emph{area rectangular} declarada en el inspector (\texttt{biomasAreas}), se usa ese bioma. Mas eficiente para zonas grandes regulares (Pradera, Urbano).
         \item Por defecto, Pradera.
     \end{itemize}
 \end{enumerate}
+
+\fotoplaceholder{grid en modo debug (tecla B) mostrando los biomas con colores}
 
 % =====================================================================
 \section{Sistema de combate}
 
 \subsection{Fundamentos}
 
-El sistema de combate es una adaptacion del ejemplo del Anexo II de la
-practica. La fuerza efectiva de atacante y defensor se calculan como:
+El sistema es una adaptacion del ejemplo del Anexo II de la practica.
+La fuerza efectiva de atacante y defensor se calcula como:
 
 \begin{formulabox}
 \centering
 $FA = \text{Calidad}_{atacante} \cdot FAD \cdot FTA \qquad FD = \text{Calidad}_{defensor} \cdot FTD$
 \end{formulabox}
 
-Lo que en el enunciado se llama \textbf{Calidad} se ha implementado como
-el atributo \texttt{poder} de \texttt{NPCStats}, ya que resulta mas
-intuitivo cuando una unidad actua como defensora.
+Lo que en el enunciado se llama \textbf{Calidad} se ha implementado
+como el atributo \texttt{poder} de \texttt{NPCStats}, ya que resulta
+mas intuitivo cuando una unidad actua como defensora.
 
-\subsection{Tablas de modificadores}
+\subsection{Tabla FAD: matchup atacante / defensor}
 
 \begin{table}[H]
 \centering
@@ -315,6 +387,10 @@ intuitivo cuando una unidad actua como defensora.
 \end{tabular}
 \end{table}
 
+\noindent\textit{Verde: bonus $> 1.0$. Rojo: penalizacion $< 1.0$. Gris: neutro.}
+
+\subsection{Tablas FTA y FTD: terreno}
+
 \begin{table}[H]
 \centering
 \caption{FTA: Factor de tipo Ataque por bioma}
@@ -327,7 +403,7 @@ Arquero    & \neutral{1.00} & \neutral{1.00} & \bonus{1.50} & \malus{0.75} \\
 Caballero  & \bonus{1.50} & \bonus{1.25} & \malus{0.75} & \malus{0.50} \\
 Explorador & \neutral{1.00} & \malus{0.75} & \bonus{1.25} & \bonus{1.25} \\
 Lancero    & \neutral{1.00} & \neutral{1.00} & \malus{0.75} & \bonus{1.25} \\
-Tanque     & \neutral{1.00} & \malus{0.75} & \malus{0.50} & \bonus{1.50} \\
+Tanque     & \bonus{1.25} & \malus{0.75} & \malus{0.50} & \bonus{1.50} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -340,34 +416,51 @@ Tanque     & \neutral{1.00} & \malus{0.75} & \malus{0.50} & \bonus{1.50} \\
 \toprule
 \textbf{Unidad} & \textbf{Pradera} & \textbf{Camino} & \textbf{Bosque} & \textbf{Urbano} \\
 \midrule
-Arquero    & \neutral{1.00} & \neutral{1.00} & \malus{0.50} & \bonus{1.25} \\
+Arquero    & \neutral{1.00} & \neutral{1.00} & \malus{0.75} & \bonus{1.25} \\
 Caballero  & \malus{0.75} & \bonus{1.25} & \bonus{1.25} & \bonus{1.50} \\
-Explorador & \neutral{1.00} & \malus{0.75} & \malus{0.75} & \malus{0.75} \\
+Explorador & \bonus{1.25} & \malus{0.75} & \neutral{1.00} & \malus{0.75} \\
 Lancero    & \neutral{1.00} & \neutral{1.00} & \bonus{1.25} & \malus{0.75} \\
-Tanque     & \neutral{1.00} & \malus{0.75} & \bonus{1.50} & \malus{0.50} \\
+Tanque     & \neutral{1.00} & \neutral{1.00} & \bonus{1.25} & \malus{0.75} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textit{Verde claro} indica bonus $> 1.0$, \textit{rojo claro} indica
-penalizacion $< 1.0$, \textit{gris} es valor neutro.
+\subsection{Bonuses contextuales por estado y tipo}
+
+Sobre el calculo base se aplican multiplicadores extra sensibles al
+estado individual y al tipo de la unidad. Estos bonuses recompensan
+\emph{jugar bien con cada tipo}:
+
+\begin{table}[H]
+\centering
+\caption{Bonuses contextuales aplicados por SistemaCombate}
+\label{tab:bonus}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{l l l l}
+\toprule
+\textbf{Tipo} & \textbf{Estado} & \textbf{Condicion} & \textbf{Efecto} \\
+\midrule
+Tanque    & Defensa & Sin aliados cerca & $FA \times 1.25$ y $FD \times 1.25$ (heroe solitario) \\
+Caballero & Ataque  & Vida $< 50\%$    & $FA \times 1.20$ (\emph{rage}) \\
+Lancero   & Ataque  & Aliados cerca    & $FA \times 1.20$ (formacion) \\
+Lancero   & Defensa & Inmovil          & $FD \times 1.25$ (pike defense) \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \subsection{Formula de daño}
-
-Por cada ataque se aplica:
 
 \begin{formulabox}
 \begin{itemize}[leftmargin=1.5em]
     \item Con probabilidad $1/100$ (ataque \textbf{critico}): $\text{daño} = \text{CteImpacto} \cdot 50$.
-    \item En caso normal:
-    $$\text{daño} = \frac{FA}{FD} \cdot \text{CteImpacto} \cdot \text{Random}[0.5,\, 1.0]$$
+    \item En caso normal: $\text{daño} = (FA/FD) \cdot \text{CteImpacto} \cdot \text{Random}[0.5,\, 1.0]$.
     \item Si el daño calculado no llega al 10\% de \texttt{CteImpacto}, se garantiza un minimo entre el 10\% y el 20\% para que ningun ataque resulte completamente inutil.
 \end{itemize}
 \end{formulabox}
 
 Con $\text{CteImpacto} = 100$ y $\text{vidaMax} = 1000$ un combate
-equilibrado dura unos 10–15 ataques. Un critico, en cambio, puede
-matar de un golpe a unidades con vida media.
+equilibrado dura unos 10–15 ataques. Un critico puede matar de un golpe
+a unidades con vida media.
 
 \subsection{Ejemplo numerico}
 
@@ -376,21 +469,17 @@ Pradera, Arquero en Bosque:
 
 \begin{align*}
 FA &= 100 \cdot \underbrace{1.50}_{FAD\text{(Cab vs Arq)}} \cdot \underbrace{1.50}_{FTA\text{(Pradera, Cab)}} = 225 \\
-FD &= 70 \cdot \underbrace{0.50}_{FTD\text{(Bosque, Arq)}} = 35 \\
-\text{daño}_{\text{Random}=0.7} &= \tfrac{225}{35} \cdot 100 \cdot 0.7 \approx 450
+FD &= 70 \cdot \underbrace{0.75}_{FTD\text{(Bosque, Arq)}} = 52.5 \\
+\text{daño}_{\text{Random}=0.7} &= \tfrac{225}{52.5} \cdot 100 \cdot 0.7 \approx 300
 \end{align*}
 
-El Caballero tumba al Arquero en 2-3 ataques. Si la situacion fuera la
-inversa (Arquero atacando a Caballero, Arquero en Bosque), el FA seria
-$70 \cdot 0.75 \cdot 1.50 = 78.75$ y el FD del Caballero seria
-$100 \cdot 0.75 = 75$, dando un daño $\approx 105$, y el Arquero
-necesitaria muchos mas turnos.
+El Caballero tumba al Arquero en pocos ataques.
 
 \subsection{Implementacion}
 
-El sistema vive en \texttt{SistemaCombate.cs} (clase estatica con las tres
-matrices y la funcion \texttt{CalcularDanio}). Para que un atacante pegue
-a un defensor basta con:
+El sistema vive en \texttt{SistemaCombate.cs} (clase estatica con las
+tres matrices y la funcion \texttt{CalcularDanio}). Para que un
+atacante pegue a un defensor basta con:
 
 \begin{lstlisting}[caption={Llamada al sistema de combate desde PercepcionNPC.cs}]
 SistemaCombate.ResultadoAtaque res = targetStats.RecibirAtaqueDe(stats);
@@ -402,12 +491,19 @@ if (res.esCritico)
 
 \texttt{NPCStats.RecibirAtaqueDe(atacante)} consulta los biomas de
 atacante y defensor, llama a \texttt{SistemaCombate.CalcularDanio} y
-aplica el resultado. Adicionalmente dispara dos eventos:
+aplica el resultado, ademas de disparar dos eventos:
 
 \begin{itemize}[leftmargin=1.5em]
     \item \texttt{OnDanioRecibido()} (sin atacante) — usado por la torre para resetear su contador de captura.
     \item \texttt{OnAtacado(NPCStats atacante)} — usado por \texttt{PercepcionNPC} para reaccionar al atacante.
 \end{itemize}
+
+\subsection{Inmovilidad al atacar}
+
+El enunciado pide que la unidad permanezca inmovil mientras ataca.
+\texttt{PercepcionNPC.EjecutarAtaque} llama a \texttt{Parar()} antes de
+aplicar el daño, lo que vacia la lista de waypoints y deja al NPC en
+sitio durante \texttt{velAtaque} segundos.
 
 \subsection{Reaccion al ataque}
 
@@ -416,192 +512,327 @@ Cuando un NPC es golpeado, su \texttt{PercepcionNPC.AlSerAtacado}:
 \begin{enumerate}[leftmargin=1.5em]
     \item Si no tenia objetivo, apunta directamente al atacante.
     \item Si ya tenia objetivo, calcula los ratios $FA/FD$ contra ambos candidatos (a si mismo, en su bioma actual) y conserva al mas peligroso.
-    \item Si alguno de los dos pertenece a la lista de \emph{objetivos preferidos} de su perfil tactico (definido en \texttt{TacticasPorTipo}, p.~ej.\ el Lancero prioriza Tanques y Caballeros), recibe un bonus del 30\,\% en su valoracion.
 \end{enumerate}
+
+\fotoplaceholder{combate entre dos NPCs con barras de vida y log de critico en consola visible}
 
 % =====================================================================
 \section{Comportamiento de los agentes}
 
 Cada NPC tiene tres estados individuales (\texttt{estadoNPC.cs}):
-\textbf{Vigilancia}, \textbf{Ataque} y \textbf{Defensa}. Sobre estos, el
-bando aplica un modo estrategico (vease seccion siguiente).
+\textbf{Vigilancia}, \textbf{Ataque} y \textbf{Defensa}. Sobre estos,
+el modo de combate global del bando (Defensa o Ataque) y el modo
+Guerra Total los redistribuyen.
+
+\subsection{Iconos de estado sobre cada unidad}
+
+Para que sea evidente qué hace cada NPC, \texttt{estadoNPC} crea sobre
+cada unidad una primitiva flotante:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \textbf{Cubo rojo}: estado \textbf{Ataque}.
+    \item \textbf{Esfera azul}: estado \textbf{Defensa}.
+    \item \textbf{Piramide amarilla}: estado \textbf{Vigilancia}.
+\end{itemize}
+
+\fotoplaceholder{tres NPCs con sus iconos de estado distintos: cubo rojo, esfera azul y piramide amarilla}
 
 \subsection{Estado Vigilancia}
 
-El NPC patrulla entre waypoints predefinidos (\texttt{NPCPatrol.cs}). En cada
-\texttt{Update} de \texttt{PercepcionNPC} se ejecuta:
-
-\begin{lstlisting}[caption={Pseudocodigo del bucle de PercepcionNPC en Vigilancia},language=]
-Cada frame:
-  1. Modo estrategico = EstrategiaBando.GetModo(miBando)
-  2. Si NecesitaCuracion()  o  DebeHuirPorInfluencia():
-        enemigoActual = null
-        Ir al hospital propio
-        return
-
-  3. Cada 0.2s recalcular:
-        radio = stats.radioPercepcion
-        Si modo == GuerraTotal -> radio *= 2.5
-        Si estado == Ataque    -> radio *= 1.6
-        Si bioma actual == perfil.biomaPreferido -> radio *= 1.2-1.5
-        enemigoActual = mejor candidato dentro de radio
-
-  4. Si enemigoActual != null:
-        Cancelar patrulla
-        Si distancia <= rangoAtaque -> ATACAR (cada velAtaque)
-        Si distancia > rangoAtaque  -> perseguir hasta rangoAtaque * distPref
-     Si no:
-        Estado Defensa  -> volver al ancla si te has alejado
-        Estado Ataque   -> ir a base enemiga
-        Estado Vigilancia + bando Ofensivo/GuerraTotal -> ir a base enemiga
-        Estado Vigilancia + bando Defensivo -> reanudar patrulla
-\end{lstlisting}
+El NPC patrulla entre waypoints predefinidos (\texttt{NPCPatrol.cs}). Si
+en cualquier momento detecta un enemigo dentro del radio de percepcion,
+abandona la patrulla y persigue. En cuanto pierde el objetivo y no
+detecta a nadie, vuelve a patrullar.
 
 \subsection{Estado Ataque}
 
-La patrulla queda desactivada de forma permanente (mientras el estado
-sea Ataque). El radio de percepcion crece $\times 1.6$ y, si no hay
-enemigos en vista, el NPC avanza hacia la base enemiga sin esperar a que
-el bando lo ordene.
+Si no hay enemigo en vista, el NPC busca activamente un destino
+ofensivo. \texttt{CalcularDestinoAtaque} elige segun tipo:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \textbf{Tanque}: va directo a la torre/spawn enemigo mas cercano.
+    \item \textbf{Arquero}: busca un punto con \emph{baja influencia enemiga} pero \emph{alta influencia propia} (atacar seguro detras de aliados).
+    \item \textbf{Caballero, Explorador, Lancero (vanguardia)}: buscan el punto con \emph{mayor influencia enemiga} (donde hay refriega) restando algo de influencia propia para no quedarse atras.
+    \item Si nadie tiene combate cerca (la batalla aun no ha empezado), todos avanzan rectos hacia el objetivo enemigo mas cercano para ir a buscar al rival.
+\end{itemize}
+
+El radio de percepcion del NPC en este estado se multiplica por 1.6
+para que vea enemigos antes y se compromete con el primero que encuentre.
 
 \subsection{Estado Defensa}
 
-El NPC se ancla a la posicion que tenia al entrar en este estado. Si por
-una persecucion se aleja, vuelve al ancla en cuanto pierde el objetivo.
-No se desplaza a buscar combate.
-
-\subsection{Tacticas por tipo de unidad}
-
-\texttt{TacticasPorTipo.cs} expone un \texttt{PerfilTactico} por tipo
-con los siguientes campos relevantes:
+Tambien con switch por tipo en \texttt{CalcularDestinoDefensa}, donde
+cada uno elige posicion segun una funcion de scoring distinta sobre
+los mapas de influencia:
 
 \begin{table}[H]
 \centering
-\caption{Perfiles tacticos por tipo de unidad}
-\label{tab:perfiles}
-\begin{tabular}{l|c|c|c|c}
+\caption{Funcion de scoring defensivo por tipo}
+\label{tab:scoringdef}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{l X}
 \toprule
-\textbf{Tipo} & \textbf{vidaCriticaPct} & \textbf{distCombatePref} & \textbf{Bioma preferido} & \textbf{Aguanta influencia} \\
+\textbf{Tipo} & \textbf{Score (mas alto = mejor)} \\
 \midrule
-Caballero  & 0.30 & 1.0  & Pradera & No \\
-Arquero    & 0.45 & 1.6  & Pradera & No \\
-Lancero    & 0.25 & 1.0  & Urbano  & No \\
-Tanque     & 0.15 & 1.0  & Camino  & \textbf{Si} \\
-Explorador & 0.50 & 1.2  & Bosque  & No \\
+Caballero  & $\text{infPropia} + \text{infEnemiga} - 2 \cdot |\text{infPropia} - \text{infEnemiga}|$  (la frontera entre los dos bandos: linea de contacto) \\
+Lancero    & $3 \cdot \text{infPropia} - \text{infEnemiga}$ (se agrupa con aliados, formacion) \\
+Tanque     & $2 \cdot \text{infEnemiga} - 0.3 \cdot d_{\text{torre}}$ (avanza hacia donde hay enemigos sin alejarse de su torre) \\
+Arquero    & $1.5 \cdot \text{infEnemiga} - 2 \cdot \text{infPropia}$ (zona despejada con visibilidad sobre el enemigo) \\
+Explorador & $-(\text{infPropia} + \text{infEnemiga})$ (flancos / terreno sin explorar) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Ademas, si el enemigo entra en rango y el tipo lo permite, hay
+maniobras especificas:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \textbf{Arquero}: si el enemigo se acerca a menos de $0.9 \cdot \text{rangoAtaque}$, huye 3 unidades en sentido contrario y dispara desde alli (\emph{kiting}).
+    \item \textbf{Explorador}: si no esta en Bosque, intenta replegarse a un nodo de Bosque cercano (donde su FTD = 1.0 frente al 0.75 de Pradera).
+    \item \textbf{Caballero}: usa \texttt{BuscarMayorInfluenciaAliada} para replegarse hacia donde hay mas amigos.
+\end{itemize}
+
+\subsection{Persecucion y antibloqueo}
+
+Una vez detecta un enemigo, el NPC entra en bucle persecucion-ataque:
+
+\begin{enumerate}[leftmargin=1.5em]
+    \item Si la distancia $\leq \text{rangoAtaque} + 1$ (tolerancia por radio fisico): se para y ataca cada \texttt{velAtaque} segundos.
+    \item Si esta lejos pero hay otro enemigo \emph{a distancia de ataque} pisandole, le ataca a el (anti-bloqueo en montonera).
+    \item Si esta lejos y no hay nadie cerca, se mueve a $0.75 \cdot \text{rangoAtaque}$ del enemigo (asegura entrar en rango aunque haya empujones).
+\end{enumerate}
+
+\subsection{Decision de huida (uso del mapa de influencia, req. f)}
+
+En cada \texttt{Update}, si \texttt{NecesitaCuracion()} (vida $< 20\%$)
+y el NPC no es un \textbf{Tanque en estado Ataque} (que actua como
+unidad de asedio suicida), interrumpe lo que estaba haciendo y se
+dirige al hospital propio. Es la integracion explicita de la
+informacion del mapa de influencia / vida en la toma de decisiones,
+exigida por el enunciado.
+
+\subsection{Orden manual del jugador}
+
+El jugador puede seleccionar un NPC con click izquierdo y darle una
+orden manual con otro click izquierdo en el suelo. Mientras el NPC
+ejecuta la orden, ignora a los enemigos (salvo que muera por el camino).
+En cuanto llega al destino, vuelve al control normal.
+
+\fotoplaceholder{NPC seleccionado con circulo de seleccion en el suelo y un click derecho marcando un destino}
+
+% =====================================================================
+\section{Estrategia global y Guerra Total}
+
+Cubre los requisitos (b) y (g) del enunciado.
+\texttt{EstadoTacticoGlobal} expone:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \texttt{ModoCombateActual}: \textbf{Defensa} o \textbf{Ataque} (\textbf{Q} o \textbf{E}).
+    \item \texttt{GuerraTotalActiva}: bool (\textbf{T}).
+\end{itemize}
+
+\subsection{Distribucion de unidades por modo}
+
+Cuando se cambia el modo de combate, \texttt{TacticalCanvasController}
+recorre todos los NPCs vivos y los reasigna al estado individual
+adecuado segun la siguiente \emph{composicion}:
+
+\begin{table}[H]
+\centering
+\caption{Composicion de unidades por modo de combate global (por bando)}
+\begin{tabular}{l|ccc}
+\toprule
+\textbf{Modo} & \textbf{Ataque} & \textbf{Vigilancia} & \textbf{Defensa} \\
+\midrule
+Defensa (Q)   & 5 & 6 & 4 \\
+Ataque  (E)   & 8 & 5 & 2 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Estas diferencias provocan comportamientos visiblemente distintos:
+Si hay menos vivos que el cupo total, los cupos se escalan
+proporcionalmente y el resto se asigna al estado predominante. La
+distribucion se aplica deterministicamente (segun el orden en que se
+encuentran los NPCs).
 
-\begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Tanque} es el unico que no huye por influencia enemiga ($\text{aguantaInfluenciaEnemiga} = \text{true}$). Aguanta hasta el 15\,\% de vida.
-    \item \textbf{Explorador} tiene el umbral de huida mas alto (50\,\%) y un bonus de agresividad de $\times 1.5$ en su bioma preferido (Bosque).
-    \item \textbf{Arquero} mantiene la distancia: persigue hasta $1.6 \cdot \text{rangoAtaque}$ en lugar de pegarse al enemigo (\emph{kiting}).
-    \item \textbf{Lancero} prioriza atacar al Tanque y al Caballero (objetivos preferidos).
-    \item \textbf{Caballero} prioriza Arquero y Explorador.
-\end{itemize}
+\subsection{Modo Guerra Total: condiciones de victoria}
 
-\subsection{Decision de huida (uso del mapa de influencia)}
+Al pulsar \textbf{T}, el flag \texttt{GuerraTotalActiva} se invierte y
+se dispara \texttt{OnEstadoCambiado}. Los NPCs reciben la notificacion
+y \texttt{estadoNPC.AlCambiarEstadoGlobal} guarda el estado previo y
+los pasa todos a \textbf{Ataque}.
 
-En cada tick, el NPC consulta al \texttt{MapaInfluencia} la influencia
-enemiga en su posicion actual. Si
+A partir de ese momento, \texttt{PercepcionNPC.CalcularDestinoAtaque}
+detecta \texttt{GuerraTotalActiva} y dirige a cada tipo a un objetivo
+distinto, dividido entre \textbf{atacar el castillo enemigo} (conseguir
+victoria) y \textbf{defender el propio} (evitar derrota):
 
-\begin{formulabox}
+\begin{table}[H]
 \centering
-$\text{vidaPorcentaje} < \text{perfil.vidaCriticaPct} \quad \wedge \quad \text{influenciaEnemigaLocal} \geq \text{umbral}$
-\end{formulabox}
+\caption{Reparto de roles en Guerra Total}
+\label{tab:guerratotal}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{l X}
+\toprule
+\textbf{Tipo} & \textbf{Destino en Guerra Total} \\
+\midrule
+Tanque, Caballero, Explorador & Directos al \textbf{castillo enemigo} (atacan, conseguir victoria). \\
+Arquero & 8 unidades \emph{por delante} del castillo enemigo (apoyo a distancia, no se mete en melee). \\
+Lancero & 4 unidades del \textbf{castillo propio} (defienden, evitar derrota). \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
-interrumpe lo que estaba haciendo y se dirige al hospital propio
-(salvo el Tanque). Esta es la integracion explicita del mapa de
-influencia en la toma de decisiones individual exigida por el
-requisito (f).
+Si el castillo enemigo ya cayo (es decir, hemos ganado), los NPCs se
+quedan parados.
 
-% =====================================================================
-\section{Estrategia de bando y Guerra Total}
+Cuando el jugador desactiva Guerra Total, \texttt{estadoNPC} restaura
+para cada NPC el estado que tenia justo antes de activarla.
 
-\texttt{EstrategiaBando.cs} mantiene un modo por bando: Defensivo,
-Ofensivo o GuerraTotal. Cubre los requisitos (b) y (g) del enunciado.
+\fotoplaceholder{cartel de Guerra Total activa visible en la UI con NPCs convergiendo hacia un castillo}
 
-\subsection{Modo Defensivo}
+\subsection{Indicador en pantalla del estado tactico}
 
-Las unidades en Vigilancia patrullan sus rutas; las unidades en
-Defensa se anclan a su posicion; las unidades en Ataque siguen siendo
-agresivas. Si un enemigo entra en el radio de percepcion, se le
-persigue, pero ningun NPC en Vigilancia se aleja proactivamente.
+\texttt{TacticalCanvasController} dibuja un panel con la informacion
+en vivo del \texttt{EstadoTacticoGlobal}:
 
-\subsection{Modo Ofensivo}
+\begin{verbatim}
+Modo (Q/E): Defensa
+Mapa (M): Influencia
+Guerra total (T): X
+Debugging (B): X
+PathFinding Tactico (P): OK
+\end{verbatim}
 
-Las unidades en Vigilancia abandonan la patrulla y avanzan hacia la base
-enemiga (\texttt{WayPoints.GetBase(enemigo)}). Si encuentran enemigos
-por el camino, los engagean. Las unidades en Defensa siguen ancladas.
+donde \texttt{OK} aparece en verde y \texttt{X} en rojo para los flags
+booleanos.
 
-\subsection{Modo Guerra Total}
-
-Anula los modos individuales de ambos bandos. Aumenta el radio de
-percepcion de cada NPC ($\times 2.5$ por defecto), de modo que ven
-enemigos mucho mas lejos. Todos los NPCs entran en modo agresivo y
-avanzan a por la victoria. Se activa con la tecla \texttt{T} y se
-muestra un cartel rojo en pantalla \texttt{*** GUERRA TOTAL ***}.
-
-\subsection{Indicador en pantalla}
-
-\texttt{EstrategiaBando} dibuja en la esquina superior derecha el modo
-actual de cada bando:
-
-\begin{itemize}[leftmargin=1.5em]
-    \item En blanco/rojo claro: \texttt{Rojo: Defensivo} / \texttt{Azul: Defensivo}.
-    \item En rojo si esta activa Guerra Total.
-\end{itemize}
+\fotoplaceholder{panel de informacion tactica en una esquina con los cinco indicadores}
 
 % =====================================================================
-\section{Mapa tactico de influencia}
+\section{Mapas tacticos}
 
-\subsection{Calculo}
-
-El mapa se almacena en dos matrices del tamaño del grid: \texttt{infRojo}
-e \texttt{infAzul}. Cada \texttt{intervaloActualizacion} segundos
-(0.5\,s por defecto) se hace un barrido completo:
+Cubre los requisitos (d), (e) y (f) del enunciado, ampliado a tres
+mapas distintos. \texttt{MapaInfluencia.cs} mantiene dos matrices del
+tamaño del grid (\texttt{infRojo} e \texttt{infAzul}) y las recalcula
+cada \texttt{intervaloActualizacion} segundos (0.5s por defecto):
 
 \begin{enumerate}[leftmargin=1.5em]
-    \item Se limpian las dos matrices.
-    \item Por cada NPC vivo, se identifica su nodo y se "irradia" influencia a todas las celdas dentro de un radio configurable. La formula del aporte es:
+    \item Limpia las dos matrices.
+    \item Por cada NPC vivo, irradia influencia a las celdas dentro de un radio de 10 celdas con la formula:
     \begin{formulabox}
     \centering
     $\text{aporte}(d) = \dfrac{\text{poder}_{NPC} \cdot \text{pesoPoder}}{1 + d^2}$
     \end{formulabox}
     donde $d$ es la distancia en celdas. Esto crea picos intensos cerca del NPC y decae suavemente.
-    \item Se vuelca la influencia neta al campo \texttt{Node.influenceValue} para compatibilidad con consumidores que no usen el API directamente.
+    \item Vuelca la suma a \texttt{Node.influenceValue} para compatibilidad con consumidores que no usen el API.
 \end{enumerate}
 
-\subsection{Uso en pathfinding (req. i)}
+A partir de las dos matrices se construyen tres mapas distintos:
 
-Aestrella consulta a \texttt{MapaInfluencia} en cada paso del A*:
+\subsection{Mapa de Influencia (neta)}
 
 \begin{formulabox}
 \centering
-$\text{coste}(n \to v) = \text{stepCost} + \text{costeBioma}_{tipo}(v) + \text{costeInfluenciaEnemiga}_{bando}(v)$
+$\text{Influencia}(x,y) = \text{infRojo}(x,y) - \text{infAzul}(x,y)$
 \end{formulabox}
 
-donde
+\textbf{Lectura:} positivo = Rojo dominante, negativo = Azul dominante.
+Se usa para \emph{quien manda} en cada celda.
 
-$$\text{costeInfluenciaEnemiga}_{bando}(v) = \text{Round}\big(\text{influencia}_{enemigo}(v) \cdot \text{pesoCostePathfinding}\big)$$
+\subsection{Mapa de Tension}
 
-Como solo se suma la influencia \emph{enemiga} (siempre $\geq 0$), no se
-rompe la admisibilidad de la heuristica. La tecla \texttt{I} permite
-desactivar este componente para comparar comportamientos en la demo.
+\begin{formulabox}
+\centering
+$\text{Tension}(x,y) = \text{infRojo}(x,y) + \text{infAzul}(x,y)$
+\end{formulabox}
 
-\subsection{Visualizacion: minimapa (req. e)}
+Siempre $\geq 0$. Indica \emph{cuanta actividad total hay} en la zona,
+sin importar de quien. Picos = sitios con muchas unidades (sean del
+bando que sean).
+
+\subsection{Mapa de Vulnerabilidad}
+
+\begin{formulabox}
+\centering
+$\text{Vulnerabilidad}(x,y) = \text{Tension}(x,y) - |\text{Influencia}(x,y)| = 2 \cdot \min(\text{infRojo}, \text{infAzul})$
+\end{formulabox}
+
+Picos = zonas \emph{disputadas} (ambos bandos presentes en cantidades
+similares). Vale 0 si solo hay unidades de un bando. Es muy util para
+identificar el frente de batalla.
+
+\subsection{Visualizacion: minimapa}
 
 \texttt{MinimapaInfluencia.cs} pinta un \texttt{Texture2D} del tamaño
-del grid en la esquina superior izquierda (toggle con tecla \texttt{M}).
-Cada celda se colorea:
+del grid en la esquina superior izquierda. La tecla \textbf{M} cicla
+entre los tres mapas (Influencia $\to$ Vulnerabilidad $\to$ Tension
+$\to$ Influencia $\to$ \dots), gracias a
+\texttt{EstadoTacticoGlobal.CiclarMapa()}. Una etiqueta arriba indica
+cual se esta viendo.
+
+\subsubsection*{Paleta de colores por mapa}
+
+\begin{table}[H]
+\centering
+\caption{Codigo de color del minimapa para cada mapa tactico}
+\label{tab:colores}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{l X}
+\toprule
+\textbf{Mapa} & \textbf{Significado del color} \\
+\midrule
+\textbf{Influencia} &
+Tonalidad de \textbf{rojo} si la influencia neta es positiva (Rojo domina),
+mas saturado cuanto mayor es la diferencia.
+Tonalidad de \textbf{azul} si la influencia neta es negativa (Azul domina).
+\textbf{Color de bioma} (verde para pradera/bosque, marron para camino,
+gris para urbano) si no hay influencia significativa. \\
+
+\textbf{Tension} &
+Gradiente \textbf{amarillo $\to$ naranja $\to$ rojo}.
+Amarillo claro = poca actividad, rojo intenso = zona muy concurrida
+(de uno o ambos bandos). El color de bioma se ve si la celda esta
+practicamente vacia. \\
+
+\textbf{Vulnerabilidad} &
+Gradiente \textbf{blanco $\to$ magenta saturado}.
+Blanco = sin disputa (solo un bando o ninguno), magenta = zona muy
+disputada con ambos bandos balanceados. Es el mejor mapa para localizar
+el \emph{frente de batalla}. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+En cualquiera de los tres mapas, las celdas \textbf{negras} son
+obstaculos no transitables.
+
+\fotoplaceholder{los tres minimapas lado a lado: Influencia (rojo/azul), Tension (amarillo/naranja), Vulnerabilidad (magenta)}
+
+\subsection{Uso del mapa en el A*}
+
+Al estar \texttt{PathfindingTacticoActivo} (toggle \textbf{P}), Aestrella
+suma al coste de cada paso la \emph{influencia enemiga} de la celda
+destino multiplicada por 2.5:
+
+\begin{formulabox}
+\centering
+$\text{coste}(n \to v) = \text{stepCost} + \text{costeBioma}_{tipo}(v) + 2.5 \cdot \text{infEnemiga}_{bando}(v)$
+\end{formulabox}
+
+Como solo se suma la influencia \emph{enemiga} (siempre $\geq 0$), no
+se rompe la admisibilidad de la heuristica. La unidad rodea zonas
+peligrosas en lugar de meterse a saco.
+
+\subsection{Uso del mapa en la toma de decisiones}
+
+Como ya se ha visto en la seccion de Comportamiento:
 
 \begin{itemize}[leftmargin=1.5em]
-    \item Tonalidad de \textbf{rojo} si la influencia neta es positiva (Rojo dominante).
-    \item Tonalidad de \textbf{azul} si la influencia neta es negativa (Azul dominante).
-    \item Color de bioma si no hay influencia (Pradera verde, Camino marron, Bosque verde oscuro, Urbano gris).
-    \item Negro si el nodo no es transitable.
+    \item \textbf{Defensa por tipo} (\texttt{CalcularDestinoDefensa}) usa influencia propia + enemiga para puntuar candidatos.
+    \item \textbf{Ataque por tipo} (\texttt{BuscarDestinoPorInfluencia}) busca alta o baja influencia enemiga segun el rol.
+    \item \textbf{Caballero en Defensa} (\texttt{BuscarMayorInfluenciaAliada}) se repliega hacia el aliado mas cercano.
+    \item \textbf{Bonus al Tanque sin aliados} y \textbf{Lancero con aliados} en \texttt{SistemaCombate} dependen de la presencia de aliados, que se calcula con un \texttt{Physics.OverlapSphere}.
 \end{itemize}
 
 % =====================================================================
@@ -618,11 +849,11 @@ f(v) &= g(v) + h(v)
 \end{align*}
 
 donde \texttt{stepCost} vale 10 (ortogonal) o 14 (diagonal). El
-algoritmo continua hasta extraer el nodo objetivo o vaciar la frontera.
+algoritmo termina cuando extrae el nodo objetivo o vacia la frontera.
 
-\subsection{Heuristicas}
+\subsection{Heuristicas seleccionables}
 
-Se ofrecen tres heuristicas seleccionables en el Inspector:
+Se ofrecen tres heuristicas configurables en el Inspector:
 
 \begin{itemize}[leftmargin=1.5em]
     \item \textbf{Manhattan}: para movimientos solo en ortogonal.
@@ -630,19 +861,31 @@ Se ofrecen tres heuristicas seleccionables en el Inspector:
     \item \textbf{Chebyshev}: para movimientos donde diagonal y ortogonal cuestan lo mismo.
 \end{itemize}
 
-Las tres devuelven la distancia \emph{multiplicada por 10}. El motivo
-es directo: si la heuristica devolviera distancias en celdas (1, 2,
-3...) infraestimaria drasticamente el coste real (10 o 14 por paso),
-ralentizando enormemente la convergencia. El factor $\times 10$ las
-hace comparables sin romper la admisibilidad.
+Las tres devuelven la distancia \emph{multiplicada por 10}. Si
+devolvieran distancias en celdas (1, 2, 3...) infraestimarian
+drasticamente el coste real (10 o 14 por paso) y el A* se ralentizaria.
+El factor $\times 10$ las hace comparables sin romper la admisibilidad.
 
-\subsection{Pathfinding tactico}
+\subsection{Pathfinding tactico (req. i)}
 
-Como se explica en la seccion del mapa de influencia, el A* lee el
-\texttt{costeInfluenciaEnemiga} si el flag \texttt{usarPathfindingTactico}
-esta activo. Esto cumple el requisito (i) del enunciado, que pide
-\emph{añadir} informacion tactica al coste (no contar solo el coste
-del bioma).
+Cuando \texttt{EstadoTacticoGlobal.PathfindingTacticoActivo} es true
+(toggle \textbf{P}), el A* añade al coste de paso la influencia enemiga
+de la celda multiplicada por 2.5. Esto provoca que las unidades
+\emph{rodeen} las zonas dominadas por el enemigo en lugar de
+atravesarlas. Sin esto, el A* solo tendria en cuenta el coste del
+bioma, lo que (segun el enunciado) NO se considera pathfinding tactico.
+
+\fotoplaceholder{misma orden de movimiento con tactico apagado y con tactico encendido, mostrando el desvio}
+
+\subsection{Visualizacion del camino}
+
+Cada \texttt{PathFollowing} tiene un \texttt{OnDrawGizmos} que pinta:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item Una \textbf{linea amarilla} desde el NPC al waypoint actual.
+    \item El \textbf{camino completo} en cyan (debug) o rojo (pathfinding tactico activo) o amarillo (NPC seleccionado).
+    \item \textbf{Esferas} en cada waypoint del camino (verde = destino actual, azul = resto, negro = patrulla).
+\end{itemize}
 
 % =====================================================================
 \section{Patrullas y respawn}
@@ -652,57 +895,81 @@ del bioma).
 \texttt{NPCPatrol.cs} hace que el NPC visite ciclicamente una lista de
 \texttt{Transform} (\texttt{waypointsRojo} o \texttt{waypointsAzul}
 segun su bando). Cada vez que llega al waypoint actual, calcula el
-camino al siguiente con A* y se lo entrega al \texttt{PathFollowing}
-del Bloque 1.
+camino al siguiente con A* y se lo entrega al \texttt{PathFollowing}.
 
 La patrulla se desactiva automaticamente cuando \texttt{PercepcionNPC}
 detecta un enemigo o cuando el estado individual cambia a Ataque o
 Defensa, y se reactiva al volver a Vigilancia sin enemigos a la vista.
 
-\subsection{Spawn y respawn}
+\subsection{Spawn inicial y composicion}
 
-\texttt{NPCRespawnSpawner.cs} mantiene un contador de unidades vivas por
-bando con un maximo configurable (\texttt{maxNPCsPorEquipo = 15} por
-defecto). Cuando una unidad muere:
+\texttt{NPCRespawnSpawner.cs} mantiene la composicion deseada por bando
+en tres campos:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \texttt{numVigilantes} (por defecto 2)
+    \item \texttt{numAtaque} (por defecto 4)
+    \item \texttt{numDefensa} (por defecto 4)
+\end{itemize}
+
+Total: 10 NPCs por bando. Al arrancar, recorre la lista enumerada de
+tipos rotando y los crea con el estado adecuado.
+
+\subsection{Respawn}
+
+Cuando una unidad muere:
 
 \begin{enumerate}[leftmargin=1.5em]
-    \item Decrementa el contador del bando correspondiente.
+    \item Decrementa el contador del bando.
+    \item Lanza una corutina con \texttt{WaitForSeconds(30f)} antes de respawnear.
     \item Calcula el waypoint de respawn \emph{mas cercano} al punto de muerte.
-    \item Instancia el prefab del mismo tipo de unidad en ese waypoint.
+    \item Instancia el prefab del mismo tipo y bando, conservando el estado individual que tenia (no el override de Guerra Total).
     \item Le asigna automaticamente como destino el punto donde cayo, para que regrese a la lucha.
 \end{enumerate}
 
 \subsection{Curacion}
 
-\texttt{Hospital.cs} es un trigger que cura $50$ pv/segundo a las
+\texttt{Hospital.cs} es un trigger que cura $50$pv/segundo a las
 unidades de su bando que entren y \emph{necesiten} curacion.
 \texttt{NPCStats.NecesitaCuracion()} devuelve true si la vida cae por
-debajo del 20\,\%, y mantiene un flag interno hasta que la vida vuelve
+debajo del 20\,\% y mantiene un flag interno hasta que la vida vuelve
 al 100\,\% para evitar el "yo-yo" de entrar y salir constantemente del
 hospital.
+
+\fotoplaceholder{NPC curandose en el hospital con barra de vida subiendo}
 
 % =====================================================================
 \section{Condiciones de victoria}
 
+\subsection{Castillo derrumbado (victoria principal)}
+
 La partida termina cuando uno de los dos castillos es destruido.
 \texttt{CastilloDerrumbado.cs} comprueba en cada \texttt{Update} si la
-referencia a \texttt{CastilloRojo} o \texttt{CastilloAzul} es \texttt{null};
-en ese caso muestra el mensaje de victoria del bando contrario.
+referencia a \texttt{CastilloRojo} o \texttt{CastilloAzul} es
+\texttt{null}; en ese caso muestra el mensaje de victoria del bando
+contrario y aplica \texttt{Time.timeScale = 0} para congelar la escena.
 
-Adicionalmente, \texttt{Torre.cs} implementa un sistema de captura de
-torres alternativo: si una unidad enemiga permanece dentro del trigger
-de una torre durante 20 segundos sin recibir daño, la torre cae. El
-contador se resetea si el atacante recibe daño. Las torres caidas
-desactivan el waypoint de respawn asociado, debilitando al bando
-perdedor con el tiempo.
+\subsection{Captura de torres (objetivo intermedio)}
+
+\texttt{Torre.cs} implementa un sistema de captura: si una unidad
+enemiga permanece dentro del trigger durante 20 segundos sin recibir
+daño, la torre cae. La torre suscribe a \texttt{OnDanioRecibido} de
+todos los atacantes en su zona; si alguno recibe daño, el contador se
+resetea. Las torres caidas avisan a \texttt{WayPoints} para
+desactivar el spawn asociado, debilitando al bando perdedor con el
+tiempo.
+
+\fotoplaceholder{una torre con un atacante dentro y el log "Capturando Torre... 50\%" visible en consola}
 
 % =====================================================================
 \section{Interfaz de usuario y mapa de teclas}
 
-La interfaz prima la informacion de depuracion accesible. Al pulsar
-\texttt{F1} se abre la pantalla de ayuda con todas las teclas
-(\texttt{HelpScreen.cs}). En todo momento se muestra abajo a la
-izquierda el indicador \texttt{F1: ayuda de teclas}.
+La interfaz prima la informacion de depuracion accesible.
+\texttt{TacticalCanvasController} dibuja un panel con el estado tactico
+actual (modo, mapa, Guerra Total, debug, pathfinding) y procesa las
+teclas. \texttt{MinimapaInfluencia} dibuja el minimapa actual.
+\texttt{EstadoTacticoGlobal} es el unico punto de verdad y dispara
+eventos para que todos los suscriptores se enteren de los cambios.
 
 \subsection{Mapa completo de teclas}
 
@@ -710,101 +977,154 @@ izquierda el indicador \texttt{F1: ayuda de teclas}.
 \centering
 \caption{Mapa de teclas y raton del proyecto}
 \label{tab:teclas}
-\begin{tabular}{l l}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\textwidth}{l X}
 \toprule
 \textbf{Tecla / accion} & \textbf{Funcionalidad} \\
 \midrule
 \multicolumn{2}{l}{\textit{Camara (RTS)}} \\
-\quad W A S D                & Mover camara \\
-\quad Shift                  & Movimiento rapido de camara \\
-\quad Rueda del raton        & Zoom in / out \\
+W A S D / flechas & Mover camara \\
+Shift             & Movimiento rapido de camara ($\times 10$) \\
+Rueda del raton   & Zoom in / out (avanza/retrocede en la direccion de la camara) \\
 \midrule
 \multicolumn{2}{l}{\textit{Seleccion y control de unidad}} \\
-\quad Click izquierdo (sobre unidad) & Seleccionar / deseleccionar \\
-\quad Click izquierdo (sobre suelo)  & Mover ahi (manual, con unidad seleccionada) \\
-\quad J / K                  & Debug daño / curacion a la unidad seleccionada \\
+Click izquierdo (sobre unidad) & Seleccionar / deseleccionar la unidad \\
+Click izquierdo (sobre suelo)  & Si hay unidad seleccionada, le da una orden manual de movimiento (camino A* al destino). El NPC ejecuta la orden ignorando enemigos hasta llegar. \\
+J                 & Debug: aplica daño fijo a la unidad seleccionada \\
+K                 & Debug: cura la unidad seleccionada \\
 \midrule
-\multicolumn{2}{l}{\textit{Estrategia de bando}} \\
-\quad 1 / 2                  & Bando ROJO Defensivo / Ofensivo \\
-\quad 3 / 4                  & Bando AZUL Defensivo / Ofensivo \\
-\quad T                      & Toggle GUERRA TOTAL (ambos bandos) \\
+\multicolumn{2}{l}{\textit{Estrategia global}} \\
+\textbf{Q}        & Modo de combate global \textbf{Defensa}. Distribucion: 5 ataque / 6 vigilancia / 4 defensa por bando. \\
+\textbf{E}        & Modo de combate global \textbf{Ataque}. Distribucion: 8 ataque / 5 vigilancia / 2 defensa por bando. \\
+\textbf{T}        & Toggle GUERRA TOTAL. Todos los NPCs pasan a Ataque y van a destruir el castillo enemigo (los Lanceros se quedan defendiendo el propio). \\
 \midrule
-\multicolumn{2}{l}{\textit{Mapa tactico y depuracion}} \\
-\quad M                      & Toggle minimapa de influencia \\
-\quad I                      & Toggle componente tactico del A* \\
-\quad G                      & Toggle visualizacion del grid \\
-\quad C                      & Toggle gizmos de percepcion / rutas \\
-\midrule
-\multicolumn{2}{l}{\textit{Ayuda}} \\
-\quad F1                     & Mostrar / ocultar panel de ayuda \\
+\multicolumn{2}{l}{\textit{Mapas tacticos y depuracion}} \\
+\textbf{M}        & Cicla el mapa del minimapa: Influencia $\to$ Vulnerabilidad $\to$ Tension $\to$ Influencia $\to$ \dots \\
+\textbf{P}        & Toggle del componente tactico del A*. Activado = el A* suma la influencia enemiga al coste y rodea zonas peligrosas. Desactivado = pathfinding solo por bioma. \\
+\textbf{B}        & Toggle del modo depuracion global. Activa: gizmos del grid, lineas y esferas de los caminos A*, esferas de los waypoints, areas defendidas, etc. \\
+G                 & Toggle alternativo de la visualizacion del grid. \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
+
+\subsection{Detalle de cada tecla}
+
+\paragraph{Q (Defensa global).}
+Reorganiza ambos bandos hacia un modo defensivo. Cada bando tendra,
+aproximadamente, 5 unidades en estado Ataque (que avanzan a buscar
+enemigos donde se concentran), 6 en Vigilancia (patrullan) y 4 en
+Defensa (se quedan en zonas tacticas defensivas calculadas con el
+mapa de influencia). El \texttt{TacticalCanvasController} hace este
+reparto automaticamente.
+
+\paragraph{E (Ataque global).}
+Sube la apuesta: 8 en Ataque, 5 en Vigilancia, 2 en Defensa. Mas
+unidades empujando hacia el enemigo y menos defendiendo.
+
+\paragraph{T (Guerra Total).}
+Cancela la composicion anterior y manda a todos los NPCs a
+\textbf{Ataque}. Los destinos cambian: ya no se busca "donde hay
+enemigos" sino \textbf{el castillo} enemigo o propio segun el tipo
+(ver tabla \ref{tab:guerratotal}). Pulsar T otra vez restaura cada NPC
+a su estado anterior.
+
+\paragraph{M (mapa actual).}
+Cicla los tres mapas tacticos en el minimapa de la esquina superior
+izquierda. La etiqueta arriba dice cual estas viendo. Util para la
+demo y para entender que esta percibiendo la IA.
+
+\paragraph{P (componente tactico del A*).}
+Activa o desactiva la suma de la influencia enemiga al coste del A*.
+Permite ver \emph{en directo} la diferencia entre rutas con y sin
+informacion tactica, lo que el enunciado exige expresamente en el
+requisito (k).
+
+\paragraph{B (debug).}
+Activa todos los gizmos: dibuja el grid, los biomas, las areas
+declaradas en el inspector, los waypoints, las cadenas
+spawn-hospital-base de cada bando y los caminos A* activos de cada
+NPC.
+
+\paragraph{J / K (debug daño / curacion).}
+Aplican daño o curacion fija a la unidad seleccionada. Util para
+probar el sistema de combate sin esperar a que pase la batalla, y
+para forzar al NPC a ir al hospital y comprobar la decision de huida.
 
 \subsection{Indicadores en pantalla (OnGUI)}
 
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Esquina superior derecha}: modo estrategico actual de cada bando, o cartel de Guerra Total en rojo.
-    \item \textbf{Esquina superior izquierda} (cuando el minimapa esta activo): heatmap de influencia con un marco titulado "MAPA DE INFLUENCIA".
-    \item \textbf{Esquina inferior izquierda}: recordatorio "F1: ayuda de teclas".
-    \item \textbf{Sobre cada NPC}: barra de vida (\texttt{NPCHealthBar.cs}) e icono del estado individual (cubo rojo = Ataque, esfera azul = Defensa, piramide amarilla = Vigilancia).
+    \item \textbf{Esquina superior izquierda}: minimapa con etiqueta del modo actual ("Mapa: Influencia (M)").
+    \item \textbf{Panel del Canvas}: estado tactico global con cinco indicadores.
+    \item \textbf{Sobre cada NPC}: barra de vida (\texttt{NPCHealthBar.cs}) e icono de estado individual (cubo rojo, esfera azul o piramide amarilla).
+    \item \textbf{Consola}: cada ataque imprime FA, FD, daño y tipo (\textbf{CRITICO} en naranja cuando salta).
 \end{itemize}
+
+\fotoplaceholder{vista general del juego con minimapa, panel tactico, NPCs con barras de vida e iconos, y log de la consola}
 
 % =====================================================================
 \section{Diagramas}
 
-% Espacio reservado para diagramas. Anadir capturas en doc/img/ y referenciarlas
-% con \includegraphics. Diagramas sugeridos:
-%   1) Flujo de decision de PercepcionNPC (cura -> enemigo -> persecucion / ataque / vagar).
-%   2) Maquina de estados individual: Vigilancia <-> Ataque <-> Defensa.
-%   3) Modos estrategicos del bando y su interaccion con los estados individuales.
-%   4) Esquema visual del calculo de daño FAD * FTA / FTD.
+% Espacio reservado para diagramas. Se recomiendan al menos los listados a continuacion.
 
-\textit{En esta seccion conviene incluir capturas o esquemas hechos a
-mano / con \texttt{draw.io} colocados en \texttt{doc/img/} y
-referenciados aqui con \texttt{\textbackslash includegraphics}. Se
-recomiendan al menos:}
+\textit{Conviene incluir capturas o esquemas hechos a mano / con
+\texttt{draw.io} y guardarlos en \texttt{doc/img/}.}
 
-\begin{itemize}[leftmargin=1.5em]
-    \item Flujo de decision de \texttt{PercepcionNPC} en cada Update.
+\subsection*{Diagramas sugeridos}
+
+\begin{enumerate}[leftmargin=1.5em]
+    \item Flujo de decision de \texttt{PercepcionNPC} en cada Update (cura $\to$ orden manual $\to$ enemigo $\to$ persecucion / ataque / sin enemigo).
     \item Maquina de los tres estados individuales (Vigilancia, Ataque, Defensa) y sus transiciones.
-    \item Esquema visual del calculo de daño FAD $\cdot$ FTA / FTD.
-    \item Captura del minimapa de influencia y del cartel de Guerra Total.
-\end{itemize}
+    \item Diagrama del flujo de Guerra Total: T pulsada $\to$ EstadoTacticoGlobal cambia $\to$ OnEstadoCambiado $\to$ todos los estadoNPC pasan a Ataque $\to$ PercepcionNPC dirige a cada tipo a su destino.
+    \item Esquema visual del calculo de daño: $FA = \text{poder} \cdot FAD \cdot FTA$, $FD = \text{poder} \cdot FTD$, daño = $FA/FD \cdot \text{cte}$.
+    \item Captura de los tres mapas en orden (Influencia, Tension, Vulnerabilidad) sobre la misma escena.
+    \item Capturas del modo Defensa global y del modo Ataque global mostrando la diferente distribucion de iconos sobre los NPCs.
+\end{enumerate}
+
+\fotoplaceholder{diagrama del flujo de decision de PercepcionNPC}
+
+\fotoplaceholder{diagrama de la maquina de tres estados y sus transiciones}
 
 % =====================================================================
 \newpage
 \section{Conclusion}
 
 El Bloque 2 ha permitido integrar varios niveles de IA en un mismo
-escenario: combate por matchups (FAD/FTA/FTD), influencia espacial,
-estrategia de bando y tacticas particularizadas por tipo de unidad. La
-arquitectura por componentes de Unity ha facilitado mantener cada
+escenario:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \textbf{Combate} por matchups (FAD/FTA/FTD) con bonuses contextuales.
+    \item \textbf{Tres mapas tacticos} (Influencia, Tension, Vulnerabilidad) consultados por el A* y por la toma de decisiones.
+    \item \textbf{Estrategia de bando} con dos modos (Q/E) que distribuyen automaticamente los NPCs entre los tres estados individuales.
+    \item \textbf{Guerra Total} alineada con las condiciones de victoria reales (destruir el castillo enemigo, defender el propio).
+    \item \textbf{Tacticas particularizadas por tipo} (Tanque carga, Arquero kitea, Explorador caza heridos, Lancero formacion, Caballero busca aliados).
+\end{itemize}
+
+La arquitectura por componentes de Unity ha facilitado mantener cada
 concepto en su propio script (\texttt{SistemaCombate},
-\texttt{MapaInfluencia}, \texttt{EstrategiaBando},
-\texttt{TacticasPorTipo}, \texttt{PercepcionNPC}), de modo que añadir
-un nuevo modo o un nuevo tipo de unidad supone modificar como mucho
-dos ficheros.
+\texttt{MapaInfluencia}, \texttt{EstadoTacticoGlobal},
+\texttt{TacticalCanvasController}, \texttt{PercepcionNPC}), de modo
+que añadir un nuevo modo o un nuevo tipo de unidad supone modificar
+como mucho dos ficheros.
 
-La principal dificultad encontrada ha sido evitar que la informacion
-tactica acabara duplicada o desincronizada (estado individual vs.\
-modo de bando vs.\ perfil de tipo). La solucion ha sido centralizar
-las consultas en \texttt{PercepcionNPC.Update}: cada frame se leen las
-tres fuentes y se combinan, sin que ningun NPC almacene copias.
+\paragraph{Principal dificultad.}
+Evitar que la informacion tactica acabara duplicada o desincronizada
+(estado individual vs.\ modo global vs.\ Guerra Total). La solucion
+fue centralizar todo el estado en \texttt{EstadoTacticoGlobal} y que
+cada NPC, mapa o gizmo se suscriba al evento \texttt{OnEstadoCambiado}.
 
-Tambien ha sido importante exponer toggles de depuracion (tecla
-\texttt{I} para activar/desactivar el componente tactico, \texttt{M}
-para el minimapa, \texttt{F1} para la ayuda) que permiten al
-evaluador comprobar la diferencia con y sin informacion tactica en
-directo, tal como pide el requisito (k).
+\paragraph{Toggles de depuracion.}
+Tambien fue importante exponer toggles (\textbf{P} para el componente
+tactico del A*, \textbf{B} para todos los gizmos, \textbf{M} para el
+mapa, \textbf{T} para Guerra Total) que permiten al evaluador comprobar
+la diferencia con y sin informacion tactica en directo, tal como pide
+el requisito (k).
 
-\paragraph{Trabajo en equipo y workflow.}
-Para evitar la fricción de los conflictos clasicos de Unity en Git, se
-han preparado scripts compartidos (\texttt{push.bat}, \texttt{pull.bat},
-\texttt{reset-unity.bat}) y un \texttt{.gitignore} alineado con la
-plantilla oficial de Unity, junto con instrucciones de setup en
-\texttt{scripts-equipo/SETUP\_UNITY.md}. Esto ha eliminado la
-necesidad de re-clonar el repositorio en cada sincronizacion.
+\paragraph{Trabajo en equipo.}
+Para evitar la friccion de los conflictos clasicos de Unity en Git, se
+prepararon scripts \texttt{push.bat}, \texttt{pull.bat} y
+\texttt{reset-unity.bat}, junto con un \texttt{.gitignore} alineado
+con la plantilla oficial de Unity. Esto elimino la necesidad de
+re-clonar el repositorio en cada sincronizacion.
 
 % =====================================================================
 \newpage
@@ -813,7 +1133,7 @@ necesidad de re-clonar el repositorio en cada sincronizacion.
 \begin{itemize}[leftmargin=1.5em]
     \item Apuntes y diapositivas semanales de la asignatura.
     \item Enunciado de la practica curso 2023-2024 (v1.5, febrero de 2024). \emph{Anexo II} como base del sistema de combate.
-    \item Documentacion oficial de Unity 2021.3 LTS (\url{https://docs.unity3d.com/2021.3/Documentation/Manual/index.html}).
+    \item Documentacion oficial de Unity 2021.3 LTS \\(\url{https://docs.unity3d.com/2021.3/Documentation/Manual/index.html}).
     \item Apoyo puntual en \textit{ChatGPT} y \textit{Claude} para revision de codigo, estructura de la memoria y depuracion.
 \end{itemize}
 
@@ -822,36 +1142,46 @@ necesidad de re-clonar el repositorio en cada sincronizacion.
 \appendix
 \section{Anexo: Listado de scripts}
 
-\subsection*{Scripts nuevos del Bloque 2}
+\subsection*{Scripts del sistema tactico (\texttt{Assets/scripts/canvas/})}
 
 \begin{itemize}[leftmargin=1.5em]
-    \item \texttt{Assets/scripts/AI/SistemaCombate.cs} — tablas FAD/FTA/FTD y formula del daño.
-    \item \texttt{Assets/scripts/AI/MapaInfluencia.cs} — calculo del mapa de influencia por bando.
-    \item \texttt{Assets/scripts/AI/MinimapaInfluencia.cs} — heatmap rojo/azul en pantalla.
-    \item \texttt{Assets/scripts/AI/EstrategiaBando.cs} — modos Defensivo/Ofensivo/GuerraTotal.
-    \item \texttt{Assets/scripts/AI/TacticasPorTipo.cs} — perfil tactico por tipo de unidad.
-    \item \texttt{Assets/scripts/AI/HelpScreen.cs} — pantalla de ayuda con todas las teclas.
+    \item \texttt{EstadoTacticoGlobal.cs} — singleton estatico con todo el estado tactico global y el evento \texttt{OnEstadoCambiado}.
+    \item \texttt{TacticalCanvasController.cs} — lee teclas, modifica el \texttt{EstadoTacticoGlobal}, distribuye unidades segun el modo y refresca el panel de informacion.
 \end{itemize}
 
-\subsection*{Scripts existentes modificados}
+\subsection*{Scripts de combate, percepcion y comportamiento (\texttt{Assets/scripts/AI/})}
 
 \begin{itemize}[leftmargin=1.5em]
-    \item \texttt{Assets/scripts/AI/NPCStats.cs} — evento \texttt{OnAtacado(atacante)} y \texttt{RecibirAtaqueDe()}.
-    \item \texttt{Assets/scripts/AI/PercepcionNPC.cs} — integracion completa: combate, influencia, estrategia, tacticas por tipo, estado individual; bug-fix de persecucion con distancia 0; lookup del hospital via WayPoints.
-    \item \texttt{Assets/scripts/AI/estadoNPC.cs} — implementacion de los TODOs de Ataque y Defensa, helpers \texttt{EsAgresivo / EsDefensivo / EsVigilante} y \texttt{SetEstado}.
-    \item \texttt{Assets/scripts/AI/Hospital.cs} — warning si la layer "Unidad" no existe; fallback degradado si no esta definida.
-    \item \texttt{Assets/scripts/AI/NPCRespawnSpawner.cs} — eliminacion de codigo muerto.
-    \item \texttt{Assets/scripts/GridTransitable/Aestrella.cs} — lectura del \texttt{MapaInfluencia} segun bando del NPC; toggle \texttt{I}.
-    \item \texttt{Assets/scripts/GridTransitable/GridManager.cs} — getters publicos \texttt{GetNode(x,y)}, \texttt{GridSizeX}, \texttt{GridSizeY}.
+    \item \texttt{NPCStats.cs} — vida, poder, eventos. Metodo \texttt{RecibirAtaqueDe(atacante)} que invoca a \texttt{SistemaCombate}.
+    \item \texttt{SistemaCombate.cs} — tablas FAD/FTA/FTD, bonuses contextuales por estado y tipo, formula de daño y critico.
+    \item \texttt{PercepcionNPC.cs} — cerebro: percibe enemigos, decide perseguir/atacar/huir/defender, gestiona ordenes manuales del jugador, reacciona a ataques con priorizacion segun ratio FA/FD.
+    \item \texttt{estadoNPC.cs} — maquina de tres estados con icono visible y soporte de Guerra Total (override + restauracion del estado previo).
+    \item \texttt{NPCPatrol.cs} — itinerario de patrulla.
+    \item \texttt{NPCRespawnSpawner.cs} — composicion inicial por bando, respawn 30s tras morir.
+    \item \texttt{NPCHealthBar.cs} — barra de vida sobre cada NPC.
+    \item \texttt{Hospital.cs} — trigger de curacion.
+    \item \texttt{Torre.cs} — captura por permanencia 20s sin daño, desactiva spawn al caer.
+    \item \texttt{CastilloDerrumbado.cs} — condicion de victoria.
+    \item \texttt{MapaInfluencia.cs} — calcula los tres mapas (Influencia, Tension, Vulnerabilidad).
+    \item \texttt{MinimapaInfluencia.cs} — pinta en pantalla el mapa actual.
+    \item \texttt{SeleccionarUnidad.cs} — selector con click izquierdo, debug daño/curacion (J/K), orden manual de movimiento.
+    \item \texttt{MainCameraController.cs} — camara estilo RTS.
 \end{itemize}
 
-\subsection*{Scripts de workflow}
+\subsection*{Scripts de pathfinding y grid (\texttt{Assets/scripts/GridTransitable/})}
 
 \begin{itemize}[leftmargin=1.5em]
-    \item \texttt{scripts-equipo/pull.bat / pull.sh}.
-    \item \texttt{scripts-equipo/push.bat / push.sh}.
-    \item \texttt{scripts-equipo/reset-unity.bat}.
-    \item \texttt{scripts-equipo/README.md} y \texttt{SETUP\_UNITY.md}.
+    \item \texttt{GridManager.cs} — construye el grid, detecta obstaculos y biomas. Getters \texttt{GetNode(x,y)}, \texttt{GridSizeX}, \texttt{GridSizeY}.
+    \item \texttt{Aestrella.cs} — A* con heuristica seleccionable y coste tactico opcional.
+    \item \texttt{Node.cs} — celda del grid.
+    \item \texttt{WayPoints.cs} — spawns, hospitales, bases y castillos. Metodos \texttt{GetCastilloEnemigo}, \texttt{GetCastilloPropio}, \texttt{CastilloEnemigoVivo} usados por Guerra Total.
+\end{itemize}
+
+\subsection*{Scripts de workflow (\texttt{scripts-equipo/})}
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \texttt{push.bat / push.sh}, \texttt{pull.bat / pull.sh}, \texttt{reset-unity.bat}.
+    \item Documentacion en \texttt{README.md} y \texttt{SETUP\_UNITY.md}.
 \end{itemize}
 
 \end{document}
