@@ -144,8 +144,11 @@ public class PathFollowing : SteeringBehaviour
         if (patrol != null && patrol.enabled) esPatrulla = true;
 
         bool mostrarPorDebug = EstadoTacticoGlobal.DebugActivo;
-        bool mostrarPorTactico = EstadoTacticoGlobal.PathfindingTacticoActivo && !esPatrulla;
-        if (!mostrarPorDebug && !mostrarPorTactico) return;
+        // Ahora permitimos que el camino de las unidades se vea siempre (si no son patrullas),
+        // independientemente de si el modo táctico está activo o no.
+        bool mostrarCaminoUnidad = !esPatrulla;
+
+        if (!mostrarPorDebug && !mostrarCaminoUnidad) return;
 
         Color colorActual;
         Color colorCamino;
@@ -166,7 +169,7 @@ public class PathFollowing : SteeringBehaviour
             colorPuntoNormal = Color.yellow;
             colorPuntoDestino = Color.yellow;
         }
-        else if (mostrarPorTactico)
+        else if (EstadoTacticoGlobal.PathfindingTacticoActivo)
         {
             colorActual = new Color(1f, 0.35f, 0.35f, 1f);
             colorCamino = Color.red;
@@ -197,7 +200,7 @@ public class PathFollowing : SteeringBehaviour
                 Vector3 a = waypoints[i].position;
                 Vector3 b = waypoints[i + 1].position;
 
-                if (mostrarPorTactico)
+                if (EstadoTacticoGlobal.PathfindingTacticoActivo)
                 {
                     DrawThickLine(a, b, 0.12f);
                 }

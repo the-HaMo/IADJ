@@ -31824,9 +31824,10 @@ MonoBehaviour:
   prefabTanque: {fileID: 961614647817374387, guid: 13f5215f14068fb46bb5381af2f68ba6, type: 3}
   prefabExplorador: {fileID: 3563285655907377835, guid: 9731d6b00c403f44cab356d723046421, type: 3}
   tipoUnidadDefault: 0
-  numVigilantes: 5
-  numAtaque: 7
-  numDefensa: 3
+  numVigilantes: 1
+  numAtaque: 13
+  numDefensa: 1
+  tiempoRespawn: 15
   numeroNPCsPorBando: 15
   usarWaypointSiguienteParaRespawn: 1
   alturaRespawn: 2.3
