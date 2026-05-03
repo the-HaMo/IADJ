@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public enum EstadoNPC
 {
@@ -15,17 +18,27 @@ public class estadoNPC : MonoBehaviour
     [SerializeField] private EstadoNPC estadoActual = EstadoNPC.Vigilancia;
 
     [Header("Posicion del icono")]
-    [SerializeField] private float alturaIcono = 2.5f;
+    [SerializeField] private float alturaIcono = 3.0f;
     [SerializeField] private Vector3 offsetIcono = Vector3.zero;
-    [SerializeField] private float escalaIcono = 1f;
+    [SerializeField] private float escalaLocalIcono = 0.1397475f;
+    [SerializeField] private int ordenRenderIcono = 50;
+
+    [Header("Imagenes de estado (Assets/Materials)")]
+    [SerializeField] private Texture2D texturaEspada;
+    [SerializeField] private Texture2D texturaEscudo;
+    [SerializeField] private Texture2D texturaOjo;
 
     private GameObject iconoActual;
     private Transform iconoTransform;
+    private Sprite spriteAtaque;
+    private Sprite spriteDefensa;
+    private Sprite spriteVigilancia;
     private NPCPatrol patrol;
 
     private void Awake()
     {
         patrol = GetComponent<NPCPatrol>();
+        CargarTexturasIconoEnEditorSiFaltan();
     }
 
     private void Start()
@@ -103,85 +116,146 @@ public class estadoNPC : MonoBehaviour
         iconoActual.transform.SetParent(transform, false);
         iconoTransform = iconoActual.transform;
 
+        SpriteRenderer renderer = iconoActual.GetComponent<SpriteRenderer>();
+        if (renderer != null && renderer.sprite != null)
+        {
+            AjustarEscalaIcono(renderer);
+        }
+
         iconoTransform.localRotation = Quaternion.identity;
-        iconoTransform.localScale = Vector3.one * escalaIcono;
         ActualizarPosicionIcono();
     }
 
     private void ActualizarPosicionIcono()
     {
         if (iconoTransform == null) return;
-        iconoTransform.localPosition = Vector3.up * alturaIcono + offsetIcono;
+
+        Vector3 posicion = Vector3.up * alturaIcono + offsetIcono;
+        iconoTransform.localPosition = posicion;
+        iconoTransform.localRotation = Quaternion.Euler(0f, 180f, 0f);
     }
 
     private GameObject CrearIconoPorEstado(EstadoNPC estado)
     {
         return estado switch
         {
-            EstadoNPC.Ataque => CrearPrimitiva(PrimitiveType.Cube, "IconoAtaque", Color.red),
-            EstadoNPC.Defensa => CrearPrimitiva(PrimitiveType.Sphere, "IconoDefensa", Color.blue),
-            EstadoNPC.Vigilancia => CrearPiramide("IconoVigilancia", Color.yellow),
+            EstadoNPC.Ataque => CrearIconoImagen("IconoAtaque", ObtenerSpriteAtaque(), Color.white),
+            EstadoNPC.Defensa => CrearIconoImagen("IconoDefensa", ObtenerSpriteDefensa(), Color.white),
+            EstadoNPC.Vigilancia => CrearIconoImagen("IconoVigilancia", ObtenerSpriteVigilancia(), Color.white),
             _ => null
         };
     }
 
-    private GameObject CrearPrimitiva(PrimitiveType tipo, string nombre, Color color)
+    private GameObject CrearIconoImagen(string nombre, Sprite sprite, Color tint)
     {
-        GameObject go = GameObject.CreatePrimitive(tipo);
-        go.name = nombre;
+        GameObject go = new GameObject(nombre);
+        SpriteRenderer renderer = go.AddComponent<SpriteRenderer>();
+        renderer.sprite = sprite;
+        renderer.color = tint;
+        renderer.sortingOrder = ordenRenderIcono;
 
-        Renderer renderer = go.GetComponent<Renderer>();
-        if (renderer != null)
+        if (sprite == null)
         {
-            Material mat = new Material(Shader.Find("Standard"));
-            mat.color = color;
-            renderer.material = mat;
+            Debug.LogWarning($"No se pudo crear el sprite para {nombre}.", this);
         }
 
         return go;
     }
 
-    private GameObject CrearPiramide(string nombre, Color color)
+    private Sprite ObtenerSpriteAtaque()
     {
-        GameObject go = new GameObject(nombre);
-        MeshFilter mf = go.AddComponent<MeshFilter>();
-        MeshRenderer mr = go.AddComponent<MeshRenderer>();
-        MeshCollider mc = go.AddComponent<MeshCollider>();
-
-        Mesh mesh = new Mesh();
-        mesh.name = "PiramideMesh";
-
-        Vector3[] vertices =
+        if (spriteAtaque == null)
         {
-            new Vector3(0f, 0.5f, 0f),      // 0: punta
-            new Vector3(-0.5f, -0.5f, -0.5f), // 1: base
-            new Vector3(0.5f, -0.5f, -0.5f),  // 2
-            new Vector3(0.5f, -0.5f, 0.5f),   // 3
-            new Vector3(-0.5f, -0.5f, 0.5f)   // 4
-        };
+            spriteAtaque = CrearSpriteDesdeTextura(texturaEspada);
+        }
 
-        int[] triangles =
+        return spriteAtaque;
+    }
+
+    private Sprite ObtenerSpriteDefensa()
+    {
+        if (spriteDefensa == null)
         {
-            0, 1, 2,
-            0, 2, 3,
-            0, 3, 4,
-            0, 4, 1,
-            1, 3, 2,
-            1, 4, 3
-        };
+            spriteDefensa = CrearSpriteDesdeTextura(texturaEscudo);
+        }
 
-        mesh.vertices = vertices;
-        mesh.triangles = triangles;
-        mesh.RecalculateNormals();
+        return spriteDefensa;
+    }
 
-        mf.mesh = mesh;
-        mc.sharedMesh = mesh;
+    private Sprite ObtenerSpriteVigilancia()
+    {
+        if (spriteVigilancia == null)
+        {
+            spriteVigilancia = CrearSpriteDesdeTextura(texturaOjo);
+        }
 
-        Material mat = new Material(Shader.Find("Standard"));
-        mat.color = color;
-        mr.material = mat;
+        return spriteVigilancia;
+    }
 
-        return go;
+    private Sprite CrearSpriteDesdeTextura(Texture2D textura)
+    {
+        if (textura == null) return null;
+
+        Rect recorte = ObtenerRectRecorte(textura);
+        return Sprite.Create(textura, recorte, new Vector2(0.5f, 0.5f), 100f);
+    }
+
+    private void AjustarEscalaIcono(SpriteRenderer renderer)
+    {
+        renderer.transform.localScale = Vector3.one * escalaLocalIcono;
+    }
+
+    private Rect ObtenerRectRecorte(Texture2D textura)
+    {
+        try
+        {
+            Color32[] pixeles = textura.GetPixels32();
+            int ancho = textura.width;
+            int alto = textura.height;
+
+            int minX = ancho;
+            int minY = alto;
+            int maxX = -1;
+            int maxY = -1;
+
+            for (int y = 0; y < alto; y++)
+            {
+                int fila = y * ancho;
+                for (int x = 0; x < ancho; x++)
+                {
+                    Color32 c = pixeles[fila + x];
+                    if (c.a <= 10) continue;
+
+                    if (x < minX) minX = x;
+                    if (y < minY) minY = y;
+                    if (x > maxX) maxX = x;
+                    if (y > maxY) maxY = y;
+                }
+            }
+
+            if (maxX >= minX && maxY >= minY)
+            {
+                return new Rect(minX, minY, (maxX - minX) + 1, (maxY - minY) + 1);
+            }
+        }
+        catch
+        {
+            // Si la textura no es legible, usamos la imagen completa.
+        }
+
+        return new Rect(0f, 0f, textura.width, textura.height);
+    }
+
+    private void CargarTexturasIconoEnEditorSiFaltan()
+    {
+#if UNITY_EDITOR
+        if (texturaEspada == null)
+            texturaEspada = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Materials/espada.png");
+        if (texturaEscudo == null)
+            texturaEscudo = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Materials/escudo.png");
+        if (texturaOjo == null)
+            texturaOjo = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Materials/ojo.png");
+#endif
     }
 
     // Aplica el comportamiento segun el estado con el que nace el NPC.
