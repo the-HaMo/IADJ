@@ -197,7 +197,8 @@ public class MinimapaInfluencia : MonoBehaviour
         if (textura != null)
         {
             Rect r = new Rect(posicion.x, posicion.y, tamano.x, tamano.y);
-            GUI.DrawTextureWithTexCoords(r, textura, new Rect(0, 1, 1, -1));
+            // Rotar 180 grados: invertimos tanto X (U) como Y (V)
+            GUI.DrawTextureWithTexCoords(r, textura, new Rect(1, 1, -1, -1));
         }
 
         if (mostrarEtiqueta)

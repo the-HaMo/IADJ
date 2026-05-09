@@ -99,15 +99,15 @@ public class TacticalCanvasController : MonoBehaviour
 
         if (EstadoTacticoGlobal.ModoCombateActual == EstadoNPC.Ataque)
         {
-            // Modo ataque: 8 atacan, 5 vigilan, 2 defienden.
-            AplicarDistribucion(rojos, 8, 5, 2, EstadoNPC.Ataque);
-            AplicarDistribucion(azules, 8, 5, 2, EstadoNPC.Ataque);
+            // Modo ataque: 8 atacan, 4 vigilan, 3 defienden.
+            AplicarDistribucion(rojos, 8, 4, 3, EstadoNPC.Ataque);
+            AplicarDistribucion(azules, 8, 4, 3, EstadoNPC.Ataque);
         }
         else
         {
-            // Modo defensa: 5 atacan, 6 vigilan, 4 defienden.
-            AplicarDistribucion(rojos, 5, 6, 4, EstadoNPC.Defensa);
-            AplicarDistribucion(azules, 5, 6, 4, EstadoNPC.Defensa);
+            // Modo defensa: 4 atacan, 6 vigilan, 5 defienden.
+            AplicarDistribucion(rojos, 3, 6, 6, EstadoNPC.Defensa);
+            AplicarDistribucion(azules, 3, 6, 6, EstadoNPC.Defensa);
         }
     }
 

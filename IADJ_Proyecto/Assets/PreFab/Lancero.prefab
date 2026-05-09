@@ -140,7 +140,7 @@ MonoBehaviour:
   poder: 90
   rangoAtaque: 3
   velAtaque: 1.2
-  radioPercepcion: 17
+  radioPercepcion: 17.5
   costeCamino: 10
   costeBosque: 40
   costePradera: 20
@@ -243,7 +243,11 @@ MonoBehaviour:
   estadoActual: 0
   alturaIcono: 2.5
   offsetIcono: {x: 0, y: 0, z: 0}
-  escalaIcono: 1
+  escalaLocalIcono: 0.1397475
+  ordenRenderIcono: 50
+  texturaEspada: {fileID: 0}
+  texturaEscudo: {fileID: 0}
+  texturaOjo: {fileID: 0}
 --- !u!114 &-4848076667998207139
 MonoBehaviour:
   m_ObjectHideFlags: 0

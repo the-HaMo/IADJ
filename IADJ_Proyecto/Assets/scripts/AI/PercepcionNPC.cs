@@ -524,8 +524,9 @@ public class PercepcionNPC : MonoBehaviour
                     break;
 
                 case TipoUnidad.Arquero:
-                    // Zona despejada con visibilidad: baja densidad aliada, algo de presencia enemiga visible
-                    score = infEnemiga * 1.5f - infPropia * 2f;
+                    // Zona despejada con visibilidad: baja densidad aliada, algo de presencia enemiga visible.
+                    // Ahora se restará la distancia a la torre para que no se alejen demasiado a los flancos.
+                    score = (infEnemiga * 1.5f) - (infPropia * 2f) - (distTorre * 0.1f);
                     break;
 
                 case TipoUnidad.Explorador:
