@@ -13208,7 +13208,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bandoPropietario: 1
-  tiempoParaConquistar: 30
+  tiempoParaConquistar: 15
 --- !u!1 &597954100
 GameObject:
   m_ObjectHideFlags: 0
@@ -31457,7 +31457,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bandoPropietario: 0
-  tiempoParaConquistar: 30
+  tiempoParaConquistar: 15
 --- !u!1 &1288147294
 GameObject:
   m_ObjectHideFlags: 0
@@ -31783,8 +31783,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   intervaloActualizacion: 0.5
-  radioInfluencia: 10
   pesoPoder: 0.3
+  decaimiento: 0.75
+  umbralMinimo: 0.05
 --- !u!114 &1294030584
 MonoBehaviour:
   m_ObjectHideFlags: 0

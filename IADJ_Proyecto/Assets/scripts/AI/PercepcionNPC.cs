@@ -33,6 +33,10 @@ public class PercepcionNPC : MonoBehaviour
     private bool tieneOrdenManual = false;
     private Vector3 destinoManual;
 
+    // true si el NPC transitó de Vigilancia → Defensa de forma reactiva al ver un enemigo.
+    // Se usa para volver a Vigilancia (y reactivar patrulla) cuando el enemigo desaparece.
+    private bool defensaReactiva = false;
+
 
     void Awake()
     {
@@ -134,6 +138,14 @@ public class PercepcionNPC : MonoBehaviour
         if (enemigoActual != null)
         {
             if (patrol != null && patrol.enabled) { patrol.enabled = false; patrol.DetenerPatrulla(); }
+
+            // Transición reactiva: Vigilancia → Defensa al detectar un enemigo.
+            if (estadoIndividual == EstadoNPC.Vigilancia)
+            {
+                estado?.SetEstado(EstadoNPC.Defensa);
+                defensaReactiva = true;
+                estadoIndividual = EstadoNPC.Defensa;
+            }
 
             float dist = Vector3.Distance(transform.position, enemigoActual.position);
 
@@ -246,6 +258,14 @@ public class PercepcionNPC : MonoBehaviour
 
     private void GestionarSinEnemigos(EstadoNPC estadoInd)
     {
+        // Si el NPC llegó a Defensa de forma reactiva y ya no hay enemigos, vuelve a Vigilancia.
+        if (defensaReactiva && estadoInd == EstadoNPC.Defensa)
+        {
+            defensaReactiva = false;
+            estado?.SetEstado(EstadoNPC.Vigilancia); // también reactiva la patrulla
+            return;
+        }
+
         if (estadoInd == EstadoNPC.Defensa)
         {
             GestionarDefensa();

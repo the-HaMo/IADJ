@@ -1,28 +1,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// Mapa de influencia de bandos. Cada NPC vivo "irradia" influencia en torno a su
-// posicion, decreciendo con la distancia. Hay un mapa por bando.
+// Mapa de influencia de bandos usando el algoritmo de inundacion de Dijkstra.
+//
+// Diferencia con suma directa:
+//   - Cada celda guarda la influencia MAS ALTA de UNA sola unidad (no la suma).
+//   - Una unidad fuerte es mas importante que muchas debiles.
+//   - La influencia se propaga celda a celda con decaimiento multiplicativo.
 //
 // Como lo usa el resto del proyecto:
-//  - El A* (Aestrella.cs) lee la influencia ENEMIGA al planear caminos para
-//    evitar zonas peligrosas (pathfinding tactico, requisito i).
-//  - PercepcionNPC consulta la influencia para decidir huir si esta en zona
-//    enemiga con poca vida (requisito f).
-//  - MinimapaInfluencia dibuja los dos mapas como un heatmap (requisito e).
+//  - Aestrella.cs lee la influencia ENEMIGA como coste adicional (pathfinding tactico).
+//  - PercepcionNPC consulta la influencia para toma de decisiones tacticas.
+//  - MinimapaInfluencia dibuja los mapas como heatmap (req. e).
+
 public class MapaInfluencia : MonoBehaviour
 {
     public static MapaInfluencia Instance { get; private set; }
 
-    [Header("Configuracion")]
+    [Header("Configuracion general")]
     [Tooltip("Cada cuantos segundos se recalcula todo el mapa.")]
     public float intervaloActualizacion = 0.5f;
 
-    [Tooltip("Radio en celdas que cada NPC irradia.")]
-    public int radioInfluencia = 10;
-
-    [Tooltip("Multiplicador del poder del NPC al traducir a influencia bruta.")]
+    [Tooltip("Multiplicador del poder del NPC al traducir a influencia inicial.")]
     public float pesoPoder = 0.3f;
+
+    [Header("Dijkstra Flood")]
+    [Tooltip("Factor de decaimiento multiplicativo por celda (0-1). 0.85 = pierde 15% por paso.")]
+    [Range(0.5f, 0.99f)]
+    public float decaimiento = 0.85f;
+
+    [Tooltip("Influencia minima para seguir propagando (corte de propagacion).")]
+    public float umbralMinimo = 0.05f;
 
     private GridManager gridManager;
     private float[,] infRojo;
@@ -30,7 +38,71 @@ public class MapaInfluencia : MonoBehaviour
     private float nextUpdate;
     private int sizeX, sizeY;
 
-    void Awake()
+  // Estructuras para el heap de Dijkstra (max-heap por influencia)
+    private struct EntradaHeap
+    {
+        public float inf;
+        public int x, y;
+    }
+
+    private class MaxHeap
+    {
+        private readonly List<EntradaHeap> datos = new List<EntradaHeap>();
+
+        public int Count => datos.Count;
+
+        public void Clear() => datos.Clear();
+
+        public void Push(EntradaHeap e)
+        {
+            datos.Add(e);
+            SubirUltimo();
+        }
+
+        public EntradaHeap Pop()
+        {
+            EntradaHeap top = datos[0];
+            int ultimo = datos.Count - 1;
+            datos[0] = datos[ultimo];
+            datos.RemoveAt(ultimo);
+            if (datos.Count > 0) BajarPrimero();
+            return top;
+        }
+
+        private void SubirUltimo()
+        {
+            int i = datos.Count - 1;
+            while (i > 0)
+            {
+                int padre = (i - 1) / 2;
+                if (datos[i].inf > datos[padre].inf)
+                {
+                    EntradaHeap tmp = datos[i]; datos[i] = datos[padre]; datos[padre] = tmp;
+                    i = padre;
+                }
+                else break;
+            }
+        }
+
+        private void BajarPrimero()
+        {
+            int i = 0, n = datos.Count;
+            while (true)
+            {
+                int mayor = i;
+                int l = 2 * i + 1, r = 2 * i + 2;
+                if (l < n && datos[l].inf > datos[mayor].inf) mayor = l;
+                if (r < n && datos[r].inf > datos[mayor].inf) mayor = r;
+                if (mayor == i) break;
+                EntradaHeap tmp = datos[i]; datos[i] = datos[mayor]; datos[mayor] = tmp;
+                i = mayor;
+            }
+        }
+    }
+
+    private readonly MaxHeap heap = new MaxHeap();
+
+       void Awake()
     {
         Instance = this;
         gridManager = FindFirstObjectByType<GridManager>();
@@ -61,68 +133,102 @@ public class MapaInfluencia : MonoBehaviour
         }
     }
 
+
     public void Recalcular()
     {
         if (gridManager == null || infRojo == null) return;
 
-        // 1. Limpiar mapas
         System.Array.Clear(infRojo, 0, infRojo.Length);
         System.Array.Clear(infAzul, 0, infAzul.Length);
 
-        // 2. Cada NPC vivo irradia influencia en su entorno
         NPCStats[] todos = FindObjectsByType<NPCStats>(FindObjectsSortMode.None);
-        foreach (NPCStats npc in todos)
-        {
-            if (npc == null || npc.miBando == Bando.Default) continue;
 
-            Node n = npc.ObtenerNodoActual();
-            if (n == null) continue;
+        InundarDijkstra(todos, Bando.Rojo, infRojo);
+        InundarDijkstra(todos, Bando.Azul, infAzul);
 
-            float fuerza = npc.poder * pesoPoder;
-            EsparcirInfluencia(n.gridX, n.gridY, fuerza, npc.miBando);
-        }
-
-        // 3. Volcar al Node.influenceValue para los NPCs que no usan MapaInfluencia
-        //    directamente (compatibilidad con Aestrella sin pasar bando).
         for (int x = 0; x < sizeX; x++)
         {
             for (int y = 0; y < sizeY; y++)
             {
                 Node n = gridManager.GetNode(x, y);
                 if (n == null) continue;
-                // Influencia "neta" como valor positivo (bandera de zona disputada)
                 n.influenceValue = Mathf.RoundToInt(infRojo[x, y] + infAzul[x, y]);
             }
         }
     }
 
-    private void EsparcirInfluencia(int cx, int cy, float fuerza, Bando bando)
+    // -----------------------------------------------------------------------
+    // Inundacion de Dijkstra para un bando.
+    //
+    // Algoritmo:
+    //   1. Sembrar el heap con todas las unidades del bando (fuerza = poder * pesoPoder).
+    //   2. Extraer la celda de mayor influencia.
+    //   3. Para cada vecino: nuevaInf = infActual * decaimiento.
+    //      Si nuevaInf supera el valor actual del vecino, actualizar y encolar.
+    //   4. Repetir hasta vaciar el heap o quedar por debajo del umbral.
+    //
+    // Resultado: cada celda contiene la influencia MAS ALTA de UNA unidad
+    // (no la suma), lo que hace que unidades fuertes sean mas relevantes.
+    // -----------------------------------------------------------------------
+    private void InundarDijkstra(NPCStats[] todos, Bando bando, float[,] mapa)
     {
-        int rad = radioInfluencia;
-        int x0 = Mathf.Max(0, cx - rad);
-        int x1 = Mathf.Min(sizeX - 1, cx + rad);
-        int y0 = Mathf.Max(0, cy - rad);
-        int y1 = Mathf.Min(sizeY - 1, cy + rad);
-
-        for (int x = x0; x <= x1; x++)
+        heap.Clear();
+        foreach (NPCStats npc in todos)
         {
-            for (int y = y0; y <= y1; y++)
+            if (npc == null || npc.miBando != bando) continue;
+
+            Node n = npc.ObtenerNodoActual();
+            if (n == null) continue;
+
+            float fuerza = npc.poder * pesoPoder;
+            int gx = n.gridX, gy = n.gridY;
+
+            if (fuerza > mapa[gx, gy])
             {
-                int dx = x - cx;
-                int dy = y - cy;
-                int distSq = dx * dx + dy * dy;
-                if (distSq > rad * rad) continue;
+                mapa[gx, gy] = fuerza;
+                heap.Push(new EntradaHeap { inf = fuerza, x = gx, y = gy });
+            }
+        }
 
-                // Cae con 1/(1+d^2) -> intensa cerca, suave lejos
-                float aporte = fuerza / (1f + distSq);
+        // Decaimiento diagonal: un paso diagonal recorre sqrt(2) veces mas distancia,
+        // por lo que aplicamos decaimiento^sqrt(2) para obtener forma circular.
+        float decaimientoDiagonal = Mathf.Pow(decaimiento, 1.414f);
 
-                if (bando == Bando.Rojo) infRojo[x, y] += aporte;
-                else if (bando == Bando.Azul) infAzul[x, y] += aporte;
+        // --- Propagacion Dijkstra ---
+        while (heap.Count > 0)
+        {
+            EntradaHeap actual = heap.Pop();
+            int cx = actual.x, cy = actual.y;
+
+            // Entrada obsoleta: otra ruta ya llego con mayor influencia
+            if (mapa[cx, cy] > actual.inf + 0.001f) continue;
+
+            // Propagar a los 8 vecinos
+            for (int dx = -1; dx <= 1; dx++)
+            {
+                for (int dy = -1; dy <= 1; dy++)
+                {
+                    if (dx == 0 && dy == 0) continue;
+
+                    int nx = cx + dx, ny = cy + dy;
+                    if (nx < 0 || nx >= sizeX || ny < 0 || ny >= sizeY) continue;
+
+                    // Paso diagonal = sqrt(2) veces mas largo -> mayor decaimiento
+                    bool esDiagonal = dx != 0 && dy != 0;
+                    float nuevaInf = actual.inf * (esDiagonal ? decaimientoDiagonal : decaimiento);
+
+                    if (nuevaInf < umbralMinimo) continue;
+
+                    if (nuevaInf > mapa[nx, ny])
+                    {
+                        mapa[nx, ny] = nuevaInf;
+                        heap.Push(new EntradaHeap { inf = nuevaInf, x = nx, y = ny });
+                    }
+                }
             }
         }
     }
 
-    // ------- API publica -------
 
     public float GetInfluencia(Bando bando, int x, int y)
     {
@@ -141,44 +247,29 @@ public class MapaInfluencia : MonoBehaviour
         return GetInfluencia(miBando, x, y);
     }
 
-    // ----------------------------------------------------------------------
-    // Mapa de INFLUENCIA neta (Rojo - Azul). Positivo = Rojo dominante,
-    // negativo = Azul dominante.
-    // ----------------------------------------------------------------------
+    // Influencia neta: positivo = Rojo domina, negativo = Azul domina
     public float GetInfluenciaNeta(int x, int y)
     {
         if (!EnRango(x, y)) return 0f;
         return infRojo[x, y] - infAzul[x, y];
     }
 
-    // ----------------------------------------------------------------------
-    // Mapa de TENSION = Influencia_Propia + Influencia_Oponente
-    //                 = inf_rojo + inf_azul     (siempre >= 0)
-    // Indica donde hay actividad de cualquier bando. Picos = zonas con
-    // muchas unidades (de uno o ambos bandos).
-    // ----------------------------------------------------------------------
+    // Tension = suma de ambas influencias (actividad total)
     public float GetTension(int x, int y)
     {
         if (!EnRango(x, y)) return 0f;
         return infRojo[x, y] + infAzul[x, y];
     }
 
-    // ----------------------------------------------------------------------
-    // Mapa de VULNERABILIDAD = Tension - |Influencia neta|
-    //                        = (rojo + azul) - |rojo - azul|
-    //                        = 2 * min(rojo, azul)
-    // Picos = zonas DISPUTADAS (ambos bandos presentes en cantidades
-    // similares). Valor 0 = uno de los dos bandos no esta presente.
-    // ----------------------------------------------------------------------
+    // Vulnerabilidad = zonas disputadas: 2 * min(rojo, azul)
     public float GetVulnerabilidad(int x, int y)
     {
         if (!EnRango(x, y)) return 0f;
         float r = infRojo[x, y];
         float a = infAzul[x, y];
-        return (r + a) - Mathf.Abs(r - a); // == 2 * min(r, a)
+        return (r + a) - Mathf.Abs(r - a);
     }
 
-    // En posicion del mundo: util para PercepcionNPC.
     public float GetInfluenciaEnemigaEnMundo(Bando miBando, Vector3 worldPos)
     {
         if (gridManager == null) return 0f;
@@ -198,11 +289,5 @@ public class MapaInfluencia : MonoBehaviour
     private bool EnRango(int x, int y)
     {
         return infRojo != null && x >= 0 && x < sizeX && y >= 0 && y < sizeY;
-    }
-
-    // Toggle del componente tactico del pathfinding (req. k del enunciado)
-    void Update_Toggle()
-    {
-        // Llamado desde Update via teclado en otro script si se quiere
     }
 }
